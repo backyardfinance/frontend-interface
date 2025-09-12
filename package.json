@@ -1,0 +1,48 @@
+{
+  "name": "vite-template",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc && vite build",
+    "typecheck": "tsc --noEmit",
+    "lint": "yarn typecheck && biome lint --fix",
+    "format": "biome format --write",
+    "check": "biome check --fix",
+    "preview": "vite preview",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "4.1.13",
+    "clsx": "2.1.1",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-router": "7.8.2",
+    "tailwind-merge": "3.3.1",
+    "tailwindcss": "4.1.13"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.4",
+    "@types/node": "24.3.1",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "@vitejs/plugin-react-swc": "4.0.1",
+    "husky": "9.1.7",
+    "lightningcss": "1.30.1",
+    "lint-staged": "16.1.6",
+    "typescript": "5.9.2",
+    "vite": "7.1.5",
+    "vite-tsconfig-paths": "5.1.4"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx,json,md}": [
+      "biome check --fix --files-ignore-unknown=true"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  }
+}
