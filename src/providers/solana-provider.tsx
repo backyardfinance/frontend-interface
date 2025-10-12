@@ -1,7 +1,7 @@
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
+import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
 import { type FC, type PropsWithChildren, useMemo } from "react";
 
@@ -11,7 +11,7 @@ const network = WalletAdapterNetwork.Devnet;
 
 const SolanaWalletProvider: FC<PropsWithChildren> = ({ children }) => {
   const endpoint = useMemo(() => clusterApiUrl(network), []);
-  const wallets = useMemo(() => [new SolflareWalletAdapter()], []);
+  const wallets = useMemo(() => [new SolflareWalletAdapter(), new PhantomWalletAdapter()], []);
 
   return (
     <ConnectionProvider endpoint={endpoint}>

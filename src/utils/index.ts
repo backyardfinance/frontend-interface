@@ -10,3 +10,7 @@ export function truncateAddress(address: string | undefined): string {
   if (address.length <= 16) return address;
   return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
 }
+
+export function formatNumber(number: number): string {
+  return number.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
