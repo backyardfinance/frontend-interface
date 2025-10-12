@@ -44,6 +44,5 @@
 @layer base {
   body {
     font-family: "Product Sans", sans-serif;
-    @apply bg-white text-black;
   }
 }
