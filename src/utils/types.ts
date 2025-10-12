@@ -1,8 +1,10 @@
+export type Platform = "Drift" | "Hylo" | "Jupyter" | "Synatra";
+
 export interface Vault {
   id: string;
   title: string;
   vaultImage: string;
-  platform: string;
+  platform: Platform;
   platformImage: string;
   tvl: number;
   apy: number;
