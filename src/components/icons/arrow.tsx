@@ -1,12 +1,18 @@
 import { cn } from "@/utils";
 import type { Icon } from "./icons";
 
-//TODO: implement direction
+const directionClasses: Record<string, string> = {
+  up: "rotate-180",
+  down: "",
+  left: "-rotate-90",
+  right: "rotate-90",
+};
+
 export const ArrowIcon: Icon = ({ className, color = "#B1B1B1", direction = "up" }) => {
   return (
     <svg
       aria-hidden="true"
-      className={cn(className)}
+      className={cn("transition-transform duration-200", directionClasses[direction], className)}
       fill="none"
       height="9"
       viewBox="0 0 8 9"
