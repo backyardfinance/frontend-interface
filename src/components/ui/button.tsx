@@ -10,11 +10,12 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-slate-900 text-slate-50 hover:bg-slate-900/90",
-        secondary: "rounded-[100px] border border-[rgba(225,225,226,0.5)] bg-[#FAFAFA] px-[17px] py-1 text-[#8A8A8A]",
+        secondary: "border border-[rgba(225,225,226,0.5)] bg-[#FAFAFA] px-4.5 py-1 text-[#8A8A8A]",
+        white: "bg-white font-normal text-neutral-800",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
+        sm: "h-7 gap-1 rounded-[19px] px-1.5 py-0 text-[11px]",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9",
         "icon-sm": "size-8",

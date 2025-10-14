@@ -1,13 +1,59 @@
 import * as TabsPrimitive from "@radix-ui/react-tabs";
+import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { cn } from "@/utils/index";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { cn } from "@/utils";
 
-function Tabs({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Root>) {
-  return <TabsPrimitive.Root className={cn("flex flex-col gap-2", className)} data-slot="tabs" {...props} />;
+const tabsListVariants = cva(
+  "z-20 inline-flex h-11 w-fit items-center justify-center gap-2.5 rounded-[100px] p-[3px] text-[#AEB0B1]",
+  {
+    variants: {
+      variant: {
+        default: "bg-[#FAFAFA]",
+        black: "bg-[#FAFAFA]",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
+const tabsTriggerVariants = cva(
+  "z-20 inline-flex h-[calc(100%-1px)] flex-1 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap rounded-[100px] px-3.5 py-[11px] font-medium text-sm transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default: "text-[#AEB0B1] data-[state=active]:text-neutral-800",
+        black: "text-[#AEB0B1] data-[state=active]:text-white",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+);
+
+interface TabsContextType {
+  variant: VariantProps<typeof tabsListVariants>["variant"];
+}
+
+const TabsContext = createContext<TabsContextType>({ variant: "default" });
+const useTabsContext = () => useContext(TabsContext);
+
+interface TabsProps extends React.ComponentProps<typeof TabsPrimitive.Root>, VariantProps<typeof tabsListVariants> {}
+
+function Tabs({ className, variant = "default", ...props }: TabsProps) {
+  return (
+    <TabsContext.Provider value={{ variant }}>
+      <TabsPrimitive.Root className={cn("flex flex-col gap-2", className)} data-slot="tabs" {...props} />
+    </TabsContext.Provider>
+  );
 }
 
 function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
+  const { variant } = useTabsContext();
+
   const [indicatorStyle, setIndicatorStyle] = useState({
     left: 0,
     top: 0,
@@ -18,7 +64,6 @@ function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimi
 
   const updateIndicator = useCallback(() => {
     if (!tabsListRef.current) return;
-
     const activeTab = tabsListRef.current.querySelector<HTMLElement>('[data-state="active"]');
     if (!activeTab) return;
 
@@ -37,7 +82,6 @@ function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimi
 
   useEffect(() => {
     const timeoutId = setTimeout(updateIndicator, 0);
-
     window.addEventListener("resize", updateIndicator);
     const observer = new MutationObserver(updateIndicator);
 
@@ -58,16 +102,12 @@ function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimi
 
   return (
     <div className="relative" ref={tabsListRef}>
-      <TabsPrimitive.List
-        className={cn(
-          "z-20 inline-flex h-11 w-fit items-center justify-center gap-2.5 rounded-[100px] bg-[#FAFAFA] p-[3px] text-[#AEB0B1]",
-          className
-        )}
-        data-slot="tabs-list"
-        {...props}
-      />
+      <TabsPrimitive.List className={cn(tabsListVariants({ variant }), className)} data-slot="tabs-list" {...props} />
       <div
-        className="absolute z-10 rounded-[100px] bg-white shadow-sm transition-all duration-300 ease-in-out"
+        className={cn(
+          "absolute z-10 rounded-[100px] shadow-sm transition-all duration-300 ease-in-out",
+          variant === "black" ? "bg-[#383838]" : "bg-white"
+        )}
         style={indicatorStyle}
       />
     </div>
@@ -75,12 +115,11 @@ function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimi
 }
 
 function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+  const { variant } = useTabsContext();
+
   return (
     <TabsPrimitive.Trigger
-      className={cn(
-        "z-20 inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-[100px] px-3.5 py-[11px] font-medium text-neutral-800 text-sm transition-[color,box-shadow] disabled:pointer-events-none disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
-        className
-      )}
+      className={cn(tabsTriggerVariants({ variant }), className)}
       data-slot="tabs-trigger"
       {...props}
     />
