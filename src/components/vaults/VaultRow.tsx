@@ -9,7 +9,7 @@ import { StarsIcon } from "../icons/stars";
 
 type Props = {
   vault: Vault;
-  onAdd: (e: React.MouseEvent<HTMLButtonElement>, vault: Vault) => void;
+  onAdd: (e: React.MouseEvent<HTMLDivElement>, vault: Vault) => void;
 };
 
 export const VaultRow: React.FC<Props> = ({ vault, onAdd }) => {
@@ -58,9 +58,9 @@ export const VaultRow: React.FC<Props> = ({ vault, onAdd }) => {
           <StarsIcon className="h-3.5 w-3.5" />
         </div>
       </div>
-      <button className="inline-flex items-center justify-end" onClick={(e) => onAdd(e, vault)} type="button">
+      <div className="inline-flex items-center justify-end" onClick={(e) => onAdd(e, vault)} role="button" tabIndex={0}>
         <PlusIcon className="h-3.5 w-3.5" />
-      </button>
+      </div>
     </button>
   );
 };

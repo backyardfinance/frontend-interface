@@ -20,13 +20,13 @@ export const TopVaults: React.FC<Props> = ({ vaults, onAdd }) => {
           key={vault.id}
         >
           <div className="flex flex-row items-center justify-center gap-[7px] rounded-2xl bg-white p-[8px] outline outline-zinc-100 outline-offset-[-1px]">
-            <div className="h-[30px] w-[30px]">
+            <div className="relative h-[30px] w-[30px]">
               {vault.vaultImage ? (
                 <img alt={vault.title} className="h-full w-full rounded-[31px]" src={vault.vaultImage} />
               ) : (
                 getTokenImage(vault.title)
               )}
-              <div className="absolute right-0 bottom-0">
+              <div className="absolute right-0 bottom-0 rounded-full bg-white">
                 {vault.platformImage ? (
                   <img alt={vault.platform} className="h-4 w-4 rounded-3xl" src={vault.platformImage} />
                 ) : (
