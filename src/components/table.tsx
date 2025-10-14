@@ -23,9 +23,10 @@ type TableProps = {
   rows: React.ReactNode[][];
   pagination?: PaginationData;
   rowClassName?: string;
+  action?: (rowIndex: number) => React.ReactNode;
 };
 
-export const Table: React.FC<TableProps> = ({ headers, rows, pagination, rowClassName }) => {
+export const Table: React.FC<TableProps> = ({ headers, rows, pagination, rowClassName, action }) => {
   const getPageNumbers = () => {
     if (!pagination) return [];
 
@@ -53,40 +54,46 @@ export const Table: React.FC<TableProps> = ({ headers, rows, pagination, rowClas
 
   return (
     <div className="flex w-full flex-col gap-2">
-      <div className="flex px-4">
-        {headers.map((header, index) => (
-          <div
-            className={cn(
-              "flex flex-1 items-center font-normal text-[#CACACA] text-[9px] leading-[normal]",
-              index === 0 ? "justify-start" : index === headers.length - 1 ? "justify-end" : "justify-center"
-            )}
-            key={index}
-          >
-            {header}
-          </div>
-        ))}
+      <div className="flex items-center gap-3 px-4">
+        <div className="grid flex-1 [grid-template-columns:repeat(auto-fit,minmax(0,1fr))]">
+          {headers.map((header, index) => (
+            <div
+              className={cn(
+                "flex items-center font-normal text-[#CACACA] text-[9px] leading-[normal]",
+                index === 0 ? "justify-start" : index === headers.length - 1 ? "justify-end" : "justify-center"
+              )}
+              key={index}
+            >
+              {header}
+            </div>
+          ))}
+        </div>
+        {action && <div className="pointer-events-none invisible">{action(0)}</div>}
       </div>
 
       <div className="flex flex-col gap-2">
         {rows.map((row, rowIndex) => (
           <div
             className={cn(
-              "flex flex-1 rounded-2xl border border-[rgba(214,214,214,0.30)] bg-[#FAFAFA] px-4 py-3",
+              "flex items-center gap-3 rounded-2xl border border-[rgba(214,214,214,0.30)] bg-[#FAFAFA] px-4 py-3",
               rowClassName
             )}
             key={rowIndex}
           >
-            {row.map((cell, cellIndex) => (
-              <div
-                className={cn(
-                  "flex flex-1 items-center",
-                  cellIndex === 0 ? "justify-start" : cellIndex === row.length - 1 ? "justify-end" : "justify-center"
-                )}
-                key={cellIndex}
-              >
-                {cell}
-              </div>
-            ))}
+            <div className="grid flex-1 [grid-template-columns:repeat(auto-fit,minmax(0,1fr))]">
+              {row.map((cell, cellIndex) => (
+                <div
+                  className={cn(
+                    "flex items-center font-bold text-neutral-800 text-xs leading-[normal]",
+                    cellIndex === 0 ? "justify-start" : cellIndex === row.length - 1 ? "justify-end" : "justify-center"
+                  )}
+                  key={cellIndex}
+                >
+                  {cell}
+                </div>
+              ))}
+            </div>
+            {!!action && action(rowIndex)}
           </div>
         ))}
       </div>
