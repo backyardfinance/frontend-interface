@@ -1,5 +1,7 @@
+import { useNavigate } from "react-router";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
+import { toVaultRoute } from "@/config/routes";
 import { formatNumber } from "@/utils";
 import type { Vault } from "@/utils/types";
 import { PlusIcon } from "../icons/plus";
@@ -10,8 +12,13 @@ type Props = {
 };
 
 export const VaultRow: React.FC<Props> = ({ vault }) => {
+  const navigate = useNavigate();
   return (
-    <div className="relative flex min-h-[21px] w-full cursor-pointer flex-row items-center justify-between overflow-hidden rounded-2xl bg-neutral-50 px-[16px] py-[13px] outline outline-zinc-300/30 outline-offset-[-1px]">
+    <button
+      className="relative flex min-h-[21px] w-full cursor-pointer flex-row items-center justify-between overflow-hidden rounded-2xl bg-neutral-50 px-[16px] py-[13px] outline outline-zinc-300/30 outline-offset-[-1px]"
+      onClick={() => navigate(toVaultRoute(vault.id))}
+      type="button"
+    >
       <div className="inline-flex flex-2 items-center justify-start gap-2">
         <div className="relative flex items-center justify-center">
           <div className="h-[27px] w-[27px] p-[3px]">
@@ -53,6 +60,6 @@ export const VaultRow: React.FC<Props> = ({ vault }) => {
       <div className="inline-flex flex-1 items-center justify-end">
         <PlusIcon className="h-3.5 w-3.5" />
       </div>
-    </div>
+    </button>
   );
 };

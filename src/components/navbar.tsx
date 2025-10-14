@@ -6,10 +6,9 @@ export const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const currentPath = location.pathname;
-
+  const currentPath = location.pathname.split("/")[1];
   return (
-    <Tabs onValueChange={(val) => navigate(val)} value={currentPath}>
+    <Tabs onValueChange={(val) => navigate(val)} value={`/${currentPath}`}>
       <TabsList>
         {NavItems.map(({ title, path }) => (
           <TabsTrigger key={path} value={path}>
