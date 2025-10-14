@@ -4,11 +4,11 @@ import type { Icon } from "./icons";
 const directionClasses: Record<string, string> = {
   up: "rotate-180",
   down: "",
-  left: "-rotate-90",
-  right: "rotate-90",
+  left: "rotate-90",
+  right: "-rotate-90",
 };
 
-export const Chevron: Icon = ({ className, color = "#979797", direction = "down" }) => {
+export const ChevronIcon: Icon = ({ className, color = "#979797", direction = "down" }) => {
   return (
     <svg
       aria-hidden="true"
