@@ -9,9 +9,10 @@ import { StarsIcon } from "../icons/stars";
 
 type Props = {
   vault: Vault;
+  onAdd: (e: React.MouseEvent<HTMLButtonElement>, vault: Vault) => void;
 };
 
-export const VaultRow: React.FC<Props> = ({ vault }) => {
+export const VaultRow: React.FC<Props> = ({ vault, onAdd }) => {
   const navigate = useNavigate();
   return (
     <button
@@ -33,7 +34,7 @@ export const VaultRow: React.FC<Props> = ({ vault }) => {
           <div className="justify-start font-['Product_Sans'] font-bold text-neutral-800 text-xs">{vault.title}</div>
         </div>
       </div>
-      <div className="inline-flex flex-2 items-center justify-center gap-2.5">
+      <div className="inline-flex flex-2 items-center justify-start gap-2.5">
         <div className="inline-flex items-center justify-start gap-1">
           {vault.platformImage ? (
             <img alt={vault.platform} className="h-4 w-4 rounded-3xl" src={vault.platformImage} />
@@ -45,21 +46,21 @@ export const VaultRow: React.FC<Props> = ({ vault }) => {
           </div>
         </div>
       </div>
-      <div className="inline-flex flex-2 items-center justify-center gap-1.5">
+      <div className="inline-flex flex-2 items-center justify-start gap-1.5">
         <div className="justify-center text-center font-['Product_Sans'] font-bold text-neutral-800 text-xs">
           {formatNumber(vault.tvl)}
         </div>
       </div>
 
-      <div className="inline-flex flex-2 items-center justify-center gap-0.5">
+      <div className="inline-flex flex-2 items-center justify-start gap-0.5">
         <div className="flex flex-row items-center justify-start gap-0.5 font-['Product_Sans'] font-bold text-neutral-800 text-xs">
           {vault.apy}%
           <StarsIcon className="h-3.5 w-3.5" />
         </div>
       </div>
-      <div className="inline-flex flex-1 items-center justify-end">
+      <button className="inline-flex items-center justify-end" onClick={(e) => onAdd(e, vault)} type="button">
         <PlusIcon className="h-3.5 w-3.5" />
-      </div>
+      </button>
     </button>
   );
 };

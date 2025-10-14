@@ -16,6 +16,7 @@ export interface Strategy {
   id: string;
   vaults: Vault[];
   depositAmount: number;
+  allocation: number[];
 }
 
 export interface Asset {

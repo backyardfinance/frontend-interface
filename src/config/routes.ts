@@ -6,6 +6,7 @@ export const APP_ROUTES = {
   VAULT_BY_ID: `/vaults/${VAULT_ID}`,
   PRESETS: "/presets",
   DASHBOARD: "/dashboard",
+  REDIRECT: "*",
 } as const;
 
 export const toVaultRoute = (vaultId: string) => APP_ROUTES.VAULT_BY_ID.replace(VAULT_ID, vaultId);

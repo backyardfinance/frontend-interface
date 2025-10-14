@@ -16,6 +16,7 @@ function App() {
         <Route element={<VaultIdPage />} path={APP_ROUTES.VAULT_BY_ID} />
         <Route element={<PresetsPage />} path={APP_ROUTES.PRESETS} />
         <Route element={<DashboardPage />} path={APP_ROUTES.DASHBOARD} />
+        <Route element={<IndexPage />} path={APP_ROUTES.REDIRECT} />
       </Route>
     </Routes>
   );
