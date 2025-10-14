@@ -1,5 +1,10 @@
 import { useState } from "react";
+import { Link } from "react-router";
+import { getTokenImage } from "@/assets/tokens";
+import { toVaultRoute } from "@/config/routes";
+import { ArrowIcon } from "../icons/arrow";
 import { Table } from "../table";
+import { Badge } from "../ui/badge";
 
 export const RecentActivity = () => {
   const [page, setPage] = useState(1);
@@ -9,55 +14,67 @@ export const RecentActivity = () => {
       token: "USDT",
       amount: "1000",
       strategy: "STR-02",
-      status: "DEPOSIT", //"WITHDRAW",
+      status: "Withdrawing",
     },
     {
       id: "2",
       token: "USDC",
       amount: "1000",
       strategy: "STR-02",
-      status: "WITHDRAW", //"WITHDRAW",
+      status: "Withdrawn",
     },
     {
       id: "3",
       token: "USDT",
       amount: "1000",
       strategy: "STR-02",
-      status: "DEPOSIT", //"WITHDRAW",
+      status: "Deposited",
     },
     {
       id: "4",
       token: "USDT",
       amount: "1000",
       strategy: "STR-02",
-      status: "DEPOSIT", //"WITHDRAW",
+      status: "Deposited",
     },
     {
       id: "5",
       token: "USDT",
       amount: "1000",
       strategy: "STR-02",
-      status: "DEPOSIT", //"WITHDRAW",
+      status: "Withdrawn",
     },
     {
       id: "6",
       token: "USDT",
       amount: "1000",
       strategy: "STR-02",
-      status: "DEPOSIT", //"WITHDRAW",
+      status: "Deposited",
     },
     {
       id: "7",
       token: "USDT",
       amount: "1000",
       strategy: "STR-02",
-      status: "DEPOSIT", //"WITHDRAW",
+      status: "Deposited",
     },
   ];
 
   const table = {
-    headers: ["id", "token", "amount", "strategy", "status"],
-    rows: activity.map((item) => [item.id, item.token, item.amount, item.strategy, item.status]),
+    headers: ["token", "amount", "strategy", "status"],
+    rows: activity.map((item) => [
+      <span className="inline-flex items-center gap-1" key={item.id}>
+        <span className="size-3">{getTokenImage(item.token)}</span>
+        {item.token}
+      </span>,
+      item.amount,
+      <Badge key={item.id} variant="secondary">
+        {item.strategy}
+      </Badge>,
+      <Badge key={item.id} text="xxs" variant="secondary">
+        {item.status}
+      </Badge>,
+    ]),
   };
 
   return (
@@ -73,9 +90,19 @@ export const RecentActivity = () => {
           </>
         ) : (
           <Table
+            action={(rowIndex) => {
+              const item = activity[(rowIndex + (page - 1) * 5) % activity.length];
+              return (
+                <Link
+                  className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]"
+                  to={toVaultRoute(item.id)}
+                >
+                  <ArrowIcon className="size-2 rotate-45" />
+                </Link>
+              );
+            }}
             headers={table.headers}
             pagination={{ currentPage: page, totalPages: Math.ceil(activity.length / 5), onPageChange: setPage }}
-            // rows={table.rows}
             rowClassName="bg-white"
             rows={table.rows.slice((page - 1) * 5, page * 5)}
           />
