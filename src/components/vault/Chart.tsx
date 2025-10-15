@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChartArea } from "@/components/charts/ChartArea";
 // import { Table } from "@/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -85,7 +86,24 @@ export const Chart = () => {
         </Tabs>
       </div>
       {/* //TODO: add chart */}
-      <div className="h-[285px] w-full rounded-[23px] border border-[rgba(214,214,214,0.26)] border-solid bg-[#FAFAFA]" />
+      <div className="w-full rounded-[23px] border border-[rgba(214,214,214,0.26)] border-solid bg-[#FAFAFA]">
+        <ChartArea
+          chartConfig={{
+            desktop: {
+              label: "Desktop",
+              color: "var(--chart-1)",
+            },
+          }}
+          chartData={[
+            { date: "2024-04-01", desktop: 222 },
+            { date: "2024-04-02", desktop: 97 },
+            { date: "2024-04-03", desktop: 167 },
+          ]}
+          title={selectedMetric}
+          value="6.04%"
+          valueTooltip="APY"
+        />
+      </div>
       {/* <div>
         <Table headers={table.headers} rows={table.rows} />
       </div> */}

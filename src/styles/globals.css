@@ -41,6 +41,28 @@
   font-display: swap;
 }
 
+:root {
+  --chart-1: oklch(0.5771 0.2126 294.66);
+  --chart-2: oklch(0.6074 0.2378 340.76);
+  --chart-3: oklch(0.8987 0.0393 301.84);
+  --chart-4: oklch(0.8858 0.075 187.51);
+  --chart-5: oklch(0.8854 0.1752 136.1);
+  --chart-6: oklch(0.7668 0.1573 71.8);
+  --chart-7: oklch(0.9086 0.2026 116.08);
+  --chart-8: oklch(0.7804 0.1023 241.03);
+}
+
+@theme inline {
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
+}
+
 @layer base {
   body {
     font-family: "Product Sans", sans-serif;
