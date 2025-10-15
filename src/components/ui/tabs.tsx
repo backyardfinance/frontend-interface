@@ -11,6 +11,7 @@ const tabsListVariants = cva(
       variant: {
         default: "bg-[#FAFAFA]",
         black: "bg-[#FAFAFA]",
+        gray: "bg-neutral-300/10",
       },
     },
     defaultVariants: {
@@ -26,6 +27,7 @@ const tabsTriggerVariants = cva(
       variant: {
         default: "text-[#AEB0B1] data-[state=active]:text-neutral-800",
         black: "text-[#AEB0B1] data-[state=active]:text-white",
+        gray: "text-[#AEB0B1] data-[state=active]:text-neutral-800",
       },
     },
     defaultVariants: {

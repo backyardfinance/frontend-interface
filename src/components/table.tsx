@@ -24,9 +24,10 @@ type TableProps = {
   pagination?: PaginationData;
   rowClassName?: string;
   action?: (rowIndex: number) => React.ReactNode;
+  handleRowClick?: (rowIndex: number) => void;
 };
 
-export const Table: React.FC<TableProps> = ({ headers, rows, pagination, rowClassName, action }) => {
+export const Table: React.FC<TableProps> = ({ headers, rows, pagination, rowClassName, action, handleRowClick }) => {
   const getPageNumbers = () => {
     if (!pagination) return [];
 
@@ -57,13 +58,7 @@ export const Table: React.FC<TableProps> = ({ headers, rows, pagination, rowClas
       <div className="flex items-center gap-3 px-4">
         <div className="grid flex-1 [grid-template-columns:repeat(auto-fit,minmax(0,1fr))]">
           {headers.map((header, index) => (
-            <div
-              className={cn(
-                "flex items-center font-normal text-[#CACACA] text-[9px] leading-[normal]",
-                index === 0 ? "justify-start" : index === headers.length - 1 ? "justify-end" : "justify-center"
-              )}
-              key={index}
-            >
+            <div className={cn("flex items-center font-normal text-[#CACACA] text-[9px] leading-[normal]")} key={index}>
               {header}
             </div>
           ))}
@@ -73,20 +68,19 @@ export const Table: React.FC<TableProps> = ({ headers, rows, pagination, rowClas
 
       <div className="flex flex-col gap-2">
         {rows.map((row, rowIndex) => (
-          <div
+          <button
             className={cn(
-              "flex items-center gap-3 rounded-2xl border border-[rgba(214,214,214,0.30)] bg-[#FAFAFA] px-4 py-3",
+              "flex cursor-pointer items-center gap-3 rounded-2xl border border-[rgba(214,214,214,0.30)] bg-[#FAFAFA] px-4 py-3",
               rowClassName
             )}
             key={rowIndex}
+            onClick={() => handleRowClick?.(rowIndex)}
+            type="button"
           >
             <div className="grid flex-1 [grid-template-columns:repeat(auto-fit,minmax(0,1fr))]">
               {row.map((cell, cellIndex) => (
                 <div
-                  className={cn(
-                    "flex items-center font-bold text-neutral-800 text-xs leading-[normal]",
-                    cellIndex === 0 ? "justify-start" : cellIndex === row.length - 1 ? "justify-end" : "justify-center"
-                  )}
+                  className={cn("flex items-center font-bold text-neutral-800 text-xs leading-[normal]")}
                   key={cellIndex}
                 >
                   {cell}
@@ -94,7 +88,7 @@ export const Table: React.FC<TableProps> = ({ headers, rows, pagination, rowClas
               ))}
             </div>
             {!!action && action(rowIndex)}
-          </div>
+          </button>
         ))}
       </div>
       {pagination && (

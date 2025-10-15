@@ -10,12 +10,14 @@ export interface Vault {
   apy: number;
   description: string;
   contractAddress: string;
+  asset: Asset;
 }
 
 export interface Strategy {
   id: string;
   vaults: Vault[];
-  depositAmount: number;
+  depositAmount: bigint;
+  allocation: number[];
 }
 
 export interface Asset {
