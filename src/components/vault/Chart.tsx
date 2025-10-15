@@ -32,7 +32,7 @@ export const Chart = () => {
   //     [
   //       <div className="inline-flex items-center justify-start gap-1.5">
   //         <img alt="token" className="h-3 w-3" src="https://placehold.co/13x13" />
-  //         <div className="justify-start font-['Product_Sans'] font-bold text-neutral-800 text-sm">100,234.23</div>
+  //         <div className="justify-start   font-bold text-neutral-800 text-sm">100,234.23</div>
   //       </div>,
   //       "87%",
   //       <div>
@@ -48,7 +48,7 @@ export const Chart = () => {
   //     [
   //       <div className="inline-flex items-center justify-start gap-1.5">
   //         <img alt="token" className="h-3 w-3" src="https://placehold.co/13x13" />
-  //         <div className="justify-start font-['Product_Sans'] font-bold text-neutral-800 text-sm">100,234.23</div>
+  //         <div className="justify-start   font-bold text-neutral-800 text-sm">100,234.23</div>
   //       </div>,
   //       "87%",
   //       <div>

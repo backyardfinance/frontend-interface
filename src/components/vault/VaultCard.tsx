@@ -16,19 +16,15 @@ export const VaultCard = ({ vault, allocation, depositAmount, setAllocation }: V
       <div className="flex grow flex-col gap-2">
         <div className="flex flex-row items-center gap-1">
           <div className="size-[17px]">{getTokenImage(vault.title)}</div>
-          <span className="justify-center font-['Product_Sans'] font-bold text-base text-neutral-700">
-            {vault.title}
-          </span>
+          <span className="justify-center font-bold text-base text-neutral-700">{vault.title}</span>
         </div>
         <div className="flex flex-row items-center gap-[7px]">
           <div className="flex flex-row items-center justify-between gap-1 rounded-2xl bg-[#FBFBFB] p-[4px]">
             <div className="size-[16px]">{getPlatformImage(vault.platform)}</div>
-            <span className="justify-start font-['Product_Sans'] font-normal text-neutral-800 text-xs">
-              {vault.platform}
-            </span>
+            <span className="justify-start font-normal text-neutral-800 text-xs">{vault.platform}</span>
           </div>
-          <div className="flex flex-row items-center justify-between gap-[2px] rounded-2xl bg-[#FBFBFB] p-[4px] font-['Product_Sans'] font-bold text-neutral-500 text-xs">
-            {vault.apy}%<span className="font-['Product_Sans'] font-bold text-stone-300 text-xs">APY</span>
+          <div className="flex flex-row items-center justify-between gap-[2px] rounded-2xl bg-[#FBFBFB] p-[4px] font-bold text-neutral-500 text-xs">
+            {vault.apy}%<span className="font-bold text-stone-300 text-xs">APY</span>
             <StarsIcon className="ml-1 h-3 w-3" />
           </div>
         </div>
@@ -40,9 +36,9 @@ export const VaultCard = ({ vault, allocation, depositAmount, setAllocation }: V
             onChange={(e) => setAllocation?.(Number(e.target.value))}
             value={allocation}
           />
-          <div className="justify-start font-['Product_Sans'] font-bold text-base text-neutral-400 opacity-30">%</div>
+          <div className="justify-start font-bold text-base text-neutral-400 opacity-30">%</div>
         </div>
-        <div className="justify-start font-['Product_Sans'] font-bold text-neutral-400 text-xs">
+        <div className="justify-start font-bold text-neutral-400 text-xs">
           {depositAmount} {vault.title}
         </div>
       </div>

@@ -31,7 +31,7 @@ export const VaultRow: React.FC<Props> = ({ vault, onAdd }) => {
           </div>
         </div>
         <div className="inline-flex items-start justify-start gap-[0.67px]">
-          <div className="justify-start font-['Product_Sans'] font-bold text-neutral-800 text-xs">{vault.title}</div>
+          <div className="justify-start font-bold text-neutral-800 text-xs">{vault.title}</div>
         </div>
       </div>
       <div className="inline-flex flex-2 items-center justify-start gap-2.5">
@@ -41,19 +41,15 @@ export const VaultRow: React.FC<Props> = ({ vault, onAdd }) => {
           ) : (
             getPlatformImage(vault.platform)
           )}
-          <div className="justify-start font-['Product_Sans'] font-normal text-neutral-800 text-xs">
-            {vault.platform}
-          </div>
+          <div className="justify-start font-normal text-neutral-800 text-xs">{vault.platform}</div>
         </div>
       </div>
       <div className="inline-flex flex-2 items-center justify-start gap-1.5">
-        <div className="justify-center text-center font-['Product_Sans'] font-bold text-neutral-800 text-xs">
-          {formatNumber(vault.tvl)}
-        </div>
+        <div className="justify-center text-center font-bold text-neutral-800 text-xs">{formatNumber(vault.tvl)}</div>
       </div>
 
       <div className="inline-flex flex-2 items-center justify-start gap-0.5">
-        <div className="flex flex-row items-center justify-start gap-0.5 font-['Product_Sans'] font-bold text-neutral-800 text-xs">
+        <div className="flex flex-row items-center justify-start gap-0.5 font-bold text-neutral-800 text-xs">
           {vault.apy}%
           <StarsIcon className="h-3.5 w-3.5" />
         </div>
