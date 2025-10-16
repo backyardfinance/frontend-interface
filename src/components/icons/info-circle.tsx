@@ -1,6 +1,6 @@
 import type { Icon } from "./icons";
 
-export const InfoCircleIcon: Icon = ({ className, color = "#A03152" }) => {
+export const InfoCircleIcon: Icon = ({ className }) => {
   return (
     <svg
       aria-hidden="true"
