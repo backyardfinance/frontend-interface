@@ -70,7 +70,8 @@ export const Table: React.FC<TableProps> = ({ headers, rows, pagination, rowClas
         {rows.map((row, rowIndex) => (
           <button
             className={cn(
-              "flex cursor-pointer items-center gap-3 rounded-2xl border border-[rgba(214,214,214,0.30)] bg-[#FAFAFA] px-4 py-3",
+              "flex items-center gap-3 rounded-2xl border border-[rgba(214,214,214,0.30)] bg-[#FAFAFA] px-4 py-3",
+              handleRowClick && "cursor-pointer",
               rowClassName
             )}
             key={rowIndex}

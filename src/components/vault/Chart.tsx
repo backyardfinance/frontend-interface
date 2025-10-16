@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { getTokenImage } from "@/assets/tokens";
 import { ChartArea } from "@/components/charts/ChartArea";
-// import { Table } from "@/components/table";
+import { Table } from "@/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// import { ArrowIcon } from "../icons/arrow";
-// import { Button } from "../ui/button";
+import type { Vault } from "@/utils/types";
+import { ArrowIcon } from "../icons/arrow";
+import { Button } from "../ui/button";
 
 type ChartCategory = "overview" | "position";
 type OverviewMetricType = "apy" | "tvl" | "price";
@@ -17,7 +18,11 @@ const MetricMap: Record<ChartCategory, MetricType[]> = {
   position: ["performance", "apy"],
 };
 
-export const Chart = () => {
+type Props = {
+  vault: Vault;
+};
+
+export const Chart: React.FC<Props> = ({ vault }) => {
   const [selectedCategory, setSelectedCategory] = useState<ChartCategory>("overview");
   const [selectedMetric, setSelectedMetric] = useState<MetricType>("apy");
 
@@ -27,43 +32,43 @@ export const Chart = () => {
     setSelectedMetric(MetricMap[newCategory][0]);
   };
 
-  // const table = {
-  //   headers: ["Deposited", "Vault weight", "Interest earned", "Parent Strategy"],
-  //   rows: [
-  //     [
-  //       <div className="inline-flex items-center justify-start gap-1.5">
-  //         <img alt="token" className="h-3 w-3" src="https://placehold.co/13x13" />
-  //         <div className="justify-start   font-bold text-neutral-800 text-sm">100,234.23</div>
-  //       </div>,
-  //       "87%",
-  //       <div>
-  //         <p>1234.42</p>
-  //       </div>,
-  //       <Button size="sm" variant="white">
-  //         Morpho
-  //         <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
-  //           <ArrowIcon className="size-2 rotate-45" />
-  //         </div>
-  //       </Button>,
-  //     ],
-  //     [
-  //       <div className="inline-flex items-center justify-start gap-1.5">
-  //         <img alt="token" className="h-3 w-3" src="https://placehold.co/13x13" />
-  //         <div className="justify-start   font-bold text-neutral-800 text-sm">100,234.23</div>
-  //       </div>,
-  //       "87%",
-  //       <div>
-  //         <p>1234.42</p>
-  //       </div>,
-  //       <Button size="sm" variant="white">
-  //         Morpho
-  //         <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
-  //           <ArrowIcon className="size-2 rotate-45" />
-  //         </div>
-  //       </Button>,
-  //     ],
-  //   ],
-  // };
+  const positions = [
+    {
+      id: "1",
+      deposited: "100,234.23",
+      vaultWeight: "87%",
+      interestEarned: "1234.42",
+      parentStrategy: "Morpho",
+    },
+    {
+      id: "2",
+      deposited: "100,234.23",
+      vaultWeight: "87%",
+      interestEarned: "1234.42",
+      parentStrategy: "STR-01",
+    },
+  ];
+
+  const table = {
+    headers: ["Deposited", "Vault weight", "Interest earned", "Parent Strategy"],
+    rows: positions.map((position) => [
+      <div className="inline-flex items-center justify-start gap-1.5" key={position.id}>
+        <div className="size-3">{getTokenImage(vault.title)}</div>
+        <div className="justify-start font-bold text-neutral-800 text-sm">{position.deposited}</div>
+      </div>,
+      position.vaultWeight,
+      <div className="inline-flex items-center justify-start gap-1.5" key={position.id}>
+        <div className="justify-start font-bold text-neutral-800 text-sm">{position.interestEarned}</div>
+        <div className="size-3">{getTokenImage(vault.title)}</div>
+      </div>,
+      <Button key={position.id} size="sm" variant="white">
+        {position.parentStrategy}
+        <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
+          <ArrowIcon className="size-2 rotate-45" />
+        </div>
+      </Button>,
+    ]),
+  };
 
   return (
     <>
@@ -104,9 +109,9 @@ export const Chart = () => {
           valueTooltip="APY"
         />
       </div>
-      {/* <div>
+      <div>
         <Table headers={table.headers} rows={table.rows} />
-      </div> */}
+      </div>
     </>
   );
 };

@@ -1,5 +1,6 @@
 import { AverageAPYChart } from "@/components/dashboard/AverageAPYChart";
 import { DashboardData } from "@/components/dashboard/DashboardData";
+import { DashboardTable } from "@/components/dashboard/DashboardTable";
 import { PlatformExposureChart } from "@/components/dashboard/PlatformExposureChart";
 import { PositionPerformanceChart } from "@/components/dashboard/PositionPerformanceChart";
 import { TokenExposureChart } from "@/components/dashboard/TokenExposureChart";
@@ -14,6 +15,7 @@ export default function DashboardPage() {
         <PlatformExposureChart />
         <TokenExposureChart />
       </div>
+      <DashboardTable />
     </section>
   );
 }
