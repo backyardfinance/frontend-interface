@@ -15,7 +15,7 @@ export const PlusIcon: Icon = ({ className, color = "#979797" }) => {
         d="M9.02832 1.16016V6.6875H14.582V7.99707H9.02832V13.5508H7.71875V7.99707H2.19141V6.6875H7.71875V1.16016H9.02832Z"
         fill={color}
         stroke={color}
-        stroke-width="0.308468"
+        strokeWidth="0.308468"
       />
     </svg>
   );

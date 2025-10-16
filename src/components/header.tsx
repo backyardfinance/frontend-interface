@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router";
 import Logo from "@/components/icons/backyard-logo.svg";
 import { Navbar } from "@/components/navbar";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
@@ -22,12 +23,17 @@ const ConnectWallet = () => {
 };
 
 export const Header = () => {
+  const navigate = useNavigate();
   return (
     <header className="z-50 flex w-full items-center justify-between px-12 py-4">
-      <div className="flex items-center gap-2 lg:basis-[360px]">
+      <button
+        className="flex cursor-pointer select-none items-center gap-2 lg:basis-[360px]"
+        onClick={() => navigate("/")}
+        type="button"
+      >
         <img alt="backyard" src={Logo} />
         <span className="text-[rgba(51,51,51,0.95)] text-base leading-normal [font-family:Gilroy]">Backyard</span>
-      </div>
+      </button>
       <Navbar />
       <div className="flex items-center justify-end gap-4 lg:basis-[360px]">
         <ConnectWallet />
