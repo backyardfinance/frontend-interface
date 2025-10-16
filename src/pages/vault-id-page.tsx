@@ -35,7 +35,6 @@ export default function VaultIdPage() {
   const { vaultId } = useParams<{ vaultId: string }>();
   const { data: vaults } = useVaults();
   const vault = vaults?.find((el) => el.id === vaultId);
-
   if (!vaultId || !vault) return <div>No found</div>;
 
   const data = [
@@ -104,7 +103,7 @@ export default function VaultIdPage() {
             </div>
           </div>
         </div>
-        <Chart />
+        <Chart vault={vault} />
         <div className="flex flex-col gap-y-4.5 rounded-[23px] border border-[rgba(214,214,214,0.26)] border-solid bg-[#FAFAFA] px-5.5 py-4.5">
           <p className="font-bold text-[22px] text-neutral-800 leading-[normal]">Additional info</p>
           <div className="flex flex-col gap-2">
