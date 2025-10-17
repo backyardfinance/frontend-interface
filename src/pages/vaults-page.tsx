@@ -90,7 +90,7 @@ export default function VaultsPage() {
     ],
     [vaults]
   );
-  console.log("currentStrategy?.vaults", currentStrategy?.vaults);
+
   if (!vaults) return <div>No vaults matching the filters</div>;
 
   return (
