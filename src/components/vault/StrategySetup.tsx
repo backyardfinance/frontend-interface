@@ -1,22 +1,20 @@
+import { Big } from "big.js";
 import { useMemo, useState } from "react";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
 import { VaultCard } from "@/components/vault/VaultCard";
 import { cn } from "@/utils";
-import type { Asset, Vault } from "@/utils/types";
+import type { Asset, Strategy } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { ReloadIcon } from "../icons/reload";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 export interface StrategySetupProps {
-  allocations?: number[];
-  depositAmount: bigint;
-  setAllocation: (index: number, allocation: number) => void;
-  vaults: Vault[];
+  currentStrategy: Strategy;
+  setCurrentStrategy: (strategy: Strategy) => void;
   slippage: number;
   setSlippage: (slippage: number) => void;
-  setDepositAmount: (amount: bigint) => void;
 }
 
 const mockRouteSteps = [
@@ -78,7 +76,7 @@ export const InputComponent = ({
             onChange={(e) => setCurrentValue(BigInt(e.target.value))}
             value={currentValue.toString()}
           />
-          <span className="font-normal text-[9px] text-stone-300">{assetValue}</span>
+          <span className="font-normal text-[9px] text-stone-300">${assetValue}</span>
         </div>
         <Select
           onOpenChange={setIsSelectOpen}
@@ -114,18 +112,11 @@ export const InputComponent = ({
   );
 };
 
-export const StrategySetup = ({
-  allocations,
-  depositAmount,
-  setAllocation,
-  vaults,
-  slippage,
-  setSlippage,
-  setDepositAmount,
-}: StrategySetupProps) => {
+export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurrentStrategy }: StrategySetupProps) => {
   const [isSlippageOpen, setIsSlippageOpen] = useState(false);
   const [isRouteOpen, setIsRouteOpen] = useState(false);
-  const totalAllocation = allocations?.reduce((acc, curr) => acc + curr, 0);
+  const { allocation, depositAmount, vaults } = currentStrategy;
+  const totalAllocation = allocation?.reduce((acc, curr) => acc + curr, 0);
   const fees = getFees(0.0, 0.0);
 
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
@@ -140,12 +131,30 @@ export const StrategySetup = ({
   ];
 
   const averageApy = useMemo(() => {
-    return (allocations?.reduce((acc, curr) => acc + curr, 0) || vaults[0].apy) / (allocations?.length || 1);
-  }, [allocations, vaults]);
+    if (!vaults || !allocation || !vaults.length) return 0;
+    return vaults.reduce((acc, curr) => acc + curr.apy, 0) / vaults.length;
+  }, [allocation, vaults]);
 
   const estAnnualReturn = useMemo(() => {
+    if (!vaults || !averageApy) return 0;
     return Number(depositAmount) * (1 + averageApy / 100);
   }, [depositAmount, averageApy]);
+
+  const setDepositAmount = (amount: bigint) => {
+    setCurrentStrategy({
+      ...currentStrategy,
+      depositAmount: amount,
+    });
+  };
+
+  const setAllocation = (index: number, amount: number) => {
+    const newAllocation = [...(currentStrategy.allocation || [])];
+    newAllocation[index] = amount;
+    setCurrentStrategy({
+      ...currentStrategy,
+      allocation: newAllocation,
+    });
+  };
 
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border-1 border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
@@ -192,7 +201,7 @@ export const StrategySetup = ({
           </div>
         </div>
       )}
-      {allocations && allocations.length > 0 && (
+      {allocation && allocation.length > 0 && (
         <>
           <div className="flex w-full flex-row items-center justify-between">
             <span className="justify-start font-bold text-neutral-800 text-sm">Allocation</span>
@@ -203,8 +212,8 @@ export const StrategySetup = ({
           </div>
           {vaults.map((vault, index) => (
             <VaultCard
-              allocation={allocations?.[index]}
-              depositAmount={5000}
+              allocation={allocation?.[index]}
+              depositAmount={Number(depositAmount) / (allocation?.length || 1)}
               key={vault.id}
               setAllocation={(amount) => setAllocation(index, amount)}
               vault={vault}
@@ -251,8 +260,10 @@ export const StrategySetup = ({
         <div className="flex flex-row items-start justify-between">
           <span className="font-bold text-neutral-700 text-xs">Est. Annual return</span>
           <div className="flex flex-col items-end">
-            <span className="font-bold text-emerald-500 text-xs">{estAnnualReturn} USDC</span>
-            <span className="font-normal text-[9px] text-stone-300">$1000</span>
+            <span className="font-bold text-emerald-500 text-xs">{Big(estAnnualReturn).toFixed(2)} USDC</span>
+            <span className="font-normal text-[9px] text-stone-300">
+              ${Big(estAnnualReturn).mul(prices.USDC).toFixed(2)}
+            </span>
           </div>
         </div>
         <div className="flex flex-row items-start justify-between">
@@ -262,7 +273,7 @@ export const StrategySetup = ({
       </div>
 
       <div className="flex flex-col gap-[9px] rounded-2xl border-1 border-zinc-100 bg-white">
-        <Button size="xl" variant="tertiary">
+        <Button disabled={!depositAmount || allocation?.length === 0 || !vaults?.length} size="xl" variant="tertiary">
           Deposit {depositAmount} USDC
         </Button>
         <div className="flex flex-col gap-[7px] px-[14px] pb-[14px] font-normal text-xs text-zinc-400">

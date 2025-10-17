@@ -1,3 +1,4 @@
+import { MinusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { getPlatformImage } from "@/assets/platforms";
@@ -24,21 +25,25 @@ export default function VaultsPage() {
 
   const headers = ["Vault", "Platform", "TVL", "APY"];
 
-  const handleAdd = (e: React.MouseEvent<HTMLDivElement>, rowIndex: number) => {
+  const handleAdd = (e: React.MouseEvent<HTMLDivElement>, rowIndex: number, isAdded: boolean) => {
     e.stopPropagation();
     const vault = vaults?.[rowIndex];
     if (!vault) return;
-    handleAddClick(e as unknown as React.MouseEvent<HTMLButtonElement>, vault);
+    handleAddClick(e as unknown as React.MouseEvent<HTMLButtonElement>, vault, isAdded);
   };
 
-  const handleAddClick = (e: React.MouseEvent<HTMLButtonElement>, vault: Vault) => {
+  const handleAddClick = (e: React.MouseEvent<HTMLButtonElement>, vault: Vault, isAdded: boolean) => {
     e.stopPropagation();
     setCurrentStrategy((prev) => {
       const newLength = (prev?.vaults?.length || 0) + 1;
       const updatedAllocation = 100 / newLength;
 
       return {
-        vaults: [...(prev?.vaults || []), vault],
+        vaults: isAdded
+          ? prev?.vaults?.filter((v) => {
+              return v.id !== vault.id;
+            }) || []
+          : [...(prev?.vaults || []), vault],
         id: prev?.id || "",
         depositAmount: prev?.depositAmount || BigInt(0),
         allocation: Array.from({ length: newLength }, () => updatedAllocation),
@@ -96,20 +101,27 @@ export default function VaultsPage() {
   return (
     <div className="flex select-none flex-row gap-4">
       <section className="flex-3">
-        <TopVaults onAdd={handleAddClick} vaults={topVaults} />
+        <TopVaults currentStrategy={currentStrategy} onAdd={handleAddClick} vaults={topVaults} />
         <Input leftIcon={<SearchIcon />} placeholder="Search for vault" />
         <Table
-          action={(rowIndex: number) => (
-            <div
-              className="flex min-h-[27px] min-w-[27px] cursor-pointer items-center justify-center"
-              onClick={(e) => handleAdd(e, rowIndex)}
-              onKeyDown={(e) => handleAdd(e as unknown as React.MouseEvent<HTMLDivElement>, rowIndex)}
-              role="button"
-              tabIndex={0}
-            >
-              <PlusIcon className="h-3.5 w-3.5" />
-            </div>
-          )}
+          action={(rowIndex: number) => {
+            const isAdded = currentStrategy?.vaults.find((v) => v.id === vaults?.[rowIndex].id);
+            return (
+              <div
+                className="flex min-h-[27px] min-w-[27px] cursor-pointer items-center justify-center"
+                onClick={(e) => handleAdd(e, rowIndex, !!isAdded)}
+                onKeyDown={(e) => handleAdd(e as unknown as React.MouseEvent<HTMLDivElement>, rowIndex, !!isAdded)}
+                role="button"
+                tabIndex={0}
+              >
+                {!isAdded ? (
+                  <PlusIcon className="h-3.5 w-3.5" />
+                ) : (
+                  <MinusIcon className="h-3.5 w-3.5" stroke="#979797" />
+                )}
+              </div>
+            );
+          }}
           handleRowClick={handleRowClick}
           headers={headers}
           rows={rows}
@@ -128,35 +140,10 @@ export default function VaultsPage() {
           </div>
         ) : (
           <StrategySetup
-            allocations={currentStrategy?.allocation || []}
-            depositAmount={currentStrategy?.depositAmount}
-            setAllocation={(index, amount) => {
-              setCurrentStrategy((prevStrategy) => {
-                const newAllocation = prevStrategy?.allocation || [];
-                newAllocation[index] = amount;
-                return {
-                  ...prevStrategy,
-                  id: prevStrategy?.id || "",
-                  depositAmount: prevStrategy?.depositAmount || BigInt(0),
-                  vaults: prevStrategy?.vaults || [],
-                  allocation: newAllocation,
-                };
-              });
-            }}
-            setDepositAmount={(amount) => {
-              setCurrentStrategy((prevStrategy) => {
-                return {
-                  ...prevStrategy,
-                  id: prevStrategy?.id || "",
-                  depositAmount: amount || BigInt(0),
-                  vaults: prevStrategy?.vaults || [],
-                  allocation: prevStrategy?.allocation || [],
-                };
-              });
-            }}
+            currentStrategy={currentStrategy}
+            setCurrentStrategy={setCurrentStrategy}
             setSlippage={setSlippage}
             slippage={slippage}
-            vaults={currentStrategy?.vaults || []}
           />
         )}
       </section>
