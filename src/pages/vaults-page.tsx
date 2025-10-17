@@ -101,8 +101,9 @@ export default function VaultsPage() {
         <Table
           action={(rowIndex: number) => (
             <div
-              className="inline-flex cursor-pointer items-center justify-end"
+              className="flex min-h-[27px] min-w-[27px] cursor-pointer items-center justify-center"
               onClick={(e) => handleAdd(e, rowIndex)}
+              onKeyDown={(e) => handleAdd(e as unknown as React.MouseEvent<HTMLDivElement>, rowIndex)}
               role="button"
               tabIndex={0}
             >

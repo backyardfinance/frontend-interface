@@ -1,26 +1,14 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
-import { VaultCard } from "@/components/vault/VaultCard";
 import { cn } from "@/utils";
-import type { Asset, Vault } from "@/utils/types";
+import type { Asset } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { ReloadIcon } from "../icons/reload";
 import { Button } from "../ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
-export interface StrategySetupProps {
-  allocations?: number[];
-  depositAmount: bigint;
-  setAllocation: (index: number, allocation: number) => void;
-  vaults: Vault[];
-  slippage: number;
-  setSlippage: (slippage: number) => void;
-  isAllocationShown?: boolean;
-  setDepositAmount: (amount: bigint) => void;
-  headerTextShown?: boolean;
-}
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { InputComponent } from "./StrategySetup";
 
 const mockRouteSteps = [
   "Swap 1000.00 USDC for 1000.12 USDS via Uniswap",
@@ -38,97 +26,13 @@ const getFees = (depositFee: number, routeFee: number) => [
   { name: "Route fee", value: `${routeFee}%` },
 ];
 
-const InputComponent = ({
-  title,
-  balance,
-  assets,
-  currentValue,
-  setCurrentValue,
-  selectedAsset,
-  setSelectedAsset,
-  prices,
-}: {
-  title: string;
-  balance?: string;
-  assets: Asset[];
-  currentValue: bigint;
-  setCurrentValue: (value: bigint) => void;
-  selectedAsset: Asset;
-  setSelectedAsset: (value: Asset) => void;
-  prices: Record<string, number>;
-}) => {
-  const assetValue = useMemo(() => {
-    if (!selectedAsset) return 0;
-    return Number(currentValue) * prices?.[selectedAsset?.id || ""] || 0;
-  }, [currentValue, prices, selectedAsset]);
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
-
-  return (
-    <div className="flex w-full flex-col items-center justify-between gap-[14px] rounded-3xl bg-white p-[14px]">
-      <div className={cn("flex w-full flex-row items-center justify-start", balance && "justify-between")}>
-        <span className="font-bold text-neutral-400 text-xs">{title}</span>
-        {balance && (
-          <div className="flex flex-row font-normal text-neutral-400 text-xs">
-            <span className="font-bold text-neutral-800 text-xs">Balance</span>
-            {balance}
-          </div>
-        )}
-      </div>
-      <div className="flex w-full flex-row items-center justify-between rounded-xl border-1 border-zinc-100 bg-neutral-50 px-2 py-1.5">
-        <div className="flex flex-col">
-          <input
-            className="w-full font-bold text-sm text-zinc-800 outline-none"
-            onChange={(e) => setCurrentValue(BigInt(e.target.value))}
-            value={currentValue.toString()}
-          />
-          <span className="font-normal text-[9px] text-stone-300">{assetValue}</span>
-        </div>
-        <Select
-          onOpenChange={setIsSelectOpen}
-          onValueChange={(value) => setSelectedAsset(assets.find((asset) => asset.id === value) as Asset)}
-          value={selectedAsset?.id}
-        >
-          <SelectTrigger
-            className={cn(
-              "rounded-3xl border-none bg-white shadow-none outline-none ring-none",
-              isSelectOpen && "rounded-b-none"
-            )}
-          >
-            <SelectValue placeholder="Select asset" />
-          </SelectTrigger>
-          <SelectContent
-            className={cn(
-              "max-w-full rounded-t-none rounded-b-3xl border-none bg-white shadow-none outline-none ring-none"
-            )}
-            sideOffset={-4}
-          >
-            {assets.map((asset) => (
-              <SelectItem key={asset.id} value={asset.id}>
-                {asset.symbol}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
-  );
-};
-
-export const StrategySetup = ({
-  allocations,
-  depositAmount,
-  setAllocation,
-  vaults,
-  slippage,
-  setSlippage,
-  isAllocationShown = true,
-  setDepositAmount,
-  headerTextShown = false,
-}: StrategySetupProps) => {
-  const [currentAction, setCurrentAction] = useState<Action>("Withdraw");
+export const VaultControl = () => {
+  const [depositAmount, setDepositAmount] = useState<bigint>(BigInt(0));
+  const [slippage, setSlippage] = useState<number>(0);
+  const [currentAction, setCurrentAction] = useState<Action>("Deposit");
   const [isSlippageOpen, setIsSlippageOpen] = useState(false);
   const [isRouteOpen, setIsRouteOpen] = useState(false);
-  const totalAllocation = allocations?.reduce((acc, curr) => acc + curr, 0);
+
   const fees = getFees(0.0, 0.0);
 
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
@@ -140,37 +44,36 @@ export const StrategySetup = ({
   const userAssets: Asset[] = [
     { id: "USDC", symbol: "USDC", price: 1, balance: 10, icon: "" },
     { id: "USDS", symbol: "USDS", price: 1, balance: 11, icon: "" },
-  ];
-  const withdrawTokens = [
-    { tokenId: "USDC", amount: 10 },
-    { tokenId: "USDS", amount: 11 },
-  ];
+  ]; // TODO: get user assets from backend
 
-  const userAssetsMap = userAssets.reduce(
+  const assets = [
+    { id: "USDC", symbol: "USDC", price: 1, balance: 10, icon: "" },
+    { id: "USDS", symbol: "USDS", price: 1, balance: 11, icon: "" },
+  ].reduce(
     (acc, curr) => {
       acc[curr.id] = curr;
       return acc;
     },
     {} as Record<string, Asset>
-  );
+  ); // TODO: get assets from backend
 
-  const averageApy = useMemo(() => {
-    return (allocations?.reduce((acc, curr) => acc + curr, 0) || vaults[0].apy) / (allocations?.length || 1);
-  }, [allocations, vaults]);
+  const withdrawTokens = [
+    { tokenId: "USDC", amount: 10 },
+    { tokenId: "USDS", amount: 11 },
+  ];
+
+  const isMultipleTokens = withdrawTokens.length > 1;
 
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border-1 border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
       <div className="flex flex-row items-start justify-between font-bold text-neutral-800 text-sm">
-        {headerTextShown ? (
-          " Strategy setup"
-        ) : (
-          <Tabs onValueChange={(val) => setCurrentAction(val as Action)} value={currentAction} variant="gray">
-            <TabsList>
-              <TabsTrigger value="Deposit">Deposit</TabsTrigger>
-              <TabsTrigger value="Withdraw">Withdraw</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        )}
+        <Tabs onValueChange={(val) => setCurrentAction(val as Action)} value={currentAction} variant="gray">
+          <TabsList>
+            <TabsTrigger value="Deposit">Deposit</TabsTrigger>
+            <TabsTrigger value="Withdraw">Withdraw</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
         <button
           className="cursor-pointer rounded-xl border-1 border-zinc-100 bg-white p-1.5"
           onClick={() => setIsSlippageOpen(!isSlippageOpen)}
@@ -212,26 +115,7 @@ export const StrategySetup = ({
           </div>
         </div>
       )}
-      {isAllocationShown && allocations?.length && (
-        <>
-          <div className="flex w-full flex-row items-center justify-between">
-            <span className="justify-start font-bold text-neutral-800 text-sm">Allocation</span>
-            <div className="flex flex-row items-center font-bold text-neutral-800 text-sm">
-              <span className="font-bold text-sm text-zinc-400">{totalAllocation}</span>
-              /100%
-            </div>
-          </div>
-          {vaults.map((vault, index) => (
-            <VaultCard
-              allocation={allocations?.[index]}
-              depositAmount={5000}
-              key={vault.id}
-              setAllocation={(amount) => setAllocation(index, amount)}
-              vault={vault}
-            />
-          ))}
-        </>
-      )}
+
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-2">
           <span className="font-bold text-neutral-700 text-xs">Route</span>
@@ -260,40 +144,6 @@ export const StrategySetup = ({
       {currentAction === "Withdraw" && <>Withdraw by strategy</>}
 
       <div className="h-px w-80 rounded-2xl bg-zinc-100" />
-      <StrategyFooter
-        assets={userAssetsMap}
-        averageApy={averageApy}
-        currentAction={currentAction}
-        depositAmount={depositAmount}
-        fees={fees}
-        prices={prices}
-        withdrawTokens={withdrawTokens}
-      />
-    </div>
-  );
-};
-
-export const StrategyFooter = ({
-  currentAction,
-  fees,
-  averageApy,
-  depositAmount,
-  withdrawTokens,
-  assets,
-  prices,
-}: {
-  currentAction: Action;
-  fees: { name: string; value: string }[];
-  averageApy: number;
-  depositAmount: bigint;
-  withdrawTokens: { tokenId: string; amount: number }[];
-  assets: Record<string, Asset>;
-  prices: Record<string, number>;
-}) => {
-  const isMultipleTokens = withdrawTokens.length > 1;
-
-  return (
-    <>
       {currentAction === "Deposit" ? (
         <div className="flex w-full flex-col justify-start gap-[3px]">
           <div className="flex flex-row items-start justify-between">
@@ -309,10 +159,6 @@ export const StrategyFooter = ({
               <span className="font-bold text-emerald-500 text-xs">1000.12 USDC</span>
               <span className="font-normal text-[9px] text-stone-300">$1000</span>
             </div>
-          </div>
-          <div className="flex flex-row items-start justify-between">
-            <span className="font-bold text-neutral-700 text-xs">Avg APY</span>
-            <span className="font-bold text-neutral-700 text-xs">{averageApy}%</span>
           </div>
         </div>
       ) : (
@@ -370,6 +216,6 @@ export const StrategyFooter = ({
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };

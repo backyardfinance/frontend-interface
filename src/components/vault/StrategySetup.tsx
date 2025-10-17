@@ -35,7 +35,7 @@ const getFees = (depositFee: number, routeFee: number) => [
   { name: "Route fee", value: `${routeFee}%` },
 ];
 
-const InputComponent = ({
+export const InputComponent = ({
   title,
   balance,
   assets,

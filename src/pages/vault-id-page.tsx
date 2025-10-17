@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { CompactTooltip } from "@/components/ui/tooltip";
 import { Chart } from "@/components/vault/Chart";
 import { RecentActivity } from "@/components/vault/RecentActivity";
+import { VaultControl } from "@/components/vault/VaultControl";
 import { useVaults } from "@/hooks/useVaults";
 import { formatUsdAmount, shortFormIntegerFormatter } from "@/utils";
 
@@ -122,8 +123,8 @@ export default function VaultIdPage() {
         </div>
       </div>
       <div className="flex w-[396px] flex-col gap-6">
-        {/* //TODO: add deposit and withdraw */}
-        <div className="h-[485px] rounded-[23px] border-2 border-[#F6F6F6] border-solid bg-[#FAFAFA] px-4 pt-4 pb-6" />
+        <VaultControl />
+        {/* <div className="h-[485px] rounded-[23px] border-2 border-[#F6F6F6] border-solid bg-[#FAFAFA] px-4 pt-4 pb-6" /> */}
         <RecentActivity />
       </div>
     </section>
