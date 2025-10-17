@@ -1,80 +1,19 @@
 import { useMemo } from "react";
+import { useNavigate } from "react-router";
 import { getTokenImage } from "@/assets/tokens";
 import { StarsIcon } from "@/components/icons/stars";
 import { Table } from "@/components/table";
-
-const data = [
-  {
-    strategy: "SRT-001",
-    creator: {
-      name: "Morpho",
-      icon: "/src/assets/images/morpho.png",
-    },
-    allocation: [
-      {
-        weight: "10",
-        amount: "100",
-        token: "USDC",
-      },
-      {
-        weight: "90",
-        amount: "300",
-        token: "USDC",
-      },
-    ],
-    myPosition: "$123,982.00",
-    apy: "10.6",
-  },
-  {
-    strategy: "SRT-002",
-    creator: {
-      name: "Morpho",
-      icon: "/src/assets/images/morpho.png",
-    },
-    allocation: [
-      {
-        weight: "10",
-        amount: "100",
-        token: "USDC",
-      },
-      {
-        weight: "90",
-        amount: "300",
-        token: "USDC",
-      },
-    ],
-    myPosition: "$123,982.00",
-    apy: "10.6",
-  },
-  {
-    strategy: "SRT-003",
-    creator: {
-      name: "Morpho",
-      icon: "/src/assets/images/morpho.png",
-    },
-    allocation: [
-      {
-        weight: "10",
-        amount: "100",
-        token: "USDC",
-      },
-      {
-        weight: "90",
-        amount: "300",
-        token: "USDC",
-      },
-    ],
-    myPosition: "$123,982.00",
-    apy: "10.6",
-  },
-];
+import { toStrategyRoute } from "@/config/routes";
+import { useStrategies } from "@/hooks/useStrategy";
 
 export const DashboardTable = () => {
+  const { data: strategies } = useStrategies();
+  const navigate = useNavigate();
   const headers = ["Strategy ID", "Creator", "Allocation", "My position", "APY"];
 
   const rows = useMemo(
     () =>
-      data.map((item) => [
+      strategies?.map((item) => [
         <span className="font-bold text-neutral-800 text-xs" key={`${item.strategy}-id`}>
           {item.strategy}
         </span>,
@@ -103,8 +42,14 @@ export const DashboardTable = () => {
           <StarsIcon className="size-3.5" />
         </div>,
       ]),
-    []
+    [strategies]
   );
 
-  return <Table headers={headers} rows={rows} />;
+  const handleRowClick = (rowIndex: number) => {
+    const strategy = strategies?.[rowIndex];
+    if (!strategy) return;
+    navigate(toStrategyRoute(strategies?.[rowIndex].strategy));
+  };
+
+  return <Table handleRowClick={handleRowClick} headers={headers} rows={rows || []} />;
 };

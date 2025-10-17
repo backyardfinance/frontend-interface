@@ -71,7 +71,7 @@ export const ChartArea: React.FC<Props> = ({ title, value, valueTooltip, chartCo
         </Select>
       </CardHeader>
       <CardContent className="pt-3">
-        <ChartContainer className="h-[171px] w-full" config={chartConfig}>
+        <ChartContainer className="h-[220px] w-full" config={chartConfig}>
           <AreaChart data={chartData} margin={{ left: -5 }}>
             <defs>
               {dataKeys.map((key) => (
