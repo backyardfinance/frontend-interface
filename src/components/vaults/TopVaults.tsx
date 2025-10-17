@@ -57,7 +57,7 @@ export const TopVaults: React.FC<Props> = ({ vaults, onAdd, currentStrategy }) =
                 </div>
               </div>
               <button
-                className="flex h-8 w-7 cursor-pointer items-center justify-center rounded-lg bg-stone-50 p-2 outline outline-zinc-100 outline-offset-[-1px]"
+                className="flex size-7 cursor-pointer items-center justify-center rounded-lg bg-stone-50 p-2 outline outline-zinc-100 outline-offset-[-1px]"
                 onClick={(e) => onAdd(e, vault, !!isAdded)}
                 type="button"
               >
