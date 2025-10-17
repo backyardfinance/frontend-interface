@@ -1,6 +1,8 @@
 import { MinusIcon } from "lucide-react";
+import { useNavigate } from "react-router";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
+import { toVaultRoute } from "@/config/routes";
 import { formatNumber } from "@/utils";
 import type { Strategy, Vault } from "@/utils/types";
 import { PlusIcon } from "../icons/plus";
@@ -13,6 +15,7 @@ type Props = {
 };
 
 export const TopVaults: React.FC<Props> = ({ vaults, onAdd, currentStrategy }) => {
+  const navigate = useNavigate();
   if (!vaults) return null;
 
   return (
@@ -21,8 +24,16 @@ export const TopVaults: React.FC<Props> = ({ vaults, onAdd, currentStrategy }) =
         const isAdded = currentStrategy?.vaults.find((v) => v.id === vault.id);
         return (
           <div
-            className="flex grow-1 flex-col gap-4 rounded-3xl bg-[url('/src/components/icons/card-background.png')] bg-cover bg-stone-50 bg-no-repeat p-4 outline outline-zinc-100 outline-offset-[-1px]"
+            className="flex grow-1 cursor-pointer flex-col gap-4 rounded-3xl bg-[url('/src/components/icons/card-background.png')] bg-cover bg-stone-50 bg-no-repeat p-4 outline outline-zinc-100 outline-offset-[-1px]"
             key={vault.id}
+            onClick={() => navigate(toVaultRoute(vault.id))}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                navigate(toVaultRoute(vault.id));
+              }
+            }}
+            role="button"
+            tabIndex={0}
           >
             <div className="flex flex-row items-center justify-center gap-[7px] rounded-2xl bg-white p-[8px] outline outline-zinc-100 outline-offset-[-1px]">
               <div className="relative h-[30px] w-[30px]">
