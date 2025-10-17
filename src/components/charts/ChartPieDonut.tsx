@@ -30,30 +30,26 @@ export const ChartPieDonut: React.FC<Props> = ({ title, chartData, chartConfig, 
       <CardHeader className="items-center">
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent className="flex-1">
-        <div className="flex">
-          <ChartContainer className="aspect-square size-[150px]" config={chartConfig}>
-            <PieChart>
-              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <Pie data={formattedChartData} dataKey="percentage" innerRadius={40} nameKey={nameKey} />
-            </PieChart>
-          </ChartContainer>
-          <div className="flex flex-1 flex-col items-start gap-1.5 self-center pr-3">
-            {formattedChartData.map((item) => {
-              const itemName = String((item as Record<string, unknown>)[nameKey]);
-              return (
-                <div className="flex w-full items-center justify-between" key={itemName}>
-                  <div className="flex items-center gap-2.5 rounded-[19px] bg-white px-[5px] py-[3px]">
-                    <div className="size-1.5 rounded-full" style={{ backgroundColor: item.color }} />
-                    <p className="font-bold text-[9px] text-neutral-800 leading-[normal]">{itemName}</p>
-                  </div>
-                  <p className="text-center font-normal text-[#A6A6A6] text-[9px] leading-[normal]">
-                    {item.percentage}%
-                  </p>
+      <CardContent className="flex flex-1 items-center">
+        <ChartContainer className="aspect-square size-[150px]" config={chartConfig}>
+          <PieChart>
+            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+            <Pie data={formattedChartData} dataKey="percentage" innerRadius={40} nameKey={nameKey} />
+          </PieChart>
+        </ChartContainer>
+        <div className="flex flex-1 flex-col items-start gap-1.5 self-center pr-3">
+          {formattedChartData.map((item) => {
+            const itemName = String((item as Record<string, unknown>)[nameKey]);
+            return (
+              <div className="flex w-full items-center justify-between" key={itemName}>
+                <div className="flex items-center gap-2.5 rounded-[19px] bg-white px-[5px] py-[3px]">
+                  <div className="size-1.5 rounded-full" style={{ backgroundColor: item.color }} />
+                  <p className="font-bold text-[9px] text-neutral-800 leading-[normal]">{itemName}</p>
                 </div>
-              );
-            })}
-          </div>
+                <p className="text-center font-normal text-[#A6A6A6] text-[9px] leading-[normal]">{item.percentage}%</p>
+              </div>
+            );
+          })}
         </div>
       </CardContent>
     </Card>
