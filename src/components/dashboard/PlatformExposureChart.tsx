@@ -14,7 +14,7 @@ export const PlatformExposureChart = () => {
         },
       }}
       chartData={[
-        { platform: "Morpho", percentage: 34, fill: "var(--color-morpho)" },
+        { platform: "Hylo", percentage: 34, fill: "var(--color-morpho)" },
         { platform: "Jupiter", percentage: 66, fill: "var(--color-jupiter)" },
       ]}
       nameKey="platform"

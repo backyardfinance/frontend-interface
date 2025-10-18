@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { toVaultRoute } from "@/config/routes";
-import { formatNumber } from "@/utils";
+import { formatMonetaryAmount } from "@/utils";
 import type { Strategy, Vault } from "@/utils/types";
 import { PlusIcon } from "../icons/plus";
 import { StarsIcon } from "../icons/stars";
@@ -67,7 +67,9 @@ export const TopVaults: React.FC<Props> = ({ vaults, onAdd, currentStrategy }) =
 
             <div className="flex flex-row items-center justify-between">
               <div className="flex flex-1 flex-col items-start justify-between">
-                <div className="justify-start font-bold text-base text-neutral-800">{formatNumber(vault.tvl)}</div>
+                <div className="justify-start font-bold text-base text-neutral-800">
+                  {formatMonetaryAmount(vault.tvl)}
+                </div>
                 <div className="w-14 justify-start font-normal text-xs text-zinc-500 uppercase">TVL</div>
               </div>
               <div className="h-6 w-[2px] bg-zinc-200" />

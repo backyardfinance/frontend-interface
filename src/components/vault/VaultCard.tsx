@@ -1,6 +1,7 @@
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { StarsIcon } from "@/components/icons/stars";
+import { displayAmount } from "@/utils";
 import type { Vault } from "@/utils/types";
 
 export interface VaultCardProps {
@@ -34,12 +35,12 @@ export const VaultCard = ({ vault, allocation, depositAmount, setAllocation }: V
           <input
             className="max-w-[30px] font-bold text-sm outline-none"
             onChange={(e) => setAllocation?.(Number(e.target.value))}
-            value={allocation}
+            value={displayAmount(allocation?.toString() || "0", 0, 0)}
           />
           <div className="justify-start font-bold text-base text-neutral-400 opacity-30">%</div>
         </div>
         <div className="justify-start font-bold text-neutral-400 text-xs">
-          {depositAmount} {vault.title}
+          {displayAmount(depositAmount?.toString() || "0", 0, 3)} {vault.title}
         </div>
       </div>
     </div>

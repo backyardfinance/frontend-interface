@@ -5,8 +5,8 @@ const strategies = [
   {
     strategy: "SRT-001",
     creator: {
-      name: "Morpho",
-      icon: "/src/assets/images/morpho.png",
+      name: "Hylo",
+      icon: "/src/assets/platforms/Hylo.svg",
     },
     allocation: [
       {
@@ -26,8 +26,8 @@ const strategies = [
   {
     strategy: "SRT-002",
     creator: {
-      name: "Morpho",
-      icon: "/src/assets/images/morpho.png",
+      name: "Jupiter",
+      icon: "/src/assets/platforms/Jupyter.svg",
     },
     allocation: [
       {
@@ -47,8 +47,8 @@ const strategies = [
   {
     strategy: "SRT-003",
     creator: {
-      name: "Morpho",
-      icon: "/src/assets/images/morpho.png",
+      name: "Synatra",
+      icon: "/src/assets/platforms/Synatra.svg",
     },
     allocation: [
       {

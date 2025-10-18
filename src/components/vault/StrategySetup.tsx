@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
 import { VaultCard } from "@/components/vault/VaultCard";
-import { cn } from "@/utils";
+import { cn, displayAmount } from "@/utils";
 import type { Asset, Strategy } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { ReloadIcon } from "../icons/reload";
@@ -137,7 +137,7 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
 
   const estAnnualReturn = useMemo(() => {
     if (!vaults || !averageApy) return 0;
-    return Number(depositAmount) * (1 + averageApy / 100);
+    return Number(depositAmount) * (averageApy / 100);
   }, [depositAmount, averageApy]);
 
   const setDepositAmount = (amount: bigint) => {
@@ -268,7 +268,9 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
         </div>
         <div className="flex flex-row items-start justify-between">
           <span className="font-bold text-neutral-700 text-xs">Avg APY</span>
-          <span className="font-bold text-neutral-700 text-xs">{averageApy}%</span>
+          <span className="font-bold text-neutral-700 text-xs">
+            {displayAmount(averageApy?.toString() || "0", 0, 3)}%
+          </span>
         </div>
       </div>
 

@@ -22,7 +22,7 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
       deposited: "100,234.23",
       strategyWeight: "87%",
       interestEarned: "1234.42",
-      parentStrategy: "Morpho",
+      parentStrategy: "Hylo",
     },
     {
       id: "2",
@@ -71,7 +71,7 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
           <ChartPieDonut
             chartConfig={{
               morpho: {
-                label: "Morpho",
+                label: "Hylo",
                 color: "var(--chart-1)",
               },
               jupiter: {
@@ -80,8 +80,12 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
               },
             }}
             chartData={[
-              { platform: "Morpho", percentage: 34, fill: "var(--color-morpho)" },
-              { platform: "Jupiter", percentage: 66, fill: "var(--color-jupiter)" },
+              { platform: "Hylo", percentage: 34, fill: "var(--color-morpho)" },
+              {
+                platform: "Jupiter",
+                percentage: 66,
+                fill: "var(--color-jupiter)",
+              },
             ]}
             className="max-w-[254px] flex-1 border-none bg-transparent"
             nameKey="platform"
