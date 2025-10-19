@@ -3,7 +3,7 @@ import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
 import { VaultCard } from "@/components/vault/VaultCard";
 import { cn } from "@/utils";
-import type { Asset, Vault } from "@/utils/types";
+import type { Asset, Strategy, Vault } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { ReloadIcon } from "../icons/reload";
 import { Button } from "../ui/button";
@@ -21,6 +21,8 @@ export interface StrategySetupProps {
   isAllocationShown?: boolean;
   setDepositAmount: (amount: bigint) => void;
   headerTextShown?: boolean;
+  currentStrategy: Strategy;
+  setCurrentStrategy: (strategy: Strategy) => void;
 }
 
 const mockRouteSteps = [
@@ -115,16 +117,18 @@ const InputComponent = ({
   );
 };
 
-export const StrategySetup = ({
+export const StrategyControl = ({
   allocations,
   depositAmount,
   setAllocation,
   vaults,
   slippage,
   setSlippage,
+  setCurrentStrategy,
   isAllocationShown = true,
   setDepositAmount,
   headerTextShown = false,
+  currentStrategy,
 }: StrategySetupProps) => {
   const [currentAction, setCurrentAction] = useState<Action>("Withdraw");
 
@@ -228,6 +232,12 @@ export const StrategySetup = ({
               allocation={allocations?.[index]}
               depositAmount={5000}
               key={vault.id}
+              removeVaultFromStrategy={(id) =>
+                setCurrentStrategy({
+                  ...currentStrategy,
+                  vaults: currentStrategy.vaults?.filter((v) => v.id !== id) || [],
+                })
+              }
               setAllocation={(amount) => setAllocation(index, amount)}
               vault={vault}
             />

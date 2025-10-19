@@ -216,6 +216,12 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
               allocation={allocation?.[index]}
               depositAmount={Number(depositAmount) / (allocation?.length || 1)}
               key={vault.id}
+              removeVaultFromStrategy={(id) =>
+                setCurrentStrategy({
+                  ...currentStrategy,
+                  vaults: currentStrategy.vaults?.filter((v) => v.id !== id) || [],
+                })
+              }
               setAllocation={(amount) => setAllocation(index, amount)}
               vault={vault}
             />

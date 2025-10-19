@@ -1,3 +1,4 @@
+import { MinusIcon } from "lucide-react";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { StarsIcon } from "@/components/icons/stars";
@@ -9,11 +10,18 @@ export interface VaultCardProps {
   allocation?: number;
   depositAmount?: number;
   setAllocation?: (amount: number) => void;
+  removeVaultFromStrategy: (vaultId: string) => void;
 }
 
-export const VaultCard = ({ vault, allocation, depositAmount, setAllocation }: VaultCardProps) => {
+export const VaultCard = ({
+  vault,
+  allocation,
+  depositAmount,
+  setAllocation,
+  removeVaultFromStrategy,
+}: VaultCardProps) => {
   return (
-    <div className="flex w-full flex-row gap-2 rounded-2xl bg-white p-[14px]">
+    <div className="group relative flex w-full flex-row gap-2 rounded-2xl bg-white p-[14px]">
       <div className="flex grow flex-col gap-2">
         <div className="flex flex-row items-center gap-1">
           <div className="size-[17px]">{getTokenImage(vault.title)}</div>
@@ -30,8 +38,8 @@ export const VaultCard = ({ vault, allocation, depositAmount, setAllocation }: V
           </div>
         </div>
       </div>
-      <div className="flex shrink flex-col items-end gap-2">
-        <div className="inline-flex h-[30px] items-center justify-start gap-1 rounded-xl border-1 border-zinc-100 bg-neutral-50 px-3.5 py-1.5">
+      <div className="flex shrink flex-col items-end gap-2 transition-all duration-300 ease-in-out group-hover:translate-x-[-31px]">
+        <div className="inline-flex h-[30px] items-center justify-start gap-1 rounded-xl border-1 border-zinc-100 bg-neutral-50 px-3.5 py-1.5 transition-all duration-300 ease-in-out group-hover:opacity-80">
           <input
             className="max-w-[30px] font-bold text-sm outline-none"
             onChange={(e) => setAllocation?.(Number(e.target.value))}
@@ -39,9 +47,22 @@ export const VaultCard = ({ vault, allocation, depositAmount, setAllocation }: V
           />
           <div className="justify-start font-bold text-base text-neutral-400 opacity-30">%</div>
         </div>
-        <div className="justify-start font-bold text-neutral-400 text-xs">
+        <div className="justify-start font-bold text-neutral-400 text-xs transition-all duration-300 ease-in-out group-hover:opacity-80">
           {displayAmount(depositAmount?.toString() || "0", 0, 3)} {vault.title}
         </div>
+      </div>
+      <div
+        className="-translate-y-1/2 absolute top-[26px] right-[14px] flex size-[23px] items-center justify-center rounded-full bg-stone-50 opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100"
+        onClick={() => removeVaultFromStrategy(vault.id)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            removeVaultFromStrategy(vault.id);
+          }
+        }}
+        role="button"
+        tabIndex={0}
+      >
+        <MinusIcon className="h-[9px] w-[9px]" />
       </div>
     </div>
   );
