@@ -1,8 +1,8 @@
-import EURCIcon from "./eurc.svg?react";
-import HYUSDIcon from "./hyusd.svg?react";
+import EURCIcon from "./EURC.svg?react";
+import HYUSDIcon from "./HYUSD.svg?react";
 import USDCIcon from "./USDC.svg?react";
-import USDSIcon from "./usds.svg?react";
-import USDTIcon from "./usdt.svg?react";
+import USDSIcon from "./USDS.svg?react";
+import USDTIcon from "./USDT.svg?react";
 
 export const getTokenImage = (name: string) => {
   switch (name) {

@@ -52,17 +52,6 @@
   --chart-8: oklch(0.7804 0.1023 241.03);
 }
 
-@theme inline {
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-chart-6: var(--chart-6);
-  --color-chart-7: var(--chart-7);
-  --color-chart-8: var(--chart-8);
-}
-
 @layer base {
   body {
     font-family: "Product Sans", sans-serif;

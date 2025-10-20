@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import MorphoImage from "@/assets/images/morpho.png";
+import JypiterImage from "@/assets/platforms/Jupyter.svg";
 import { getTokenImage } from "@/assets/tokens";
 import { ArrowIcon } from "@/components/icons/arrow";
 import { InfoCircleIcon } from "@/components/icons/info-circle";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
 import { Chart } from "@/components/vault/Chart";
 import { RecentActivity } from "@/components/vault/RecentActivity";
+import { VaultControl } from "@/components/vault/VaultControl";
 import { useVaults } from "@/hooks/useVaults";
 import { formatUsdAmount, shortFormIntegerFormatter } from "@/utils";
 
@@ -80,8 +81,8 @@ export default function VaultIdPage() {
             <p className="flex-1 text-center font-bold text-neutral-800 text-xl">{vault.title}</p>
             <div className="flex flex-1 items-center justify-between gap-1">
               <Button size="sm" variant="white">
-                <img alt="Morpho" className="size-[11px]" src={MorphoImage} />
-                Morpho
+                <img alt="Jypiter" className="size-[11px]" src={JypiterImage} />
+                Jypiter
                 <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
                   <ArrowIcon className="size-2 rotate-45" />
                 </div>
@@ -122,8 +123,8 @@ export default function VaultIdPage() {
         </div>
       </div>
       <div className="flex w-[396px] flex-col gap-6">
-        {/* //TODO: add deposit and withdraw */}
-        <div className="h-[485px] rounded-[23px] border-2 border-[#F6F6F6] border-solid bg-[#FAFAFA] px-4 pt-4 pb-6" />
+        <VaultControl />
+        {/* <div className="h-[485px] rounded-[23px] border-2 border-[#F6F6F6] border-solid bg-[#FAFAFA] px-4 pt-4 pb-6" /> */}
         <RecentActivity />
       </div>
     </section>

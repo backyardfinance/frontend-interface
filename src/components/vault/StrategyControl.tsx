@@ -1,21 +1,28 @@
-import { Big } from "big.js";
 import { useMemo, useState } from "react";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { VaultCard } from "@/components/vault/VaultCard";
-import { cn, displayAmount } from "@/utils";
-import type { Asset, Strategy } from "@/utils/types";
+import { cn } from "@/utils";
+import type { Asset, Strategy, Vault } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { ReloadIcon } from "../icons/reload";
 import { Button } from "../ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 
 export interface StrategySetupProps {
-  currentStrategy: Strategy;
-  setCurrentStrategy: (strategy: Strategy) => void;
+  allocations?: number[];
+  depositAmount: bigint;
+  setAllocation: (index: number, allocation: number) => void;
+  vaults: Vault[];
   slippage: number;
   setSlippage: (slippage: number) => void;
+  isAllocationShown?: boolean;
+  setDepositAmount: (amount: bigint) => void;
+  headerTextShown?: boolean;
+  currentStrategy: Strategy;
+  setCurrentStrategy: (strategy: Strategy) => void;
 }
 
 const mockRouteSteps = [
@@ -34,7 +41,7 @@ const getFees = (depositFee: number, routeFee: number) => [
   { name: "Route fee", value: `${routeFee}%` },
 ];
 
-export const InputComponent = ({
+const InputComponent = ({
   title,
   balance,
   assets,
@@ -77,7 +84,7 @@ export const InputComponent = ({
             onChange={(e) => setCurrentValue(BigInt(e.target.value))}
             value={currentValue.toString()}
           />
-          <span className="font-normal text-[9px] text-stone-300">${assetValue}</span>
+          <span className="font-normal text-[9px] text-stone-300">{assetValue}</span>
         </div>
         <Select
           onOpenChange={setIsSelectOpen}
@@ -86,7 +93,7 @@ export const InputComponent = ({
         >
           <SelectTrigger
             className={cn(
-              "rounded-[8px] border-none bg-white shadow-none outline-none ring-none",
+              "rounded-3xl border-none bg-white shadow-none outline-none ring-none",
               isSelectOpen && "rounded-b-none"
             )}
           >
@@ -94,16 +101,13 @@ export const InputComponent = ({
           </SelectTrigger>
           <SelectContent
             className={cn(
-              "max-w-full rounded-t-none rounded-b-2xl border-none bg-white shadow-none outline-none ring-none"
+              "max-w-full rounded-t-none rounded-b-3xl border-none bg-white shadow-none outline-none ring-none"
             )}
             sideOffset={-4}
           >
             {assets.map((asset) => (
               <SelectItem key={asset.id} value={asset.id}>
-                <div className="flex flex-row items-center gap-2">
-                  <div className="size-[14px]">{getTokenImage(asset.id)}</div>
-                  {asset.symbol}
-                </div>
+                {asset.symbol}
               </SelectItem>
             ))}
           </SelectContent>
@@ -113,10 +117,23 @@ export const InputComponent = ({
   );
 };
 
-export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurrentStrategy }: StrategySetupProps) => {
+export const StrategyControl = ({
+  allocations,
+  depositAmount,
+  setAllocation,
+  vaults,
+  slippage,
+  setSlippage,
+  setCurrentStrategy,
+  isAllocationShown = true,
+  setDepositAmount,
+  headerTextShown = false,
+  currentStrategy,
+}: StrategySetupProps) => {
+  const [currentAction, setCurrentAction] = useState<Action>("Withdraw");
+
   const [isRouteOpen, setIsRouteOpen] = useState(false);
-  const { allocation, depositAmount, vaults } = currentStrategy;
-  const totalAllocation = allocation?.reduce((acc, curr) => acc + curr, 0);
+  const totalAllocation = allocations?.reduce((acc, curr) => acc + curr, 0);
   const fees = getFees(0.01, 0.05);
 
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
@@ -129,37 +146,36 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
     { id: "USDC", symbol: "USDC", price: 1, balance: 10, icon: "" },
     { id: "USDS", symbol: "USDS", price: 1, balance: 11, icon: "" },
   ];
+  const withdrawTokens = [
+    { tokenId: "USDC", amount: 10 },
+    { tokenId: "USDS", amount: 11 },
+  ];
+
+  const userAssetsMap = userAssets.reduce(
+    (acc, curr) => {
+      acc[curr.id] = curr;
+      return acc;
+    },
+    {} as Record<string, Asset>
+  );
 
   const averageApy = useMemo(() => {
-    if (!vaults || !allocation || !vaults.length) return 0;
-    return vaults.reduce((acc, curr) => acc + curr.apy, 0) / vaults.length;
-  }, [allocation, vaults]);
-
-  const estAnnualReturn = useMemo(() => {
-    if (!vaults || !averageApy) return 0;
-    return Number(depositAmount) * (averageApy / 100);
-  }, [depositAmount, averageApy]);
-
-  const setDepositAmount = (amount: bigint) => {
-    setCurrentStrategy({
-      ...currentStrategy,
-      depositAmount: amount,
-    });
-  };
-
-  const setAllocation = (index: number, amount: number) => {
-    const newAllocation = [...(currentStrategy.allocation || [])];
-    newAllocation[index] = amount;
-    setCurrentStrategy({
-      ...currentStrategy,
-      allocation: newAllocation,
-    });
-  };
+    return (allocations?.reduce((acc, curr) => acc + curr, 0) || vaults[0].apy) / (allocations?.length || 1);
+  }, [allocations, vaults]);
 
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border-1 border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
       <div className="flex flex-row items-start justify-between font-bold text-neutral-800 text-sm">
-        Strategy setup
+        {headerTextShown ? (
+          " Strategy setup"
+        ) : (
+          <Tabs onValueChange={(val) => setCurrentAction(val as Action)} value={currentAction} variant="gray">
+            <TabsList>
+              <TabsTrigger value="Deposit">Deposit</TabsTrigger>
+              <TabsTrigger value="Withdraw">Withdraw</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        )}
         <Popover>
           <PopoverTrigger asChild>
             <div className="cursor-pointer rounded-xl border-1 border-zinc-100 bg-white p-1.5">
@@ -202,7 +218,7 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
         title="Total deposit amount"
       />
 
-      {allocation && allocation.length > 0 && (
+      {isAllocationShown && allocations?.length && (
         <>
           <div className="flex w-full flex-row items-center justify-between">
             <span className="justify-start font-bold text-neutral-800 text-sm">Allocation</span>
@@ -213,8 +229,8 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
           </div>
           {vaults.map((vault, index) => (
             <VaultCard
-              allocation={allocation?.[index]}
-              depositAmount={Number(depositAmount) / (allocation?.length || 1)}
+              allocation={allocations?.[index]}
+              depositAmount={5000}
               key={vault.id}
               removeVaultFromStrategy={(id) =>
                 setCurrentStrategy({
@@ -253,41 +269,109 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
           </ol>
         </div>
       )}
+      {currentAction === "Withdraw" && <>Withdraw by strategy</>}
 
       <div className="h-px w-80 rounded-2xl bg-zinc-100" />
+      <StrategyFooter
+        assets={userAssetsMap}
+        averageApy={averageApy}
+        currentAction={currentAction}
+        depositAmount={depositAmount}
+        fees={fees}
+        prices={prices}
+        withdrawTokens={withdrawTokens}
+      />
+    </div>
+  );
+};
 
-      <div className="flex w-full flex-col justify-start gap-[3px]">
-        <div className="flex flex-row items-start justify-between">
-          <span className="font-bold text-neutral-700 text-xs">Total deposited</span>
-          <div className="flex flex-col items-end">
-            <span className="font-bold text-neutral-700 text-xs">{depositAmount} USDC</span>
-            <span className="font-normal text-[9px] text-stone-300">$1000</span>
+export const StrategyFooter = ({
+  currentAction,
+  fees,
+  averageApy,
+  depositAmount,
+  withdrawTokens,
+  assets,
+  prices,
+}: {
+  currentAction: Action;
+  fees: { name: string; value: string }[];
+  averageApy: number;
+  depositAmount: bigint;
+  withdrawTokens: { tokenId: string; amount: number }[];
+  assets: Record<string, Asset>;
+  prices: Record<string, number>;
+}) => {
+  const isMultipleTokens = withdrawTokens.length > 1;
+
+  return (
+    <>
+      {currentAction === "Deposit" ? (
+        <div className="flex w-full flex-col justify-start gap-[3px]">
+          <div className="flex flex-row items-start justify-between">
+            <span className="font-bold text-neutral-700 text-xs">Total deposited</span>
+            <div className="flex flex-col items-end">
+              <span className="font-bold text-neutral-700 text-xs">1000.12 USDC</span>
+              <span className="font-normal text-[9px] text-stone-300">$1000</span>
+            </div>
+          </div>
+          <div className="flex flex-row items-start justify-between">
+            <span className="font-bold text-neutral-700 text-xs">Est. Annual return</span>
+            <div className="flex flex-col items-end">
+              <span className="font-bold text-emerald-500 text-xs">1000.12 USDC</span>
+              <span className="font-normal text-[9px] text-stone-300">$1000</span>
+            </div>
+          </div>
+          <div className="flex flex-row items-start justify-between">
+            <span className="font-bold text-neutral-700 text-xs">Avg APY</span>
+            <span className="font-bold text-neutral-700 text-xs">{averageApy}%</span>
           </div>
         </div>
-        <div className="flex flex-row items-start justify-between">
-          <span className="font-bold text-neutral-700 text-xs">Est. Annual return</span>
-          <div className="flex flex-col items-end">
-            <span className="font-bold text-emerald-500 text-xs">{Big(estAnnualReturn).toFixed(2)} USDC</span>
-            <span className="font-normal text-[9px] text-stone-300">
-              ${Big(estAnnualReturn).mul(prices.USDC).toFixed(2)}
-            </span>
+      ) : (
+        <div className="flex w-full flex-col justify-start gap-[3px]">
+          {!isMultipleTokens ? (
+            <div className="flex flex-row items-start justify-between">
+              <span className="font-bold text-neutral-700 text-xs">Total to withdraw</span>
+              <div className="flex flex-col items-end">
+                <span className="font-bold text-neutral-700 text-xs">1000.12 USDC</span>
+                <span className="font-normal text-[9px] text-stone-300">$1000</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col items-start justify-between gap-2">
+              <span className="font-bold text-neutral-700 text-xs">Tokens to withdraw</span>
+              <div className="flex w-full flex-col items-start justify-between">
+                {withdrawTokens.map((token) => {
+                  const asset = assets[token.tokenId];
+                  return (
+                    <div className="flex w-full flex-row items-start justify-between" key={token.tokenId}>
+                      <div className="flex flex-row items-center gap-1">
+                        <div className="size-[10px]">{getTokenImage(asset.symbol)}</div>
+                        <div className="font-normal text-xs text-zinc-500">{asset.symbol}</div>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="font-bold text-neutral-700 text-xs">
+                          {token.amount} {asset.symbol}
+                        </span>
+                        <span className="font-normal text-[9px] text-stone-300">
+                          ${token.amount * prices[token.tokenId]}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          <div className="flex flex-row items-start justify-between">
+            <span className="font-bold text-neutral-700 text-xs">Cooldown period</span>
+            <div className="flex flex-col items-end font-bold text-neutral-700 text-xs">7D</div>
           </div>
         </div>
-        <div className="flex flex-row items-start justify-between">
-          <span className="font-bold text-neutral-700 text-xs">Avg APY</span>
-          <span className="font-bold text-neutral-700 text-xs">
-            {displayAmount(averageApy?.toString() || "0", 0, 3)}%
-          </span>
-        </div>
-      </div>
-
+      )}
       <div className="flex flex-col gap-[9px] rounded-2xl border-1 border-zinc-100 bg-white">
-        <Button
-          disabled={!depositAmount || allocation?.length === 0 || !vaults?.length || !selectedAsset}
-          size="xl"
-          variant="tertiary"
-        >
-          Deposit {depositAmount} {selectedAsset?.symbol} {getTokenImage(selectedAsset?.id || "")}
+        <Button size="xl" variant="tertiary">
+          Deposit {depositAmount} USDC
         </Button>
         <div className="flex flex-col gap-[7px] px-[14px] pb-[14px] font-normal text-xs text-zinc-400">
           {fees.map((fee) => (
@@ -298,6 +382,6 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
           ))}
         </div>
       </div>
-    </div>
+    </>
   );
 };

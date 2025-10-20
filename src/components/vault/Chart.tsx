@@ -38,7 +38,7 @@ export const Chart: React.FC<Props> = ({ vault }) => {
       deposited: "100,234.23",
       vaultWeight: "87%",
       interestEarned: "1234.42",
-      parentStrategy: "Morpho",
+      parentStrategy: "Hylo",
     },
     {
       id: "2",
