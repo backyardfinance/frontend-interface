@@ -5,7 +5,7 @@ import { ArrowIcon } from "@/components/icons/arrow";
 import { InfoCircleIcon } from "@/components/icons/info-circle";
 import { StarsIcon } from "@/components/icons/stars";
 import { Button } from "@/components/ui/button";
-import { CompactTooltip } from "@/components/ui/tooltip";
+import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
 import { Chart } from "@/components/vault/Chart";
 import { RecentActivity } from "@/components/vault/RecentActivity";
 import { useVaults } from "@/hooks/useVaults";
@@ -111,9 +111,9 @@ export default function VaultIdPage() {
               <div className="flex items-center justify-between" key={info.title}>
                 <div className="flex items-center gap-2">
                   <p className="font-normal text-[#646464] text-sm leading-[normal]">{info.title}</p>
-                  <CompactTooltip content={info.tooltip}>
+                  <CompactHybridTooltip content={info.tooltip}>
                     <InfoCircleIcon />
-                  </CompactTooltip>
+                  </CompactHybridTooltip>
                 </div>
                 <p className="font-normal text-neutral-800 text-sm leading-[normal]">{info.value}</p>
               </div>
