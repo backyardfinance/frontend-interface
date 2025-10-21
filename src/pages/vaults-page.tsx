@@ -34,19 +34,19 @@ export default function VaultsPage() {
 
   const handleAddClick = (e: React.MouseEvent<HTMLButtonElement>, vault: Vault, isAdded: boolean) => {
     e.stopPropagation();
+
     setCurrentStrategy((prev) => {
-      const newLength = (prev?.vaults?.length || 0) + 1;
-      const updatedAllocation = 100 / newLength;
+      const vaults = prev?.vaults || [];
+      const updatedVaults = isAdded ? vaults.filter((v) => v.id !== vault.id) : [...vaults, vault];
+
+      const newLength = updatedVaults.length;
+      const newAllocation = newLength ? Array(newLength).fill(100 / newLength) : [];
 
       return {
-        vaults: isAdded
-          ? prev?.vaults?.filter((v) => {
-              return v.id !== vault.id;
-            }) || []
-          : [...(prev?.vaults || []), vault],
         id: prev?.id || "",
         depositAmount: prev?.depositAmount || BigInt(0),
-        allocation: Array.from({ length: newLength }, () => updatedAllocation),
+        vaults: updatedVaults,
+        allocation: newAllocation,
       };
     });
   };

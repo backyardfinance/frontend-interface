@@ -4,11 +4,11 @@ import type * as React from "react";
 import { useMemo, useState } from "react";
 import { Area, AreaChart, XAxis, YAxis } from "recharts";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { AreaChartDataPoint } from "@/types/charts";
 import { InfoCircleIcon } from "../icons/info-circle";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { CompactTooltip } from "../ui/tooltip";
 
 type Props = {
   title: string;
@@ -52,9 +52,9 @@ export const ChartArea: React.FC<Props> = ({ title, value, valueTooltip, chartCo
           <CardTitle>{title}</CardTitle>
           <p className="flex items-center gap-1 font-bold text-lg text-neutral-800 leading-[normal]">
             {value}
-            <CompactTooltip content={valueTooltip}>
+            <CompactHybridTooltip content={valueTooltip}>
               <InfoCircleIcon />
-            </CompactTooltip>
+            </CompactHybridTooltip>
           </p>
         </div>
         <Select onValueChange={setTimeRange} value={timeRange}>

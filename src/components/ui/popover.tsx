@@ -15,6 +15,7 @@ function PopoverContent({
   className,
   align = "center",
   sideOffset = 4,
+  side = "top",
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Content>) {
   return (
@@ -22,10 +23,11 @@ function PopoverContent({
       <PopoverPrimitive.Content
         align={align}
         className={cn(
-          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-72 origin-(--radix-popover-content-transform-origin) border border-slate-200 bg-white p-4 text-slate-950 shadow-md outline-hidden data-[state=closed]:animate-out data-[state=open]:animate-in dark:border-slate-800 dark:bg-slate-950 dark:text-slate-50",
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit max-w-[145px] origin-(--radix-popover-content-transform-origin) text-balance rounded-[10px] border border-[rgba(214,214,214,0.26)] bg-white p-2 text-[10px] text-[rgba(130,130,130,0.44)] shadow-md outline-hidden data-[state=closed]:animate-out data-[state=open]:animate-in",
           className
         )}
         data-slot="popover-content"
+        side={side}
         sideOffset={sideOffset}
         {...props}
       />

@@ -4,7 +4,7 @@ import { InfoCircleIcon } from "@/components/icons/info-circle";
 import { StarsIcon } from "@/components/icons/stars";
 import { Chart } from "@/components/strategy/Chart";
 import { RecentActivity } from "@/components/strategy/RecentActivity";
-import { CompactTooltip } from "@/components/ui/tooltip";
+import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
 import { useStrategies } from "@/hooks/useStrategy";
 import { shortFormIntegerFormatter } from "@/utils";
 
@@ -98,9 +98,9 @@ export default function DashboardStrategyIdPage() {
                 <div className="flex items-center gap-2">
                   <p className="font-normal text-[#646464] text-sm leading-[normal]">{info.title}</p>
                   {info.tooltip && (
-                    <CompactTooltip content={info.tooltip}>
+                    <CompactHybridTooltip content={info.tooltip}>
                       <InfoCircleIcon />
-                    </CompactTooltip>
+                    </CompactHybridTooltip>
                   )}
                 </div>
                 <p className="font-normal text-neutral-800 text-sm leading-[normal]">{info.value}</p>

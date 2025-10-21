@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "7.11.0",
+    "generators": {
+      "local": {
+        "inputSpec": "http://localhost:3002/swagger/json",
+        "generatorName": "typescript-axios",
+        "output": "./src/api/generated",
+        "additionalProperties": {
+          "useSingleRequestParameter": true,
+          "enumPropertyNaming": "UPPERCASE",
+          "withSeparateModelsAndApi": true,
+          "apiPackage": "api",
+          "modelPackage": "types"
+        }
+      }
+    }
+  }
+}
