@@ -1,12 +1,15 @@
 import type { UseQueryOptions } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
+import Hylo from "@/assets/platforms/Hylo.svg";
+import Jupyter from "@/assets/platforms/Jupyter.svg";
+import Synatra from "@/assets/platforms/Synatra.svg";
 
 const strategies = [
   {
     strategy: "SRT-001",
     creator: {
       name: "Hylo",
-      icon: "/src/assets/platforms/Hylo.svg",
+      icon: Hylo,
     },
     allocation: [
       {
@@ -27,7 +30,7 @@ const strategies = [
     strategy: "SRT-002",
     creator: {
       name: "Jupiter",
-      icon: "/src/assets/platforms/Jupyter.svg",
+      icon: Jupyter,
     },
     allocation: [
       {
@@ -48,7 +51,7 @@ const strategies = [
     strategy: "SRT-003",
     creator: {
       name: "Synatra",
-      icon: "/src/assets/platforms/Synatra.svg",
+      icon: Synatra,
     },
     allocation: [
       {
