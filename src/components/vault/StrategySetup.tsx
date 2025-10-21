@@ -156,6 +156,21 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
     });
   };
 
+  const handleRemoveVault = (id: string) => {
+    if (!currentStrategy) return;
+
+    const updatedVaults = currentStrategy.vaults?.filter((v) => v.id !== id) || [];
+    const newLength = updatedVaults.length;
+
+    const newAllocation = newLength ? Array(newLength).fill(100 / newLength) : [];
+
+    setCurrentStrategy({
+      ...currentStrategy,
+      vaults: updatedVaults,
+      allocation: newAllocation,
+    });
+  };
+
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border-1 border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
       <div className="flex flex-row items-start justify-between font-bold text-neutral-800 text-sm">
@@ -216,12 +231,7 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
               allocation={allocation?.[index]}
               depositAmount={Number(depositAmount) / (allocation?.length || 1)}
               key={vault.id}
-              removeVaultFromStrategy={(id) =>
-                setCurrentStrategy({
-                  ...currentStrategy,
-                  vaults: currentStrategy.vaults?.filter((v) => v.id !== id) || [],
-                })
-              }
+              removeVaultFromStrategy={handleRemoveVault}
               setAllocation={(amount) => setAllocation(index, amount)}
               vault={vault}
             />
