@@ -1,83 +1,32 @@
 import type { UseQueryOptions } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
-import Hylo from "@/assets/platforms/Hylo.svg";
-import Jupyter from "@/assets/platforms/Jupyter.svg";
-import Synatra from "@/assets/platforms/Synatra.svg";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { type CreateStrategyDto, solanaApi } from "@/api";
+import { queryKeys } from "@/api/query-keys";
+import { useSolanaWallet } from "./useSolanaWallet";
 
-const strategies = [
-  {
-    strategy: "SRT-001",
-    creator: {
-      name: "Hylo",
-      icon: Hylo,
-    },
-    allocation: [
-      {
-        weight: "10",
-        amount: "100",
-        token: "USDC",
-      },
-      {
-        weight: "90",
-        amount: "300",
-        token: "USDC",
-      },
-    ],
-    myPosition: "$123,982.00",
-    apy: "10.6",
-  },
-  {
-    strategy: "SRT-002",
-    creator: {
-      name: "Jupiter",
-      icon: Jupyter,
-    },
-    allocation: [
-      {
-        weight: "10",
-        amount: "100",
-        token: "USDC",
-      },
-      {
-        weight: "90",
-        amount: "300",
-        token: "USDC",
-      },
-    ],
-    myPosition: "$123,982.00",
-    apy: "10.6",
-  },
-  {
-    strategy: "SRT-003",
-    creator: {
-      name: "Synatra",
-      icon: Synatra,
-    },
-    allocation: [
-      {
-        weight: "10",
-        amount: "100",
-        token: "USDC",
-      },
-      {
-        weight: "90",
-        amount: "300",
-        token: "USDC",
-      },
-    ],
-    myPosition: "$123,982.00",
-    apy: "10.6",
-  },
-];
-
-export type Strategy = (typeof strategies)[number];
-
-type UseStrategiesOptions = Omit<UseQueryOptions<Strategy[], Error>, "queryKey" | "queryFn">;
+//TODO: add type
+type UseStrategiesOptions = Omit<UseQueryOptions<any, Error>, "queryKey" | "queryFn">;
 
 export const useStrategies = (options?: UseStrategiesOptions) => {
+  const { address } = useSolanaWallet();
+
   return useQuery({
-    queryKey: ["strategies"],
-    queryFn: () => strategies,
+    queryKey: queryKeys.strategies.strategyByUser(address ?? ""),
+    queryFn: async () => {
+      if (!address) throw Error("useStrategies: address is missing");
+      const { data } = await solanaApi.solanaControllerGetStrategies({ userId: address });
+      return data;
+    },
     ...options,
+    enabled: !!address && options?.enabled,
+  });
+};
+
+export const useCreateStrategy = () => {
+  //TODO: invalidate query
+  // const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateStrategyDto) => solanaApi.solanaControllerCreateStrategy({ createStrategyDto: data }),
   });
 };

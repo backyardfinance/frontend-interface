@@ -1,0 +1,16 @@
+.gitignore
+.npmignore
+.openapi-generator-ignore
+api.ts
+api/admin-api.ts
+api/app-api.ts
+api/solana-api.ts
+base.ts
+common.ts
+configuration.ts
+git_push.sh
+index.ts
+types/create-strategy-dto.ts
+types/create-vault-dto.ts
+types/index.ts
+types/quote-deposit-dto.ts

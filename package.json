@@ -12,7 +12,7 @@
     "check": "biome check --fix",
     "preview": "vite preview",
     "prepare": "husky",
-    "api:generate-dev": "rimraf ./src/api/generated && npx openapi-generator-cli generate --generator-key dev"
+    "api:generate": "rimraf ./src/api/generated && npx openapi-generator-cli generate"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.32.1",
