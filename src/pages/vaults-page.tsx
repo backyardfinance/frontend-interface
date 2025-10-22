@@ -57,7 +57,7 @@ export default function VaultsPage() {
 
   const rows = useMemo(
     () => [
-      ...(vaults?.map((vault) => [
+      ...(vaults?.map((vault: Vault) => [
         <div className="inline-flex flex-2 items-center justify-start gap-2" key={vault.id}>
           <div className="relative flex items-center justify-center">
             <div className="h-[27px] w-[27px] p-[3px]">

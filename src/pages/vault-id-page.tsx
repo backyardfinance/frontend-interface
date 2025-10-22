@@ -11,6 +11,7 @@ import { RecentActivity } from "@/components/vault/RecentActivity";
 import { VaultControl } from "@/components/vault/VaultControl";
 import { useVaults } from "@/hooks/useVaults";
 import { formatUsdAmount, shortFormIntegerFormatter } from "@/utils";
+import type { Vault } from "@/utils/types";
 
 type Props = {
   title: string;
@@ -35,7 +36,7 @@ const Item: React.FC<Props> = ({ title, value, additionalValue, valueComponent }
 export default function VaultIdPage() {
   const { vaultId } = useParams<{ vaultId: string }>();
   const { data: vaults } = useVaults();
-  const vault = vaults?.find((el) => el.id === vaultId);
+  const vault = vaults?.find((el: Vault) => el.id === vaultId);
   if (!vaultId || !vault) return <div>No found</div>;
 
   const data = [

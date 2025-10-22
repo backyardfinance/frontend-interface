@@ -32,3 +32,19 @@ export interface User {
   balances: { [key: string]: Asset };
   strategies: Strategy[];
 }
+
+export interface BackendStrategy {
+  strategy: string;
+  myPosition: number;
+  apy: number;
+  creator: {
+    name: string;
+    icon: string;
+  };
+  allocation: BackendAllocation[];
+}
+
+export interface BackendAllocation {
+  token: string;
+  weight: number;
+}
