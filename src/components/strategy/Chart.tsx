@@ -3,14 +3,14 @@ import { getTokenImage } from "@/assets/tokens";
 import { ChartArea } from "@/components/charts/ChartArea";
 import { Table } from "@/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Strategy } from "@/hooks/useStrategy";
+import type { BackendStrategy } from "@/utils/types";
 import { ChartPieDonut } from "../charts/ChartPieDonut";
 
 const positionMetrics = ["performance", "apy", "exposure"] as const;
 type MetricType = (typeof positionMetrics)[number];
 
 type Props = {
-  strategy: Strategy;
+  strategy: BackendStrategy;
 };
 
 export const Chart: React.FC<Props> = ({ strategy }) => {
