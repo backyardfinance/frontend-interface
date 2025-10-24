@@ -9,9 +9,8 @@ import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
 import { Chart } from "@/components/vault/Chart";
 import { RecentActivity } from "@/components/vault/RecentActivity";
 import { VaultControl } from "@/components/vault/VaultControl";
-import { useVaults } from "@/hooks/useVaults";
+import { useVaultById } from "@/hooks/useVaults";
 import { formatUsdAmount, shortFormIntegerFormatter } from "@/utils";
-import type { Vault } from "@/utils/types";
 
 type Props = {
   title: string;
@@ -35,8 +34,7 @@ const Item: React.FC<Props> = ({ title, value, additionalValue, valueComponent }
 
 export default function VaultIdPage() {
   const { vaultId } = useParams<{ vaultId: string }>();
-  const { data: vaults } = useVaults();
-  const vault = vaults?.find((el: Vault) => el.id === vaultId);
+  const { data: vault } = useVaultById(vaultId ?? "");
   if (!vaultId || !vault) return <div>No found</div>;
 
   const data = [
@@ -78,8 +76,8 @@ export default function VaultIdPage() {
         <div className="flex h-36 gap-4">
           <div className="relative flex h-full w-48 shrink-0 flex-col justify-between gap-5 rounded-3xl bg-[#FAFAFA] p-3">
             <div className="flex-1" />
-            <div className="-translate-x-1/2 -top-12 absolute left-1/2 h-24 w-24">{getTokenImage(vault.title)}</div>
-            <p className="flex-1 text-center font-bold text-neutral-800 text-xl">{vault.title}</p>
+            <div className="-translate-x-1/2 -top-12 absolute left-1/2 h-24 w-24">{getTokenImage(vault.name)}</div>
+            <p className="flex-1 text-center font-bold text-neutral-800 text-xl">{vault.name}</p>
             <div className="flex flex-1 items-center justify-between gap-1">
               <Button size="sm" variant="white">
                 <img alt="Jypiter" className="size-[11px]" src={JypiterImage} />

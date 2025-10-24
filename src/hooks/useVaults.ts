@@ -1,64 +1,68 @@
 import type { UseQueryOptions } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-// import { solanaApi } from "@/api";
+import { CreateVaultDtoPlatformEnum, type Vault } from "@/api";
+// import { vaultApi } from "@/api";;
 import { queryKeys } from "@/api/query-keys";
 
-const mockData = [
+const mockData: Vault[] = [
   {
     id: "1",
-    title: "USDT",
-    vaultImage: "",
-    platform: "Jupyter",
-    platformImage: "",
+    name: "USDT",
+    platform: CreateVaultDtoPlatformEnum.JUPITER,
     tvl: 12300340,
     apy: 11.9,
+    yard_reward: 0,
+    asset_price: 0,
     description: "USDT is a stablecoin that is pegged to the US dollar.",
-    contractAddress: "0x0000000000000000000000000000000000000000",
   },
   {
     id: "2",
-    title: "HYUSD",
-    vaultImage: "",
-    platform: "Synatra",
-    platformImage: "",
+    name: "HYUSD",
+    platform: CreateVaultDtoPlatformEnum.JUPITER,
     tvl: 900000,
     apy: 9,
+    yard_reward: 0,
+    asset_price: 0,
     description: "USDT is a stablecoin that is pegged to the US dollar.",
-    contractAddress: "0x0000000000000000000000000000000000000000",
   },
   {
     id: "3",
-    title: "USDC",
-    vaultImage: "",
-    platform: "Drift",
-    platformImage: "",
+    name: "USDC",
+    platform: CreateVaultDtoPlatformEnum.KAMINO,
     tvl: 10000,
     apy: 11,
+    yard_reward: 0,
+    asset_price: 0,
     description: "USDT is a stablecoin that is pegged to the US dollar.",
-    contractAddress: "0x0000000000000000000000000000000000000000",
-  },
-  {
-    id: "4",
-    title: "EURC",
-    vaultImage: "",
-    platform: "Hylo",
-    platformImage: "",
-    tvl: 1000000,
-    apy: 12.3,
-    description: "USDT is a stablecoin that is pegged to the US dollar.",
-    contractAddress: "0x0000000000000000000000000000000000000000",
   },
 ];
-type UseVaultsOptions = Omit<UseQueryOptions<any, Error>, "queryKey" | "queryFn">;
+
+type UseVaultsOptions = Omit<UseQueryOptions<Vault[], Error>, "queryKey" | "queryFn">;
 
 export const useVaults = (options?: UseVaultsOptions) => {
   return useQuery({
     queryKey: queryKeys.vaults.all,
     queryFn: async () => {
-      // const { data } = await solanaApi.solanaControllerGetAllVaults();
+      // const { data } = await vaultApi.vaultControllerGetAllVaults();
 
       return mockData;
     },
     ...options,
+  });
+};
+
+type UseVaultOptions = Omit<UseQueryOptions<Vault, Error>, "queryKey" | "queryFn">;
+
+export const useVaultById = (vaultId: string, options?: UseVaultOptions) => {
+  return useQuery({
+    queryKey: queryKeys.vaults.vaultById(vaultId),
+    queryFn: async () => {
+      // const { data } = await vaultApi.vaultControllerGetStrategies({ vaultId });
+      const vault = mockData.find((el) => el.id === vaultId);
+      if (!vault) throw Error(`Vault ${vaultId} not found`);
+      return vault;
+    },
+    ...options,
+    enabled: !!vaultId && options?.enabled,
   });
 };

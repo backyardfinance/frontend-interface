@@ -1,6 +1,7 @@
 import { MinusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
+import type { Vault } from "@/api";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { PlusIcon } from "@/components/icons/plus";
@@ -14,7 +15,7 @@ import { TopVaults } from "@/components/vaults/TopVaults";
 import { toVaultRoute } from "@/config/routes";
 import { useVaults } from "@/hooks/useVaults";
 import { formatNumber } from "@/utils";
-import type { Strategy, Vault } from "@/utils/types";
+import type { Strategy } from "@/utils/types";
 
 export default function VaultsPage() {
   const { data: vaults } = useVaults();
@@ -57,28 +58,18 @@ export default function VaultsPage() {
 
   const rows = useMemo(
     () => [
-      ...(vaults?.map((vault: Vault) => [
+      ...(vaults?.map((vault) => [
         <div className="inline-flex flex-2 items-center justify-start gap-2" key={vault.id}>
           <div className="relative flex items-center justify-center">
-            <div className="h-[27px] w-[27px] p-[3px]">
-              {vault.vaultImage ? (
-                <img alt={vault.title} className="h-full w-full rounded-[31px]" src={vault.vaultImage} />
-              ) : (
-                getTokenImage(vault.title)
-              )}
-            </div>
+            <div className="h-[27px] w-[27px] p-[3px]">{getTokenImage(vault.name)}</div>
           </div>
           <div className="inline-flex items-start justify-start gap-[0.67px]">
-            <div className="justify-start font-bold text-neutral-800 text-xs">{vault.title}</div>
+            <div className="justify-start font-bold text-neutral-800 text-xs">{vault.name}</div>
           </div>
         </div>,
         <div className="inline-flex w-full items-center justify-start gap-2.5" key={vault.id}>
           <div className="inline-flex items-center justify-start gap-1">
-            {vault.platformImage ? (
-              <img alt={vault.platform} className="h-4 w-4 rounded-3xl" src={vault.platformImage} />
-            ) : (
-              getPlatformImage(vault.platform)
-            )}
+            {getPlatformImage(vault.platform)}
             <div className="justify-start font-normal text-neutral-800 text-xs">{vault.platform}</div>
           </div>
         </div>,

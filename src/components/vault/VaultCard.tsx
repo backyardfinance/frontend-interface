@@ -1,9 +1,9 @@
 import { MinusIcon } from "lucide-react";
+import type { Vault } from "@/api";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { StarsIcon } from "@/components/icons/stars";
 import { displayAmount } from "@/utils";
-import type { Vault } from "@/utils/types";
 
 export interface VaultCardProps {
   vault: Vault;
@@ -24,8 +24,8 @@ export const VaultCard = ({
     <div className="group relative flex w-full flex-row gap-2 rounded-2xl bg-white p-[14px]">
       <div className="flex grow flex-col gap-2">
         <div className="flex flex-row items-center gap-1">
-          <div className="size-[17px]">{getTokenImage(vault.title)}</div>
-          <span className="justify-center font-bold text-base text-neutral-700">{vault.title}</span>
+          <div className="size-[17px]">{getTokenImage(vault.name)}</div>
+          <span className="justify-center font-bold text-base text-neutral-700">{vault.name}</span>
         </div>
         <div className="flex flex-row items-center gap-[7px]">
           <div className="flex flex-row items-center justify-between gap-1 rounded-2xl bg-[#FBFBFB] p-[4px]">
@@ -48,7 +48,7 @@ export const VaultCard = ({
           <div className="justify-start font-bold text-base text-neutral-400 opacity-30">%</div>
         </div>
         <div className="justify-start font-bold text-neutral-400 text-xs transition-all duration-300 ease-in-out group-hover:opacity-80">
-          {displayAmount(depositAmount?.toString() || "0", 0, 3)} {vault.title}
+          {displayAmount(depositAmount?.toString() || "0", 0, 3)} {vault.name}
         </div>
       </div>
       <div

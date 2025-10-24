@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
+import type { Vault } from "@/api";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
 import { VaultCard } from "@/components/vault/VaultCard";
 import { cn } from "@/utils";
-import type { Asset, Strategy, Vault } from "@/utils/types";
+import type { Asset, Strategy } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { ReloadIcon } from "../icons/reload";
 import { Button } from "../ui/button";

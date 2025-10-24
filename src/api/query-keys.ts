@@ -1,6 +1,7 @@
 export const queryKeys = {
   vaults: {
     all: ["vaults"],
+    vaultById: (vaultId: string) => [...queryKeys.vaults.all, vaultId],
   },
 
   strategies: {

@@ -1,17 +1,4 @@
-export type Platform = "Drift" | "Hylo" | "Jupyter" | "Synatra";
-
-export interface Vault {
-  id: string;
-  title: string;
-  vaultImage: string;
-  platform: Platform;
-  platformImage: string;
-  tvl: number;
-  apy: number;
-  description: string;
-  contractAddress: string;
-  asset: Asset;
-}
+import type { Vault } from "@/api";
 
 export interface Strategy {
   id: string;

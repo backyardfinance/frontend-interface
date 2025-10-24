@@ -25,7 +25,7 @@ export interface CreateVaultDto {
      * @type {string}
      * @memberof CreateVaultDto
      */
-    'protocolName': string;
+    'platform': CreateVaultDtoPlatformEnum;
     /**
      * 
      * @type {string}
@@ -45,4 +45,12 @@ export interface CreateVaultDto {
      */
     'uri': string;
 }
+
+export const CreateVaultDtoPlatformEnum = {
+    JUPITER: 'Jupiter',
+    KAMINO: 'Kamino'
+} as const;
+
+export type CreateVaultDtoPlatformEnum = typeof CreateVaultDtoPlatformEnum[keyof typeof CreateVaultDtoPlatformEnum];
+
 

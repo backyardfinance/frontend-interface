@@ -23,8 +23,6 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
 import type { CreateStrategyDto } from '../types';
-// @ts-ignore
-import type { QuoteDepositDto } from '../types';
 /**
  * SolanaApi - axios parameter creator
  * @export
@@ -60,35 +58,6 @@ export const SolanaApiAxiosParamCreator = function (configuration?: Configuratio
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(createStrategyDto, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        solanaControllerGetAllVaults: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/solana/vaults`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -161,41 +130,6 @@ export const SolanaApiAxiosParamCreator = function (configuration?: Configuratio
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * 
-         * @param {QuoteDepositDto} quoteDepositDto 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        solanaControllerQuoteDeposit: async (quoteDepositDto: QuoteDepositDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'quoteDepositDto' is not null or undefined
-            assertParamExists('solanaControllerQuoteDeposit', 'quoteDepositDto', quoteDepositDto)
-            const localVarPath = `/solana/quote/deposit`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(quoteDepositDto, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -216,17 +150,6 @@ export const SolanaApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.solanaControllerCreateStrategy(createStrategyDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['SolanaApi.solanaControllerCreateStrategy']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async solanaControllerGetAllVaults(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.solanaControllerGetAllVaults(options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['SolanaApi.solanaControllerGetAllVaults']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -253,18 +176,6 @@ export const SolanaApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['SolanaApi.solanaControllerGetUserTokens']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
-        /**
-         * 
-         * @param {QuoteDepositDto} quoteDepositDto 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async solanaControllerQuoteDeposit(quoteDepositDto: QuoteDepositDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.solanaControllerQuoteDeposit(quoteDepositDto, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['SolanaApi.solanaControllerQuoteDeposit']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
     }
 };
 
@@ -286,14 +197,6 @@ export const SolanaApiFactory = function (configuration?: Configuration, basePat
         },
         /**
          * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        solanaControllerGetAllVaults(options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.solanaControllerGetAllVaults(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
          * @param {SolanaApiSolanaControllerGetStrategiesRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -309,15 +212,6 @@ export const SolanaApiFactory = function (configuration?: Configuration, basePat
          */
         solanaControllerGetUserTokens(requestParameters: SolanaApiSolanaControllerGetUserTokensRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.solanaControllerGetUserTokens(requestParameters.userId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {SolanaApiSolanaControllerQuoteDepositRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        solanaControllerQuoteDeposit(requestParameters: SolanaApiSolanaControllerQuoteDepositRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.solanaControllerQuoteDeposit(requestParameters.quoteDepositDto, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -365,20 +259,6 @@ export interface SolanaApiSolanaControllerGetUserTokensRequest {
 }
 
 /**
- * Request parameters for solanaControllerQuoteDeposit operation in SolanaApi.
- * @export
- * @interface SolanaApiSolanaControllerQuoteDepositRequest
- */
-export interface SolanaApiSolanaControllerQuoteDepositRequest {
-    /**
-     * 
-     * @type {QuoteDepositDto}
-     * @memberof SolanaApiSolanaControllerQuoteDeposit
-     */
-    readonly quoteDepositDto: QuoteDepositDto
-}
-
-/**
  * SolanaApi - object-oriented interface
  * @export
  * @class SolanaApi
@@ -394,16 +274,6 @@ export class SolanaApi extends BaseAPI {
      */
     public solanaControllerCreateStrategy(requestParameters: SolanaApiSolanaControllerCreateStrategyRequest, options?: RawAxiosRequestConfig) {
         return SolanaApiFp(this.configuration).solanaControllerCreateStrategy(requestParameters.createStrategyDto, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof SolanaApi
-     */
-    public solanaControllerGetAllVaults(options?: RawAxiosRequestConfig) {
-        return SolanaApiFp(this.configuration).solanaControllerGetAllVaults(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -426,17 +296,6 @@ export class SolanaApi extends BaseAPI {
      */
     public solanaControllerGetUserTokens(requestParameters: SolanaApiSolanaControllerGetUserTokensRequest, options?: RawAxiosRequestConfig) {
         return SolanaApiFp(this.configuration).solanaControllerGetUserTokens(requestParameters.userId, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {SolanaApiSolanaControllerQuoteDepositRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof SolanaApi
-     */
-    public solanaControllerQuoteDeposit(requestParameters: SolanaApiSolanaControllerQuoteDepositRequest, options?: RawAxiosRequestConfig) {
-        return SolanaApiFp(this.configuration).solanaControllerQuoteDeposit(requestParameters.quoteDepositDto, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

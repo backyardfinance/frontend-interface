@@ -34,7 +34,12 @@
         "useExhaustiveDependencies": "off"
       },
       "suspicious": {
-        "noConsole": "warn"
+        "noConsole": {
+          "level": "warn",
+          "options": {
+            "allow": ["assert", "error", "info", "warn"]
+          }
+        }
       },
       "style": {
         "noNonNullAssertion": "off",

@@ -1,9 +1,9 @@
 import { useState } from "react";
+import type { Vault } from "@/api";
 import { getTokenImage } from "@/assets/tokens";
 import { ChartArea } from "@/components/charts/ChartArea";
 import { Table } from "@/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { Vault } from "@/utils/types";
 import { ArrowIcon } from "../icons/arrow";
 import { Button } from "../ui/button";
 
@@ -53,13 +53,13 @@ export const Chart: React.FC<Props> = ({ vault }) => {
     headers: ["Deposited", "Vault weight", "Interest earned", "Parent Strategy"],
     rows: positions.map((position) => [
       <div className="inline-flex items-center justify-start gap-1.5" key={position.id}>
-        <div className="size-3">{getTokenImage(vault.title)}</div>
+        <div className="size-3">{getTokenImage(vault.name)}</div>
         <div className="justify-start font-bold text-neutral-800 text-sm">{position.deposited}</div>
       </div>,
       position.vaultWeight,
       <div className="inline-flex items-center justify-start gap-1.5" key={position.id}>
         <div className="justify-start font-bold text-neutral-800 text-sm">{position.interestEarned}</div>
-        <div className="size-3">{getTokenImage(vault.title)}</div>
+        <div className="size-3">{getTokenImage(vault.name)}</div>
       </div>,
       <Button key={position.id} size="sm" variant="white">
         {position.parentStrategy}

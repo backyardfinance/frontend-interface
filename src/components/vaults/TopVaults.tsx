@@ -1,10 +1,11 @@
 import { MinusIcon } from "lucide-react";
 import { useNavigate } from "react-router";
+import type { Vault } from "@/api";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { toVaultRoute } from "@/config/routes";
 import { formatMonetaryAmount } from "@/utils";
-import type { Strategy, Vault } from "@/utils/types";
+import type { Strategy } from "@/utils/types";
 import { PlusIcon } from "../icons/plus";
 import { StarsIcon } from "../icons/stars";
 
@@ -37,21 +38,13 @@ export const TopVaults: React.FC<Props> = ({ vaults, onAdd, currentStrategy }) =
           >
             <div className="flex flex-row items-center justify-center gap-[7px] rounded-2xl bg-white p-[8px] outline outline-zinc-100 outline-offset-[-1px]">
               <div className="relative h-[30px] w-[30px]">
-                {vault.vaultImage ? (
-                  <img alt={vault.title} className="h-full w-full rounded-[31px]" src={vault.vaultImage} />
-                ) : (
-                  getTokenImage(vault.title)
-                )}
+                {getTokenImage(vault.name)}
                 <div className="absolute right-0 bottom-0 rounded-full bg-white">
-                  {vault.platformImage ? (
-                    <img alt={vault.platform} className="h-4 w-4 rounded-3xl" src={vault.platformImage} />
-                  ) : (
-                    getPlatformImage(vault.platform)
-                  )}
+                  {getPlatformImage(vault.platform)}
                 </div>
               </div>
               <div className="flex flex-1 shrink-0 grow-1 flex-col items-start justify-between">
-                <div className="justify-start font-bold text-base text-neutral-800 leading-none">{vault.title}</div>
+                <div className="justify-start font-bold text-base text-neutral-800 leading-none">{vault.name}</div>
                 <div className="justify-start self-stretch font-normal text-xs text-zinc-500 leading-none">
                   {vault.platform}
                 </div>
