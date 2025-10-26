@@ -1,6 +1,6 @@
 import { MinusIcon } from "lucide-react";
 import { useNavigate } from "react-router";
-import type { Vault } from "@/api";
+import type { VaultInfoResponse } from "@/api";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { toVaultRoute } from "@/config/routes";
@@ -10,8 +10,8 @@ import { PlusIcon } from "../icons/plus";
 import { StarsIcon } from "../icons/stars";
 
 type Props = {
-  vaults: Vault[] | undefined;
-  onAdd: (e: React.MouseEvent<HTMLButtonElement>, vault: Vault, isAdded: boolean) => void;
+  vaults: VaultInfoResponse[] | undefined;
+  onAdd: (e: React.MouseEvent<HTMLButtonElement>, vault: VaultInfoResponse, isAdded: boolean) => void;
   currentStrategy: Strategy | null;
 };
 
@@ -21,7 +21,7 @@ export const TopVaults: React.FC<Props> = ({ vaults, onAdd, currentStrategy }) =
 
   return (
     <div className="mb-4 flex w-full flex-row items-center justify-center gap-4">
-      {vaults?.map((vault: Vault) => {
+      {vaults?.map((vault) => {
         const isAdded = currentStrategy?.vaults.find((v) => v.id === vault.id);
         return (
           <div

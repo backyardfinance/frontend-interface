@@ -1,12 +1,12 @@
 import { MinusIcon } from "lucide-react";
-import type { Vault } from "@/api";
+import type { VaultInfoResponse } from "@/api";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { StarsIcon } from "@/components/icons/stars";
 import { displayAmount } from "@/utils";
 
 export interface VaultCardProps {
-  vault: Vault;
+  vault: VaultInfoResponse;
   allocation?: number;
   depositAmount?: number;
   setAllocation?: (amount: number) => void;

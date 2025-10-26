@@ -5,6 +5,7 @@ api.ts
 api/admin-api.ts
 api/app-api.ts
 api/solana-api.ts
+api/strategy-api.ts
 api/vault-api.ts
 base.ts
 common.ts

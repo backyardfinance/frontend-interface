@@ -1,7 +1,7 @@
 import { MinusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import type { Vault } from "@/api";
+import type { VaultInfoResponse } from "@/api";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { PlusIcon } from "@/components/icons/plus";
@@ -33,7 +33,7 @@ export default function VaultsPage() {
     handleAddClick(e as unknown as React.MouseEvent<HTMLButtonElement>, vault, isAdded);
   };
 
-  const handleAddClick = (e: React.MouseEvent<HTMLButtonElement>, vault: Vault, isAdded: boolean) => {
+  const handleAddClick = (e: React.MouseEvent<HTMLButtonElement>, vault: VaultInfoResponse, isAdded: boolean) => {
     e.stopPropagation();
 
     setCurrentStrategy((prev) => {

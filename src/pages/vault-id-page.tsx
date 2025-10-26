@@ -9,7 +9,7 @@ import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
 import { Chart } from "@/components/vault/Chart";
 import { RecentActivity } from "@/components/vault/RecentActivity";
 import { VaultControl } from "@/components/vault/VaultControl";
-import { useVaultById } from "@/hooks/useVaults";
+import { useVaultByIdWithUser, useVaults } from "@/hooks/useVaults";
 import { formatUsdAmount, shortFormIntegerFormatter } from "@/utils";
 
 type Props = {
@@ -34,7 +34,14 @@ const Item: React.FC<Props> = ({ title, value, additionalValue, valueComponent }
 
 export default function VaultIdPage() {
   const { vaultId } = useParams<{ vaultId: string }>();
-  const { data: vault } = useVaultById(vaultId ?? "");
+
+  const { data: vaults } = useVaults();
+  const vault = vaults?.find((el) => el.id === vaultId);
+
+  //TODO
+  const { data: vaultWithUser } = useVaultByIdWithUser(vaultId ?? "", { enabled: !!vault });
+  console.log("vaultWithUser", vaultWithUser);
+
   if (!vaultId || !vault) return <div>No found</div>;
 
   const data = [

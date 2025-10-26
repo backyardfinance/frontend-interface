@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Vault } from "@/api";
+import type { VaultInfoResponse } from "@/api";
 import { getTokenImage } from "@/assets/tokens";
 import { ChartArea } from "@/components/charts/ChartArea";
 import { Table } from "@/components/table";
@@ -19,7 +19,7 @@ const MetricMap: Record<ChartCategory, MetricType[]> = {
 };
 
 type Props = {
-  vault: Vault;
+  vault: VaultInfoResponse;
 };
 
 export const Chart: React.FC<Props> = ({ vault }) => {

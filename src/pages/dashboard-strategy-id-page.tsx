@@ -5,7 +5,7 @@ import { StarsIcon } from "@/components/icons/stars";
 import { Chart } from "@/components/strategy/Chart";
 import { RecentActivity } from "@/components/strategy/RecentActivity";
 import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
-import { useStrategies } from "@/hooks/useStrategy";
+import { useUserStrategies } from "@/hooks/useStrategy";
 import { shortFormIntegerFormatter } from "@/utils";
 import type { BackendStrategy } from "@/utils/types";
 
@@ -31,7 +31,7 @@ const Item: React.FC<Props> = ({ title, value, additionalValue, valueComponent }
 
 export default function DashboardStrategyIdPage() {
   const { strategyId } = useParams<{ strategyId: string }>();
-  const { data: strategies } = useStrategies();
+  const { data: strategies } = useUserStrategies();
   const strategy = strategies?.find((el: BackendStrategy) => el.strategy === strategyId);
   if (!strategyId || !strategy) return <div>No found</div>;
 

@@ -4,17 +4,18 @@ import { getTokenImage } from "@/assets/tokens";
 import { StarsIcon } from "@/components/icons/stars";
 import { Table } from "@/components/table";
 import { toStrategyRoute } from "@/config/routes";
-import { useStrategies } from "@/hooks/useStrategy";
-import type { BackendAllocation, BackendStrategy } from "@/utils/types";
+import { useUserStrategies } from "@/hooks/useStrategy";
+import type { BackendAllocation } from "@/utils/types";
 
 export const DashboardTable = () => {
-  const { data: strategies } = useStrategies();
+  const { data: strategies } = useUserStrategies();
   const navigate = useNavigate();
   const headers = ["Strategy ID", "Creator", "Allocation", "My position", "APY"];
 
+  //TODO: remove type any
   const rows = useMemo(
     () =>
-      strategies?.map((item: BackendStrategy) => [
+      strategies?.map((item: any) => [
         <span className="font-bold text-neutral-800 text-xs" key={`${item.strategy}-id`}>
           {item.strategy}
         </span>,

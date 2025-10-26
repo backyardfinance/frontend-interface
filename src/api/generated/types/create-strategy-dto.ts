@@ -25,18 +25,18 @@ export interface CreateStrategyDto {
      * @type {string}
      * @memberof CreateStrategyDto
      */
-    'vaultId': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof CreateStrategyDto
-     */
-    'deposited_amount': number;
+    'name': string;
     /**
      * 
      * @type {string}
      * @memberof CreateStrategyDto
      */
     'userId': string;
+    /**
+     * 
+     * @type {object}
+     * @memberof CreateStrategyDto
+     */
+    'vaultDeposits': object;
 }
 

@@ -17,5 +17,6 @@
 export * from './api/admin-api';
 export * from './api/app-api';
 export * from './api/solana-api';
+export * from './api/strategy-api';
 export * from './api/vault-api';
 

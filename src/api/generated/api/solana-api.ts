@@ -21,82 +21,12 @@ import globalAxios from 'axios';
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../common';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
-// @ts-ignore
-import type { CreateStrategyDto } from '../types';
 /**
  * SolanaApi - axios parameter creator
  * @export
  */
 export const SolanaApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
-        /**
-         * 
-         * @param {CreateStrategyDto} createStrategyDto 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        solanaControllerCreateStrategy: async (createStrategyDto: CreateStrategyDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'createStrategyDto' is not null or undefined
-            assertParamExists('solanaControllerCreateStrategy', 'createStrategyDto', createStrategyDto)
-            const localVarPath = `/solana/strategy/create`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(createStrategyDto, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} userId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        solanaControllerGetStrategies: async (userId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'userId' is not null or undefined
-            assertParamExists('solanaControllerGetStrategies', 'userId', userId)
-            const localVarPath = `/solana/strategies/{userId}`
-                .replace(`{${"userId"}}`, encodeURIComponent(String(userId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
         /**
          * 
          * @param {string} userId 
@@ -142,30 +72,6 @@ export const SolanaApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {CreateStrategyDto} createStrategyDto 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async solanaControllerCreateStrategy(createStrategyDto: CreateStrategyDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.solanaControllerCreateStrategy(createStrategyDto, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['SolanaApi.solanaControllerCreateStrategy']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} userId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async solanaControllerGetStrategies(userId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.solanaControllerGetStrategies(userId, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['SolanaApi.solanaControllerGetStrategies']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
          * @param {string} userId 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -188,24 +94,6 @@ export const SolanaApiFactory = function (configuration?: Configuration, basePat
     return {
         /**
          * 
-         * @param {SolanaApiSolanaControllerCreateStrategyRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        solanaControllerCreateStrategy(requestParameters: SolanaApiSolanaControllerCreateStrategyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.solanaControllerCreateStrategy(requestParameters.createStrategyDto, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {SolanaApiSolanaControllerGetStrategiesRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        solanaControllerGetStrategies(requestParameters: SolanaApiSolanaControllerGetStrategiesRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.solanaControllerGetStrategies(requestParameters.userId, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
          * @param {SolanaApiSolanaControllerGetUserTokensRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -215,34 +103,6 @@ export const SolanaApiFactory = function (configuration?: Configuration, basePat
         },
     };
 };
-
-/**
- * Request parameters for solanaControllerCreateStrategy operation in SolanaApi.
- * @export
- * @interface SolanaApiSolanaControllerCreateStrategyRequest
- */
-export interface SolanaApiSolanaControllerCreateStrategyRequest {
-    /**
-     * 
-     * @type {CreateStrategyDto}
-     * @memberof SolanaApiSolanaControllerCreateStrategy
-     */
-    readonly createStrategyDto: CreateStrategyDto
-}
-
-/**
- * Request parameters for solanaControllerGetStrategies operation in SolanaApi.
- * @export
- * @interface SolanaApiSolanaControllerGetStrategiesRequest
- */
-export interface SolanaApiSolanaControllerGetStrategiesRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof SolanaApiSolanaControllerGetStrategies
-     */
-    readonly userId: string
-}
 
 /**
  * Request parameters for solanaControllerGetUserTokens operation in SolanaApi.
@@ -265,28 +125,6 @@ export interface SolanaApiSolanaControllerGetUserTokensRequest {
  * @extends {BaseAPI}
  */
 export class SolanaApi extends BaseAPI {
-    /**
-     * 
-     * @param {SolanaApiSolanaControllerCreateStrategyRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof SolanaApi
-     */
-    public solanaControllerCreateStrategy(requestParameters: SolanaApiSolanaControllerCreateStrategyRequest, options?: RawAxiosRequestConfig) {
-        return SolanaApiFp(this.configuration).solanaControllerCreateStrategy(requestParameters.createStrategyDto, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {SolanaApiSolanaControllerGetStrategiesRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof SolanaApi
-     */
-    public solanaControllerGetStrategies(requestParameters: SolanaApiSolanaControllerGetStrategiesRequest, options?: RawAxiosRequestConfig) {
-        return SolanaApiFp(this.configuration).solanaControllerGetStrategies(requestParameters.userId, options).then((request) => request(this.axios, this.basePath));
-    }
-
     /**
      * 
      * @param {SolanaApiSolanaControllerGetUserTokensRequest} requestParameters Request parameters.

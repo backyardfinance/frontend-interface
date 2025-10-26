@@ -1,68 +1,72 @@
 import type { UseQueryOptions } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-import { CreateVaultDtoPlatformEnum, type Vault } from "@/api";
-// import { vaultApi } from "@/api";;
+import { type VaultInfoResponse, VaultPlatform } from "@/api";
 import { queryKeys } from "@/api/query-keys";
+import { useSolanaWallet } from "./useSolanaWallet";
 
-const mockData: Vault[] = [
+const mockData: VaultInfoResponse[] = [
   {
     id: "1",
     name: "USDT",
-    platform: CreateVaultDtoPlatformEnum.JUPITER,
+    platform: VaultPlatform.Jupiter,
     tvl: 12300340,
     apy: 11.9,
-    yard_reward: 0,
-    asset_price: 0,
+    yardReward: 0,
+    assetPrice: 0,
     description: "USDT is a stablecoin that is pegged to the US dollar.",
   },
   {
     id: "2",
     name: "HYUSD",
-    platform: CreateVaultDtoPlatformEnum.JUPITER,
+    platform: VaultPlatform.Jupiter,
     tvl: 900000,
     apy: 9,
-    yard_reward: 0,
-    asset_price: 0,
+    yardReward: 0,
+    assetPrice: 0,
     description: "USDT is a stablecoin that is pegged to the US dollar.",
   },
   {
     id: "3",
     name: "USDC",
-    platform: CreateVaultDtoPlatformEnum.KAMINO,
+    platform: VaultPlatform.Kamino,
     tvl: 10000,
     apy: 11,
-    yard_reward: 0,
-    asset_price: 0,
+    yardReward: 0,
+    assetPrice: 0,
     description: "USDT is a stablecoin that is pegged to the US dollar.",
   },
 ];
 
-type UseVaultsOptions = Omit<UseQueryOptions<Vault[], Error>, "queryKey" | "queryFn">;
+type UseVaultsOptions = Omit<UseQueryOptions<VaultInfoResponse[], Error>, "queryKey" | "queryFn">;
 
 export const useVaults = (options?: UseVaultsOptions) => {
   return useQuery({
     queryKey: queryKeys.vaults.all,
     queryFn: async () => {
+      //TODO
       // const { data } = await vaultApi.vaultControllerGetAllVaults();
-
       return mockData;
     },
     ...options,
   });
 };
 
-type UseVaultOptions = Omit<UseQueryOptions<Vault, Error>, "queryKey" | "queryFn">;
+type UseVaultOptions = Omit<UseQueryOptions<VaultInfoResponse, Error>, "queryKey" | "queryFn">;
 
-export const useVaultById = (vaultId: string, options?: UseVaultOptions) => {
+export const useVaultByIdWithUser = (vaultId: string, options?: UseVaultOptions) => {
+  const { address } = useSolanaWallet();
+
   return useQuery({
-    queryKey: queryKeys.vaults.vaultById(vaultId),
+    queryKey: queryKeys.vaults.vaultByIdWithUser(vaultId, address ?? ""),
     queryFn: async () => {
-      // const { data } = await vaultApi.vaultControllerGetStrategies({ vaultId });
+      if (!address) throw Error("useVaultByIdWithUser: address is missing");
+      //TODO
+      // const { data } = await vaultApi.vaultControllerGetVault({ vaultId, userId: address });
       const vault = mockData.find((el) => el.id === vaultId);
       if (!vault) throw Error(`Vault ${vaultId} not found`);
       return vault;
     },
     ...options,
-    enabled: !!vaultId && options?.enabled,
+    enabled: !!vaultId && !!address && options?.enabled,
   });
 };

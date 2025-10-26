@@ -1,18 +1,18 @@
-import { CreateVaultDtoPlatformEnum } from "@/api";
+import { VaultPlatform } from "@/api";
 // import DriftIcon from "./Drift.svg?react";
 // import HyloIcon from "./Hylo.svg?react";
 import JupyterIcon from "./Jupyter.svg?react";
 // import SynatraIcon from "./Synatra.svg?react";
 
-export const getPlatformImage = (platform: CreateVaultDtoPlatformEnum) => {
+export const getPlatformImage = (platform: VaultPlatform) => {
   switch (platform) {
     // case "Drift":
     //   return <DriftIcon className="h-full w-full" />;
     // case "Hylo":
     // return <HyloIcon className="h-full w-full" />;
-    case CreateVaultDtoPlatformEnum.JUPITER:
+    case VaultPlatform.Jupiter:
       return <JupyterIcon className="h-full w-full" />;
-    case CreateVaultDtoPlatformEnum.KAMINO:
+    case VaultPlatform.Kamino:
       return (
         <img
           alt="Kamino"

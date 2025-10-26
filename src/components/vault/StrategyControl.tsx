@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { Vault } from "@/api";
+import type { VaultInfoResponse } from "@/api";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
 import { VaultCard } from "@/components/vault/VaultCard";
@@ -16,7 +16,7 @@ export interface StrategySetupProps {
   allocations?: number[];
   depositAmount: bigint;
   setAllocation: (index: number, allocation: number) => void;
-  vaults: Vault[];
+  vaults: VaultInfoResponse[];
   slippage: number;
   setSlippage: (slippage: number) => void;
   isAllocationShown?: boolean;

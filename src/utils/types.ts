@@ -1,8 +1,8 @@
-import type { Vault } from "@/api";
+import type { VaultInfoResponse } from "@/api";
 
 export interface Strategy {
   id: string;
-  vaults: Vault[];
+  vaults: VaultInfoResponse[];
   depositAmount: bigint;
   allocation: number[];
 }

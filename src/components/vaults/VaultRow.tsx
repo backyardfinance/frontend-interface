@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import type { Vault } from "@/api";
+import type { VaultInfoResponse } from "@/api";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { toVaultRoute } from "@/config/routes";
@@ -8,8 +8,8 @@ import { PlusIcon } from "../icons/plus";
 import { StarsIcon } from "../icons/stars";
 
 type Props = {
-  vault: Vault;
-  onAdd: (e: React.MouseEvent<HTMLDivElement>, vault: Vault) => void;
+  vault: VaultInfoResponse;
+  onAdd: (e: React.MouseEvent<HTMLDivElement>, vault: VaultInfoResponse) => void;
 };
 
 export const VaultRow: React.FC<Props> = ({ vault, onAdd }) => {
