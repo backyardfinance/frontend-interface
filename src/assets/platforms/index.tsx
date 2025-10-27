@@ -1,17 +1,17 @@
 import { VaultPlatform } from "@/api";
 // import DriftIcon from "./Drift.svg?react";
 // import HyloIcon from "./Hylo.svg?react";
-import JupyterIcon from "./Jupyter.svg?react";
+import JupyterIcon from "./Jupyter.svg";
 // import SynatraIcon from "./Synatra.svg?react";
 
-export const getPlatformImage = (platform: VaultPlatform) => {
+export const getPlatformImage = (platform: string) => {
   switch (platform) {
     // case "Drift":
     //   return <DriftIcon className="h-full w-full" />;
     // case "Hylo":
     // return <HyloIcon className="h-full w-full" />;
     case VaultPlatform.Jupiter:
-      return <JupyterIcon className="h-full w-full" />;
+      return <img alt={JupyterIcon} className="h-full w-full" src={JupyterIcon} />;
     case VaultPlatform.Kamino:
       return (
         <img

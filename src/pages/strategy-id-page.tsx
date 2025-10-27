@@ -5,9 +5,8 @@ import { StarsIcon } from "@/components/icons/stars";
 import { Chart } from "@/components/strategy/Chart";
 import { RecentActivity } from "@/components/strategy/RecentActivity";
 import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
-import { useUserStrategies } from "@/hooks/useStrategy";
-import { shortFormIntegerFormatter } from "@/utils";
-import type { BackendStrategy } from "@/utils/types";
+import { useStrategyById } from "@/hooks/useStrategy";
+import { formatMonetaryAmount } from "@/utils";
 
 type Props = {
   title: string;
@@ -31,35 +30,37 @@ const Item: React.FC<Props> = ({ title, value, additionalValue, valueComponent }
 
 export default function DashboardStrategyIdPage() {
   const { strategyId } = useParams<{ strategyId: string }>();
-  const { data: strategies } = useUserStrategies();
-  const strategy = strategies?.find((el: BackendStrategy) => el.strategy === strategyId);
+  const { data: strategy } = useStrategyById({ strategyId: strategyId ?? "" });
   if (!strategyId || !strategy) return <div>No found</div>;
+
+  const uniquePlatforms = new Set(strategy.vaults.map((v) => v.platform)).size;
+  const uniqueTokens = new Set(strategy.vaults.map((v) => v.name)).size;
 
   const data = [
     {
       title: "My Position",
-      value: `$${shortFormIntegerFormatter.format(1000000)}`,
+      value: `$${formatMonetaryAmount(strategy.strategyDepositedAmount)}`,
       valueComponent: <StarsIcon color="#2ED650" />,
     },
     {
       title: "APY",
-      value: `${10.6}%`,
+      value: `${strategy.strategyApy}%`,
       valueComponent: <StarsIcon />,
     },
     {
       title: "Platform Exposure",
-      value: "1",
+      value: `${uniquePlatforms}`,
     },
     {
       title: "Token Exposure",
-      value: "7",
+      value: `${uniqueTokens}`,
     },
   ];
 
   const additionalInfo = [
     {
       title: "Strategy ID",
-      value: strategy.strategy,
+      value: strategy.strategyId,
     },
     {
       title: "Performance fee",
@@ -82,7 +83,7 @@ export default function DashboardStrategyIdPage() {
               {getTokenImage("USDC")}
               {/* {getTokenImage(strategy.strategy)} */}
             </div>
-            <p className="text-center font-bold text-neutral-800 text-xl">{strategy.strategy}</p>
+            <p className="text-center font-bold text-neutral-800 text-xl">{strategy.strategyId}</p>
           </div>
           <div className="relative flex h-full w-full items-center justify-between gap-5 rounded-3xl bg-[#FAFAFA] px-6 py-4.5">
             {data.map((el) => (

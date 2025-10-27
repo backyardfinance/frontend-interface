@@ -1,6 +1,12 @@
 import type { UseQueryOptions } from "@tanstack/react-query";
 import { useQuery } from "@tanstack/react-query";
-import { type VaultInfoResponse, VaultPlatform } from "@/api";
+import {
+  type VaultHistoryInfoResponse,
+  type VaultInfoResponse,
+  type VaultInfoStrategyResponse,
+  VaultPlatform,
+  vaultApi,
+} from "@/api";
 import { queryKeys } from "@/api/query-keys";
 import { useSolanaWallet } from "./useSolanaWallet";
 
@@ -8,6 +14,7 @@ const mockData: VaultInfoResponse[] = [
   {
     id: "1",
     name: "USDT",
+    token: "USDT",
     platform: VaultPlatform.Jupiter,
     tvl: 12300340,
     apy: 11.9,
@@ -18,6 +25,7 @@ const mockData: VaultInfoResponse[] = [
   {
     id: "2",
     name: "HYUSD",
+    token: "HYUSD",
     platform: VaultPlatform.Jupiter,
     tvl: 900000,
     apy: 9,
@@ -28,6 +36,7 @@ const mockData: VaultInfoResponse[] = [
   {
     id: "3",
     name: "USDC",
+    token: "USDC",
     platform: VaultPlatform.Kamino,
     tvl: 10000,
     apy: 11,
@@ -45,13 +54,14 @@ export const useVaults = (options?: UseVaultsOptions) => {
     queryFn: async () => {
       //TODO
       // const { data } = await vaultApi.vaultControllerGetAllVaults();
+      // console.log("vaults", data);
       return mockData;
     },
     ...options,
   });
 };
 
-type UseVaultOptions = Omit<UseQueryOptions<VaultInfoResponse, Error>, "queryKey" | "queryFn">;
+type UseVaultOptions = Omit<UseQueryOptions<VaultInfoStrategyResponse, Error>, "queryKey" | "queryFn">;
 
 export const useVaultByIdWithUser = (vaultId: string, options?: UseVaultOptions) => {
   const { address } = useSolanaWallet();
@@ -61,12 +71,24 @@ export const useVaultByIdWithUser = (vaultId: string, options?: UseVaultOptions)
     queryFn: async () => {
       if (!address) throw Error("useVaultByIdWithUser: address is missing");
       //TODO
-      // const { data } = await vaultApi.vaultControllerGetVault({ vaultId, userId: address });
-      const vault = mockData.find((el) => el.id === vaultId);
-      if (!vault) throw Error(`Vault ${vaultId} not found`);
-      return vault;
+      const { data } = await vaultApi.vaultControllerGetVault({ vaultId, userId: address });
+      return data;
     },
     ...options,
     enabled: !!vaultId && !!address && options?.enabled,
+  });
+};
+
+type UseVaultHistoryOptions = Omit<UseQueryOptions<VaultHistoryInfoResponse[], Error>, "queryKey" | "queryFn">;
+
+export const useVaultHistory = (vaultId: string, options?: UseVaultHistoryOptions) => {
+  return useQuery({
+    queryKey: queryKeys.vaults.vaultHistory(vaultId),
+    queryFn: async () => {
+      const { data } = await vaultApi.vaultControllerGetVaultHistory({ vaultId });
+      return data as unknown as VaultHistoryInfoResponse[]; // TODO: remove types
+    },
+    ...options,
+    enabled: !!vaultId && options?.enabled,
   });
 };

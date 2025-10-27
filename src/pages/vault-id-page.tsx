@@ -1,5 +1,5 @@
 import { useParams } from "react-router";
-import JypiterImage from "@/assets/platforms/Jupyter.svg";
+import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { ArrowIcon } from "@/components/icons/arrow";
 import { InfoCircleIcon } from "@/components/icons/info-circle";
@@ -10,7 +10,7 @@ import { Chart } from "@/components/vault/Chart";
 import { RecentActivity } from "@/components/vault/RecentActivity";
 import { VaultControl } from "@/components/vault/VaultControl";
 import { useVaultByIdWithUser, useVaults } from "@/hooks/useVaults";
-import { formatUsdAmount, shortFormIntegerFormatter } from "@/utils";
+import { formatMonetaryAmount, formatUsdAmount } from "@/utils";
 
 type Props = {
   title: string;
@@ -38,28 +38,28 @@ export default function VaultIdPage() {
   const { data: vaults } = useVaults();
   const vault = vaults?.find((el) => el.id === vaultId);
 
-  //TODO
   const { data: vaultWithUser } = useVaultByIdWithUser(vaultId ?? "", { enabled: !!vault });
-  console.log("vaultWithUser", vaultWithUser);
 
   if (!vaultId || !vault) return <div>No found</div>;
+
+  const myPosition = (vaultWithUser?.strategies ?? []).reduce((acc, strategy) => acc + strategy.depositedAmount, 0);
 
   const data = [
     {
       title: "Total Deposits",
-      value: shortFormIntegerFormatter.format(100000000),
-      additionalValue: formatUsdAmount(56430000),
+      value: formatMonetaryAmount(vault.tvl),
+      additionalValue: formatUsdAmount(vault.tvl * vault.assetPrice),
       valueComponent: <InfoCircleIcon />,
     },
     {
       title: "My Position",
-      value: shortFormIntegerFormatter.format(1000000),
-      additionalValue: formatUsdAmount(56430000),
+      value: formatMonetaryAmount(myPosition),
+      additionalValue: formatUsdAmount(myPosition * vault.assetPrice),
       valueComponent: <StarsIcon color="#2ED650" />,
     },
     {
       title: "APY",
-      value: `${10.6}%`,
+      value: `${vault.apy}%`,
       valueComponent: <StarsIcon />,
     },
   ];
@@ -87,8 +87,8 @@ export default function VaultIdPage() {
             <p className="flex-1 text-center font-bold text-neutral-800 text-xl">{vault.name}</p>
             <div className="flex flex-1 items-center justify-between gap-1">
               <Button size="sm" variant="white">
-                <img alt="Jypiter" className="size-[11px]" src={JypiterImage} />
-                Jypiter
+                <div className="size-[11px]">{getPlatformImage(vault.platform)}</div>
+                {vault.platform}
                 <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
                   <ArrowIcon className="size-2 rotate-45" />
                 </div>

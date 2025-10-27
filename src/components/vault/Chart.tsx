@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { VaultInfoResponse } from "@/api";
 import { getTokenImage } from "@/assets/tokens";
 import { ChartArea } from "@/components/charts/ChartArea";
 import { Table } from "@/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useVaultByIdWithUser, useVaultHistory } from "@/hooks/useVaults";
 import { ArrowIcon } from "../icons/arrow";
 import { Button } from "../ui/button";
 
@@ -23,6 +24,9 @@ type Props = {
 };
 
 export const Chart: React.FC<Props> = ({ vault }) => {
+  const { data: vaultHistory } = useVaultHistory(vault.id);
+  const { data: vaultWithUser } = useVaultByIdWithUser(vault.id);
+
   const [selectedCategory, setSelectedCategory] = useState<ChartCategory>("overview");
   const [selectedMetric, setSelectedMetric] = useState<MetricType>("apy");
 
@@ -32,43 +36,67 @@ export const Chart: React.FC<Props> = ({ vault }) => {
     setSelectedMetric(MetricMap[newCategory][0]);
   };
 
-  const positions = [
-    {
-      id: "1",
-      deposited: "100,234.23",
-      vaultWeight: "87%",
-      interestEarned: "1234.42",
-      parentStrategy: "Hylo",
-    },
-    {
-      id: "2",
-      deposited: "100,234.23",
-      vaultWeight: "87%",
-      interestEarned: "1234.42",
-      parentStrategy: "STR-01",
-    },
-  ];
-
   const table = {
     headers: ["Deposited", "Vault weight", "Interest earned", "Parent Strategy"],
-    rows: positions.map((position) => [
-      <div className="inline-flex items-center justify-start gap-1.5" key={position.id}>
+    rows: (vaultWithUser?.strategies ?? []).map((strategy) => [
+      <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>
         <div className="size-3">{getTokenImage(vault.name)}</div>
-        <div className="justify-start font-bold text-neutral-800 text-sm">{position.deposited}</div>
+        <div className="justify-start font-bold text-neutral-800 text-sm">{strategy.depositedAmount}</div>
       </div>,
-      position.vaultWeight,
-      <div className="inline-flex items-center justify-start gap-1.5" key={position.id}>
-        <div className="justify-start font-bold text-neutral-800 text-sm">{position.interestEarned}</div>
+      `${strategy.vaultWeight}%`,
+      <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>
+        <div className="justify-start font-bold text-neutral-800 text-sm">{strategy.interestEarned}</div>
         <div className="size-3">{getTokenImage(vault.name)}</div>
       </div>,
-      <Button key={position.id} size="sm" variant="white">
-        {position.parentStrategy}
+      <Button key={strategy.strategyId} size="sm" variant="white">
+        {strategy.strategyId}
         <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
           <ArrowIcon className="size-2 rotate-45" />
         </div>
       </Button>,
     ]),
   };
+
+  const chartData = useMemo(() => {
+    if (!vaultHistory?.length) return [];
+
+    return vaultHistory.map((item) => {
+      const date = new Date(item.recordedAt).toLocaleDateString("en-GB", {
+        month: "short",
+        day: "numeric",
+      });
+
+      switch (selectedMetric) {
+        case "apy":
+          return { date, value: item.apy };
+        case "tvl":
+          return { date, value: item.tvl };
+        case "price":
+          return { date, value: item.assetPrice };
+        case "performance":
+          return { date, value: item.yardReward };
+        default:
+          return { date, value: 0 };
+      }
+    });
+  }, [vaultHistory, selectedMetric]);
+
+  const valueStat = useMemo(() => {
+    if (!chartData.length) return 0;
+    const values = chartData.map((d) => d.value);
+
+    switch (selectedMetric) {
+      case "apy":
+      case "price":
+        return values.reduce((a, b) => a + b, 0) / values.length;
+      case "tvl":
+        return values.reduce((a, b) => a + b, 0);
+      case "performance":
+        return values[values.length - 1];
+      default:
+        return 0;
+    }
+  }, [chartData, selectedMetric]);
 
   return (
     <>
@@ -90,23 +118,27 @@ export const Chart: React.FC<Props> = ({ vault }) => {
           </TabsList>
         </Tabs>
       </div>
-      {/* //TODO: add chart */}
       <div className="w-full rounded-[23px] border border-[rgba(214,214,214,0.26)] border-solid bg-[#FAFAFA]">
         <ChartArea
           chartConfig={{
-            desktop: {
-              label: "Desktop",
+            value: {
+              label: selectedMetric.toUpperCase(),
               color: "var(--chart-1)",
             },
           }}
-          chartData={[
-            { date: "2024-04-01", desktop: 222 },
-            { date: "2024-04-02", desktop: 97 },
-            { date: "2024-04-03", desktop: 167 },
-          ]}
-          title={selectedMetric}
-          value="6.04%"
-          valueTooltip="APY"
+          chartData={chartData.map((d) => ({
+            date: d.date,
+            value: d.value,
+          }))}
+          title={selectedMetric.toUpperCase()}
+          value={
+            selectedMetric === "apy"
+              ? `${valueStat.toFixed(2)}%`
+              : selectedMetric === "price"
+                ? `$${valueStat.toFixed(2)}`
+                : valueStat.toLocaleString()
+          }
+          valueTooltip={selectedMetric.toUpperCase()}
         />
       </div>
       <div>

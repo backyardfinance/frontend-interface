@@ -69,7 +69,7 @@ export default function VaultsPage() {
         </div>,
         <div className="inline-flex w-full items-center justify-start gap-2.5" key={vault.id}>
           <div className="inline-flex items-center justify-start gap-1">
-            {getPlatformImage(vault.platform)}
+            <div className="size-4">{getPlatformImage(vault.platform)}</div>
             <div className="justify-start font-normal text-neutral-800 text-xs">{vault.platform}</div>
           </div>
         </div>,
@@ -125,7 +125,8 @@ export default function VaultsPage() {
               <PlusThickIcon className="h-5 w-5" />
             </div>
             <div className="justify-start self-stretch text-center font-normal text-neutral-400 text-sm">
-              Add vaults from the left to <br />
+              Add vaults from the left to
+              <br />
               build a strategy
             </div>
           </div>

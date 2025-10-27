@@ -21,6 +21,12 @@ import globalAxios from 'axios';
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../common';
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
+// @ts-ignore
+import type { VaultHistoryInfoResponse } from '../types';
+// @ts-ignore
+import type { VaultInfoResponse } from '../types';
+// @ts-ignore
+import type { VaultInfoStrategyResponse } from '../types';
 /**
  * VaultApi - axios parameter creator
  * @export
@@ -141,7 +147,7 @@ export const VaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async vaultControllerGetAllVaults(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async vaultControllerGetAllVaults(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VaultInfoResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.vaultControllerGetAllVaults(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['VaultApi.vaultControllerGetAllVaults']?.[localVarOperationServerIndex]?.url;
@@ -154,7 +160,7 @@ export const VaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async vaultControllerGetVault(userId: string, vaultId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async vaultControllerGetVault(userId: string, vaultId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VaultInfoStrategyResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.vaultControllerGetVault(userId, vaultId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['VaultApi.vaultControllerGetVault']?.[localVarOperationServerIndex]?.url;
@@ -166,7 +172,7 @@ export const VaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async vaultControllerGetVaultHistory(vaultId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async vaultControllerGetVaultHistory(vaultId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<VaultHistoryInfoResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.vaultControllerGetVaultHistory(vaultId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['VaultApi.vaultControllerGetVaultHistory']?.[localVarOperationServerIndex]?.url;
@@ -187,7 +193,7 @@ export const VaultApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        vaultControllerGetAllVaults(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        vaultControllerGetAllVaults(options?: RawAxiosRequestConfig): AxiosPromise<VaultInfoResponse> {
             return localVarFp.vaultControllerGetAllVaults(options).then((request) => request(axios, basePath));
         },
         /**
@@ -196,7 +202,7 @@ export const VaultApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        vaultControllerGetVault(requestParameters: VaultApiVaultControllerGetVaultRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        vaultControllerGetVault(requestParameters: VaultApiVaultControllerGetVaultRequest, options?: RawAxiosRequestConfig): AxiosPromise<VaultInfoStrategyResponse> {
             return localVarFp.vaultControllerGetVault(requestParameters.userId, requestParameters.vaultId, options).then((request) => request(axios, basePath));
         },
         /**
@@ -205,7 +211,7 @@ export const VaultApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        vaultControllerGetVaultHistory(requestParameters: VaultApiVaultControllerGetVaultHistoryRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        vaultControllerGetVaultHistory(requestParameters: VaultApiVaultControllerGetVaultHistoryRequest, options?: RawAxiosRequestConfig): AxiosPromise<VaultHistoryInfoResponse> {
             return localVarFp.vaultControllerGetVaultHistory(requestParameters.vaultId, options).then((request) => request(axios, basePath));
         },
     };

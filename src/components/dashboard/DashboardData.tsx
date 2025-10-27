@@ -1,23 +1,38 @@
 import React from "react";
+import { useUserStrategies } from "@/hooks/useStrategy";
+import { formatMonetaryAmount } from "@/utils";
 import { StarsIcon } from "../icons/stars";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 
 export const DashboardData = () => {
+  const { data: userStrategies } = useUserStrategies();
+
+  const summaryData = (userStrategies ?? [])?.reduce(
+    (acc, item) => {
+      const deposited = acc.deposited + item.strategyDepositedAmount;
+      const weightedApySum = acc.weightedApySum + item.strategyApy * item.strategyDepositedAmount;
+      return { deposited, weightedApySum };
+    },
+    { deposited: 0, weightedApySum: 0 }
+  );
+
+  const avgAPY = summaryData.deposited > 0 ? summaryData.weightedApySum / summaryData.deposited : 0;
+
   const data = [
     {
       title: "My Positions",
-      value: "$10.46",
+      value: formatMonetaryAmount(summaryData.deposited),
       icon: <StarsIcon className="h-3.5 w-3.5" color="#2ED650" />,
     },
     {
       title: "Avg APY",
-      value: "10.6%",
+      value: `${avgAPY}%`,
       icon: <StarsIcon className="h-3.5 w-3.5" />,
     },
     {
       title: "Total YARD earned",
-      value: "1243.24",
+      value: "0",
       icon: <img alt="backyard" className="h-3.5 w-3.5" src="/backyard.svg" />,
     },
   ];

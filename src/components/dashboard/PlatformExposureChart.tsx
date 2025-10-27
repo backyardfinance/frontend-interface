@@ -1,24 +1,20 @@
+import { useMemo } from "react";
+import { useUserStrategies } from "@/hooks/useStrategy";
+import { buildChartDataByKey } from "@/utils/calculations";
 import { ChartPieDonut } from "../charts/ChartPieDonut";
 
 export const PlatformExposureChart = () => {
-  return (
-    <ChartPieDonut
-      chartConfig={{
-        morpho: {
-          label: "Morpho",
-          color: "var(--chart-1)",
-        },
-        jupiter: {
-          label: "Jupiter",
-          color: "var(--chart-5)",
-        },
-      }}
-      chartData={[
-        { platform: "Hylo", percentage: 34, fill: "var(--color-morpho)" },
-        { platform: "Jupiter", percentage: 66, fill: "var(--color-jupiter)" },
-      ]}
-      nameKey="platform"
-      title="Platform Exposure"
-    />
-  );
+  const { data: userStrategies } = useUserStrategies();
+
+  const { chartData, chartConfig } = useMemo(() => {
+    if (!userStrategies?.length) {
+      return { chartData: [], chartConfig: {} };
+    }
+
+    const allVaults = userStrategies.flatMap((strategy) => strategy.vaults || []);
+
+    return buildChartDataByKey(allVaults, "platform");
+  }, [userStrategies]);
+
+  return <ChartPieDonut chartConfig={chartConfig} chartData={chartData} nameKey="platform" title="Platform Exposure" />;
 };

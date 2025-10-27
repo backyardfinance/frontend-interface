@@ -31,13 +31,25 @@ export interface CreateVaultDto {
      * @type {string}
      * @memberof CreateVaultDto
      */
+    'platfromLp': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateVaultDto
+     */
+    'platformVaultInputToken': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateVaultDto
+     */
     'lpName': string;
     /**
      * 
      * @type {string}
      * @memberof CreateVaultDto
      */
-    'symbol': string;
+    'lpSymbol': string;
     /**
      * 
      * @type {string}

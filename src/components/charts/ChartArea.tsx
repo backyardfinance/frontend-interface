@@ -1,11 +1,11 @@
 /** biome-ignore-all lint/correctness/useUniqueElementIds: explanation */
 
 import type * as React from "react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Area, AreaChart, XAxis, YAxis } from "recharts";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { AreaChartDataPoint } from "@/types/charts";
 import { InfoCircleIcon } from "../icons/info-circle";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -18,27 +18,27 @@ type Props = {
   chartData: AreaChartDataPoint[];
 };
 
-const duration = [
-  {
-    title: "All time",
-    value: "all",
-  },
-  {
-    title: "3 months",
-    value: "90d",
-  },
-  {
-    title: "1 month",
-    value: "30d",
-  },
-  {
-    title: "1 week",
-    value: "7d",
-  },
-];
+// const duration = [
+//   {
+//     title: "All time",
+//     value: "all",
+//   },
+//   {
+//     title: "3 months",
+//     value: "90d",
+//   },
+//   {
+//     title: "1 month",
+//     value: "30d",
+//   },
+//   {
+//     title: "1 week",
+//     value: "7d",
+//   },
+// ];
 
 export const ChartArea: React.FC<Props> = ({ title, value, valueTooltip, chartConfig, chartData }) => {
-  const [timeRange, setTimeRange] = useState("90d");
+  // const [timeRange, setTimeRange] = useState("90d");
 
   // Get all data keys from chartConfig (excluding date)
   const dataKeys = useMemo(() => {
@@ -57,7 +57,7 @@ export const ChartArea: React.FC<Props> = ({ title, value, valueTooltip, chartCo
             </CompactHybridTooltip>
           </p>
         </div>
-        <Select onValueChange={setTimeRange} value={timeRange}>
+        {/* <Select onValueChange={setTimeRange} value={timeRange}>
           <SelectTrigger aria-label="Select a value">
             <SelectValue placeholder="3 months" />
           </SelectTrigger>
@@ -68,7 +68,7 @@ export const ChartArea: React.FC<Props> = ({ title, value, valueTooltip, chartCo
               </SelectItem>
             ))}
           </SelectContent>
-        </Select>
+        </Select> */}
       </CardHeader>
       <CardContent className="pt-3">
         <ChartContainer className="h-[220px] w-full" config={chartConfig}>

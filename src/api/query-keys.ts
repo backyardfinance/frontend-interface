@@ -2,6 +2,7 @@ export const queryKeys = {
   vaults: {
     all: ["vaults"],
     vaultByIdWithUser: (vaultId: string, userId: string) => [...queryKeys.vaults.all, vaultId, userId],
+    vaultHistory: (vaultId: string) => [...queryKeys.vaults.all, "history", vaultId],
   },
 
   strategies: {
