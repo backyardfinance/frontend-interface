@@ -17,44 +17,44 @@
 /**
  * 
  * @export
- * @interface QuoteDepositDto
+ * @interface StrategyVaultInfo
  */
-export interface QuoteDepositDto {
+export interface StrategyVaultInfo {
     /**
      * 
      * @type {string}
-     * @memberof QuoteDepositDto
+     * @memberof StrategyVaultInfo
      */
-    'signer': string;
+    'id': string;
     /**
      * 
      * @type {string}
-     * @memberof QuoteDepositDto
+     * @memberof StrategyVaultInfo
      */
-    'vaultId': string;
+    'name': string;
     /**
      * 
      * @type {string}
-     * @memberof QuoteDepositDto
+     * @memberof StrategyVaultInfo
      */
-    'inputMint': string;
+    'platform': string;
     /**
      * 
-     * @type {string}
-     * @memberof QuoteDepositDto
+     * @type {number}
+     * @memberof StrategyVaultInfo
      */
-    'lpMint': string;
+    'tvl': number;
     /**
      * 
-     * @type {string}
-     * @memberof QuoteDepositDto
+     * @type {number}
+     * @memberof StrategyVaultInfo
      */
-    'amount': string;
+    'apy': number;
     /**
      * 
-     * @type {boolean}
-     * @memberof QuoteDepositDto
+     * @type {number}
+     * @memberof StrategyVaultInfo
      */
-    'ensureAtas': boolean;
+    'depositedAmount': number;
 }
 

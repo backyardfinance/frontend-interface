@@ -56,6 +56,35 @@ export const AppApiAxiosParamCreator = function (configuration?: Configuration) 
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appControllerGetOpenApi: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/openapi`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -77,6 +106,17 @@ export const AppApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['AppApi.appControllerGetHello']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appControllerGetOpenApi(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appControllerGetOpenApi(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AppApi.appControllerGetOpenApi']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -94,6 +134,14 @@ export const AppApiFactory = function (configuration?: Configuration, basePath?:
          */
         appControllerGetHello(options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.appControllerGetHello(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appControllerGetOpenApi(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appControllerGetOpenApi(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -113,6 +161,16 @@ export class AppApi extends BaseAPI {
      */
     public appControllerGetHello(options?: RawAxiosRequestConfig) {
         return AppApiFp(this.configuration).appControllerGetHello(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AppApi
+     */
+    public appControllerGetOpenApi(options?: RawAxiosRequestConfig) {
+        return AppApiFp(this.configuration).appControllerGetOpenApi(options).then((request) => request(this.axios, this.basePath));
     }
 }
 

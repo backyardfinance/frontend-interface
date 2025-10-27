@@ -4,42 +4,38 @@ import { getTokenImage } from "@/assets/tokens";
 import { StarsIcon } from "@/components/icons/stars";
 import { Table } from "@/components/table";
 import { toStrategyRoute } from "@/config/routes";
-import { useStrategies } from "@/hooks/useStrategy";
-import type { BackendAllocation, BackendStrategy } from "@/utils/types";
+import { useUserStrategies } from "@/hooks/useStrategy";
 
 export const DashboardTable = () => {
-  const { data: strategies } = useStrategies();
+  const { data: strategies } = useUserStrategies();
   const navigate = useNavigate();
-  const headers = ["Strategy ID", "Creator", "Allocation", "My position", "APY"];
+  const headers = ["Strategy ID", "Allocation", "My position", "APY"];
 
   const rows = useMemo(
     () =>
-      strategies?.map((item: BackendStrategy) => [
-        <span className="font-bold text-neutral-800 text-xs" key={`${item.strategy}-id`}>
-          {item.strategy}
+      strategies?.map((item) => [
+        <span className="font-bold text-neutral-800 text-xs" key={`${item.strategyId}-id`}>
+          {item.strategyId}
         </span>,
-        <div className="flex items-center gap-2" key={`${item.strategy}-creator`}>
-          <div className="size-6 rounded-full border border-[#E7E7E7] bg-white p-1">
-            <img alt={item.creator.name} className="size-full" src={item.creator.icon} />
-          </div>
-          <span className="font-bold text-neutral-800 text-xs">{item.creator.name}</span>
-        </div>,
-        <div className="flex items-center gap-1" key={`${item.strategy}-allocation`}>
-          {item.allocation.map((allocation: BackendAllocation) => (
+        <div className="flex items-center gap-1" key={`${item.strategyId}-allocation`}>
+          {item.vaults.map((vault) => (
             <div
               className="flex size-7.5 items-center justify-center rounded-full border border-[#F3F3F3] bg-white p-1"
-              key={`${allocation.token}-${allocation.weight}`}
+              key={`${vault.id}-${vault.depositedAmount}`}
             >
-              {getTokenImage(allocation.token)}
+              {getTokenImage(vault.token)}
             </div>
           ))}
         </div>,
-        <div className="flex items-center gap-0.5 font-bold text-neutral-800 text-xs" key={`${item.strategy}-position`}>
-          {item.myPosition}
+        <div
+          className="flex items-center gap-0.5 font-bold text-neutral-800 text-xs"
+          key={`${item.strategyId}-position`}
+        >
+          {item.strategyDepositedAmount}
           <StarsIcon className="size-3.5" color="#2ED650" />
         </div>,
-        <div className="flex items-center gap-0.5 font-bold text-neutral-800 text-xs" key={`${item.strategy}-apy`}>
-          {item.apy}%
+        <div className="flex items-center gap-0.5 font-bold text-neutral-800 text-xs" key={`${item.strategyId}-apy`}>
+          {item.strategyApy}%
           <StarsIcon className="size-3.5" />
         </div>,
       ]),
@@ -49,7 +45,7 @@ export const DashboardTable = () => {
   const handleRowClick = (rowIndex: number) => {
     const strategy = strategies?.[rowIndex];
     if (!strategy) return;
-    navigate(toStrategyRoute(strategies?.[rowIndex].strategy));
+    navigate(toStrategyRoute(strategies?.[rowIndex].strategyId));
   };
 
   return <Table handleRowClick={handleRowClick} headers={headers} rows={rows || []} />;

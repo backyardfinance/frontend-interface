@@ -17,26 +17,20 @@
 /**
  * 
  * @export
- * @interface CreateStrategyDto
+ * @interface GetQuoteDto
  */
-export interface CreateStrategyDto {
+export interface GetQuoteDto {
     /**
      * 
      * @type {string}
-     * @memberof CreateStrategyDto
+     * @memberof GetQuoteDto
      */
-    'name': string;
+    'walletAddress': string;
     /**
      * 
-     * @type {string}
-     * @memberof CreateStrategyDto
+     * @type {Array<string>}
+     * @memberof GetQuoteDto
      */
-    'userId': string;
-    /**
-     * Record of vaultId -> deposited amount
-     * @type {{ [key: string]: number; }}
-     * @memberof CreateStrategyDto
-     */
-    'vaultDeposits': { [key: string]: number; };
+    'deposits': Array<string>;
 }
 

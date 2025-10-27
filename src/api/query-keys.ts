@@ -1,11 +1,14 @@
 export const queryKeys = {
   vaults: {
     all: ["vaults"],
+    vaultByIdWithUser: (vaultId: string, userId: string) => [...queryKeys.vaults.all, vaultId, userId],
+    vaultHistory: (vaultId: string) => [...queryKeys.vaults.all, "history", vaultId],
   },
 
   strategies: {
     all: ["strategies"],
-    strategyByUser: (userId: string) => [...queryKeys.strategies.all, userId],
+    strategyById: (strategyId: string) => [...queryKeys.strategies.all, strategyId],
+    strategyByUser: (userId: string) => [...queryKeys.strategies.all, "user", userId],
   },
 
   userTokens: (userId: string) => ["user-tokens", userId],

@@ -1,15 +1,15 @@
 import { useNavigate } from "react-router";
+import type { VaultInfoResponse } from "@/api";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { toVaultRoute } from "@/config/routes";
 import { formatNumber } from "@/utils";
-import type { Vault } from "@/utils/types";
 import { PlusIcon } from "../icons/plus";
 import { StarsIcon } from "../icons/stars";
 
 type Props = {
-  vault: Vault;
-  onAdd: (e: React.MouseEvent<HTMLDivElement>, vault: Vault) => void;
+  vault: VaultInfoResponse;
+  onAdd: (e: React.MouseEvent<HTMLDivElement>, vault: VaultInfoResponse) => void;
 };
 
 export const VaultRow: React.FC<Props> = ({ vault, onAdd }) => {
@@ -22,25 +22,15 @@ export const VaultRow: React.FC<Props> = ({ vault, onAdd }) => {
     >
       <div className="inline-flex flex-2 items-center justify-start gap-2">
         <div className="relative flex items-center justify-center">
-          <div className="h-[27px] w-[27px] p-[3px]">
-            {vault.vaultImage ? (
-              <img alt={vault.title} className="h-full w-full rounded-[31px]" src={vault.vaultImage} />
-            ) : (
-              getTokenImage(vault.title)
-            )}
-          </div>
+          <div className="h-[27px] w-[27px] p-[3px]">{getTokenImage(vault.name)}</div>
         </div>
         <div className="inline-flex items-start justify-start gap-[0.67px]">
-          <div className="justify-start font-bold text-neutral-800 text-xs">{vault.title}</div>
+          <div className="justify-start font-bold text-neutral-800 text-xs">{vault.name}</div>
         </div>
       </div>
       <div className="inline-flex flex-2 items-center justify-start gap-2.5">
         <div className="inline-flex items-center justify-start gap-1">
-          {vault.platformImage ? (
-            <img alt={vault.platform} className="h-4 w-4 rounded-3xl" src={vault.platformImage} />
-          ) : (
-            getPlatformImage(vault.platform)
-          )}
+          {getPlatformImage(vault.platform)}
           <div className="justify-start font-normal text-neutral-800 text-xs">{vault.platform}</div>
         </div>
       </div>

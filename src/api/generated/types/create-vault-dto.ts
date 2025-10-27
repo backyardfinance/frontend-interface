@@ -25,7 +25,19 @@ export interface CreateVaultDto {
      * @type {string}
      * @memberof CreateVaultDto
      */
-    'protocolName': string;
+    'platform': CreateVaultDtoPlatformEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateVaultDto
+     */
+    'platfromLp': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreateVaultDto
+     */
+    'platformVaultInputToken': string;
     /**
      * 
      * @type {string}
@@ -37,7 +49,7 @@ export interface CreateVaultDto {
      * @type {string}
      * @memberof CreateVaultDto
      */
-    'symbol': string;
+    'lpSymbol': string;
     /**
      * 
      * @type {string}
@@ -45,4 +57,12 @@ export interface CreateVaultDto {
      */
     'uri': string;
 }
+
+export const CreateVaultDtoPlatformEnum = {
+    JUPITER: 'Jupiter',
+    KAMINO: 'Kamino'
+} as const;
+
+export type CreateVaultDtoPlatformEnum = typeof CreateVaultDtoPlatformEnum[keyof typeof CreateVaultDtoPlatformEnum];
+
 
