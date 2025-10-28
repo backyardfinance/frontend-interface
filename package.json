@@ -63,11 +63,8 @@
     "vite-tsconfig-paths": "5.1.4"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,md}": [
-      "biome check --fix --files-ignore-unknown=true"
-    ],
-    "!(src/api/generated)/**/*.{js,jsx,ts,tsx,json,md}": [
-      "biome check --fix --files-ignore-unknown=true"
+    "**/*.{js,jsx,ts,tsx,json,md}": [
+      "bash -c 'files=\"$@\"; files=$(echo \"$files\" | tr \" \" \"\\n\" | grep -v \"src/api/generated\" | tr \"\\n\" \" \"); [ -n \"$files\" ] && biome check --fix --files-ignore-unknown=true $files || true' --"
     ]
   },
   "husky": {
