@@ -1,10 +1,11 @@
+import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { Big } from "big.js";
 import { useMemo, useState } from "react";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { VaultCard } from "@/components/vault/VaultCard";
-import { useQuote } from "@/hooks/useDeposit";
+
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useTimer } from "@/hooks/useTimer";
 import { cn, displayAmount } from "@/utils";
@@ -125,7 +126,7 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
   const { allocation, depositAmount, vaults } = currentStrategy;
   const totalAllocation = allocation?.reduce((acc, curr) => acc + curr, 0);
   const fees = getFees(0.0, 0.0);
-  const { mutateAsync: getQuote } = useQuote();
+
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [prices] = useState<Record<string, number>>({
     USDC: 1,
@@ -154,6 +155,8 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
       depositAmount: amount,
     });
   };
+
+  const { sendTransaction } = useSolanaWallet();
 
   const setAllocation = (index: number, amount: number) => {
     const newAllocation = [...(currentStrategy.allocation || [])];
@@ -321,11 +324,20 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
           disabled={!depositAmount || allocation?.length === 0 || !vaults?.length || !selectedAsset || !walletAddress}
           onClick={async () => {
             if (!walletAddress) return;
-            const data = await getQuote({
-              walletAddress: walletAddress,
-              deposits: [selectedAsset?.id || ""],
-            });
-            console.log(data);
+            // const data = await getQuote({
+            //   walletAddress: walletAddress,
+            //   deposits: [selectedAsset?.id || ""],
+            // });
+            const tx = new Transaction();
+            tx.add(
+              new TransactionInstruction({
+                keys: [],
+                programId: new PublicKey("9J4gV4TL8EifN1PJGtysh1wp4wgzYoprZ4mYo8kS2PSv"),
+                data: Buffer.from([]),
+              })
+            );
+            sendTransaction(tx);
+            // console.log(data);
           }}
           size="xl"
           variant="tertiary"
