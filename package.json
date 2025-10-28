@@ -63,7 +63,10 @@
     "vite-tsconfig-paths": "5.1.4"
   },
   "lint-staged": {
-    "**/*.{js,jsx,ts,tsx,json,md}": [
+    "*.{js,jsx,ts,tsx,json,md}": [
+      "biome check --fix --files-ignore-unknown=true"
+    ],
+    "!(src/api/generated)/**/*.{js,jsx,ts,tsx,json,md}": [
       "biome check --fix --files-ignore-unknown=true"
     ]
   },
