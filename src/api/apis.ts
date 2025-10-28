@@ -1,7 +1,7 @@
 import { api } from "./axios";
 import { Configuration, QuoteApi, SolanaApi, StrategyApi, TransactionsApi, VaultApi } from "./generated";
 
-const basePath = import.meta.env.VITE_PUBLIC_BACKEND_URL;
+const basePath = import.meta.env.VITE_PUBLIC_BACKEND_URL || "/api";
 const config = new Configuration({ baseOptions: { headers: {} } });
 
 export const solanaApi = new SolanaApi(config, basePath, api);

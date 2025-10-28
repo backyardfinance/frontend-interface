@@ -18,7 +18,7 @@ import type { AxiosInstance, AxiosPromise, RawAxiosRequestConfig } from "axios";
 import globalAxios from "axios";
 import type { Configuration } from "./configuration";
 
-export const BASE_PATH = "http://mvp-server-alb-967539750.eu-north-1.elb.amazonaws.com";
+export const BASE_PATH = "/api";
 
 /**
  *
