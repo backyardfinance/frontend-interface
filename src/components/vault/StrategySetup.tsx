@@ -23,9 +23,9 @@ export interface StrategySetupProps {
 }
 
 const mockRouteSteps = [
-  "Swap 1000.00 USDC for 1000.12 USDS via Uniswap",
+  "Swap 800.00 USDC for 800.32 USDS",
   <>
-    You will get ~<span className="font-bold text-neutral-700 text-xs">1000.12 USDS</span>
+    You will get ~<span className="font-bold text-neutral-700 text-xs">800.32 USDS</span>
   </>,
 ];
 
@@ -124,7 +124,7 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
   const [isRouteOpen, setIsRouteOpen] = useState(false);
   const { allocation, depositAmount, vaults } = currentStrategy;
   const totalAllocation = allocation?.reduce((acc, curr) => acc + curr, 0);
-  const fees = getFees(0.01, 0.05);
+  const fees = getFees(0.0, 0.0);
   const { mutateAsync: getQuote } = useQuote();
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [prices] = useState<Record<string, number>>({
@@ -179,7 +179,7 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
     });
   };
 
-  const { seconds, minutes } = useTimer(12);
+  const { seconds, minutes } = useTimer(10);
 
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border-1 border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
@@ -294,7 +294,9 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
           <span className="font-bold text-neutral-700 text-xs">Total deposited</span>
           <div className="flex flex-col items-end">
             <span className="font-bold text-neutral-700 text-xs">{depositAmount} USDC</span>
-            <span className="font-normal text-[9px] text-stone-300">$1000</span>
+            <span className="font-normal text-[9px] text-stone-300">
+              ${Big(depositAmount.toString()).mul(prices.USDC).toFixed(2)}
+            </span>
           </div>
         </div>
         <div className="flex flex-row items-start justify-between">
@@ -328,7 +330,14 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
           size="xl"
           variant="tertiary"
         >
-          Deposit {depositAmount} {selectedAsset?.symbol} {getTokenImage(selectedAsset?.id || "")}
+          {walletAddress ? (
+            <>
+              {" "}
+              Deposit {depositAmount} {selectedAsset?.symbol} {getTokenImage(selectedAsset?.id || "")}
+            </>
+          ) : (
+            "Connect wallet"
+          )}
         </Button>
         <div className="flex flex-col gap-[7px] px-[14px] pb-[14px] font-normal text-xs text-zinc-400">
           {fees.map((fee) => (

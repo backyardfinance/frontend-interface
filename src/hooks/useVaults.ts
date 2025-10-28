@@ -70,7 +70,9 @@ export const useVaults = (options?: UseVaultsOptions) => {
     queryFn: async () => {
       const { data } = await vaultApi.vaultControllerGetAllVaults();
       const filledData = fillDescriptions(data as unknown as VaultInfoResponse[]);
-      return filledData as unknown as VaultInfoResponse[]; // TODO: remove types
+      return filledData
+        .reverse()
+        .sort((a, b) => (a.name === "USDC" ? -1 : b.name === "USDC" ? 1 : 0)) as unknown as VaultInfoResponse[]; // TODO: remove types
     },
     ...options,
   });

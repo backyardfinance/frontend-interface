@@ -1,14 +1,24 @@
 import { useEffect, useState } from "react";
 
-export const useTimer = (minutes: number) => {
-  const [time, setTime] = useState(minutes * 60 * 1000);
+export const useTimer = (seconds: number) => {
+  const [time, setTime] = useState(seconds * 1000);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTime(time - 1000);
+      if (time > 0) {
+        setTime(time - 1000);
+      } else {
+        setTime(seconds * 1000);
+      }
     }, 1000);
     return () => clearInterval(interval);
   }, [time]);
 
-  return { time, minutes: Math.floor(time / 60000) | 0, seconds: Math.floor((time % 60000) / 1000) || "00" };
+  const secondsValue = Math.floor((time % 60000) / 1000);
+
+  return {
+    time,
+    minutes: Math.floor(time / 60000) | 0,
+    seconds: secondsValue <= 9 ? `0${secondsValue}` : secondsValue || "00",
+  };
 };
