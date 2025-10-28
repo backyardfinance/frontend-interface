@@ -7,6 +7,23 @@ export enum VaultPlatform {
   Kamino = "Kamino",
 }
 
+export interface UserTokenView {
+  mint: string;
+  isNative: boolean;
+  decimals: number;
+  amountUi: number;
+  name?: string;
+  symbol?: string;
+  logoURI?: string;
+  priceUsd?: number;
+  valueUsd?: number;
+}
+
+export interface UserPortfolioView {
+  tokens: UserTokenView[];
+  totalValueUsd: number;
+}
+
 export interface VaultInfoResponse {
   apy: number;
   assetPrice: number;

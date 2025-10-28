@@ -1,6 +1,12 @@
-import type { Icon } from "./icons";
-
-export const InfoCircleIcon: Icon = ({ className }) => {
+export const InfoCircleIcon = ({
+  className,
+  backgroundColor = "#E2E2E2",
+  fillColor = "#828282",
+}: {
+  className?: string;
+  backgroundColor?: string;
+  fillColor?: string;
+}) => {
   return (
     <svg
       aria-hidden="true"
@@ -11,14 +17,14 @@ export const InfoCircleIcon: Icon = ({ className }) => {
       width="15"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect fill="#E2E2E2" height="15" rx="7.5" transform="rotate(90 15 0.5)" width="15" x="15" y="0.5" />
+      <rect fill={backgroundColor} height="15" rx="7.5" transform="rotate(90 15 0.5)" width="15" x="15" y="0.5" />
       <path
         d="M7.49931 12.4121C7.73333 12.4121 7.95776 12.3191 8.12323 12.1536C8.2887 11.9881 8.38166 11.7637 8.38166 11.5297V7.11793C8.38166 6.88392 8.2887 6.65949 8.12323 6.49402C7.95776 6.32854 7.73333 6.23558 7.49931 6.23558C7.2653 6.23558 7.04087 6.32854 6.87539 6.49402C6.70992 6.65949 6.61696 6.88392 6.61696 7.11793V11.5297C6.61696 11.7637 6.70992 11.9881 6.87539 12.1536C7.04087 12.3191 7.2653 12.4121 7.49931 12.4121Z"
-        fill="#828282"
+        fill={fillColor}
       />
       <path
         d="M6.61696 4.47088C6.61696 4.70489 6.70992 4.92932 6.87539 5.09479C7.04087 5.26027 7.2653 5.35323 7.49931 5.35323H7.50637C7.74039 5.35323 7.96482 5.26027 8.13029 5.09479C8.29576 4.92932 8.38872 4.70489 8.38872 4.47088C8.38872 4.23686 8.29576 4.01243 8.13029 3.84696C7.96482 3.68149 7.74039 3.58852 7.50637 3.58852H7.49931C7.2653 3.58852 7.04087 3.68149 6.87539 3.84696C6.70992 4.01243 6.61696 4.23686 6.61696 4.47088Z"
-        fill="#828282"
+        fill={fillColor}
       />
       <rect height="14" rx="7" stroke="#DCDCDC" transform="rotate(90 14.5 1)" width="14" x="14.5" y="1" />
     </svg>

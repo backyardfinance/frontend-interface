@@ -3,7 +3,7 @@ import type { VaultInfoResponse } from "@/api";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { StarsIcon } from "@/components/icons/stars";
-import { displayAmount } from "@/utils";
+import { cn, displayAmount } from "@/utils";
 
 export interface VaultCardProps {
   vault: VaultInfoResponse;
@@ -11,6 +11,7 @@ export interface VaultCardProps {
   depositAmount?: number;
   setAllocation?: (amount: number) => void;
   removeVaultFromStrategy: (vaultId: string) => void;
+  isAllocationError?: boolean;
 }
 
 export const VaultCard = ({
@@ -19,6 +20,7 @@ export const VaultCard = ({
   depositAmount,
   setAllocation,
   removeVaultFromStrategy,
+  isAllocationError,
 }: VaultCardProps) => {
   return (
     <div className="group relative flex w-full flex-row gap-2 rounded-2xl bg-white p-[14px]">
@@ -39,13 +41,25 @@ export const VaultCard = ({
         </div>
       </div>
       <div className="flex shrink flex-col items-end gap-2 transition-all duration-300 ease-in-out group-hover:translate-x-[-31px]">
-        <div className="inline-flex h-[30px] items-center justify-start gap-1 rounded-xl border-1 border-zinc-100 bg-neutral-50 px-3.5 py-1.5 transition-all duration-300 ease-in-out group-hover:opacity-80">
+        <div
+          className={cn(
+            "inline-flex h-[30px] items-center justify-start gap-1 rounded-xl border-1 border-zinc-100 bg-neutral-50 px-3.5 py-1.5 transition-all duration-300 ease-in-out group-hover:opacity-80",
+            isAllocationError && "bg-[#F0E8EB] text-[#A03152]"
+          )}
+        >
           <input
             className="max-w-[30px] font-bold text-sm outline-none"
             onChange={(e) => setAllocation?.(Number(e.target.value))}
             value={displayAmount(allocation?.toString() || "0", 0, 0)}
           />
-          <div className="justify-start font-bold text-base text-neutral-400 opacity-30">%</div>
+          <div
+            className={cn(
+              "justify-start font-bold text-base text-neutral-400 opacity-30",
+              isAllocationError && "text-[#C7A6AE]"
+            )}
+          >
+            %
+          </div>
         </div>
         <div className="justify-start font-bold text-neutral-400 text-xs transition-all duration-300 ease-in-out group-hover:opacity-80">
           {displayAmount(depositAmount?.toString() || "0", 0, 3)} {vault.name}

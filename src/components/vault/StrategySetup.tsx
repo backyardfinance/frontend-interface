@@ -4,9 +4,13 @@ import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { VaultCard } from "@/components/vault/VaultCard";
+import { useQuote } from "@/hooks/useDeposit";
+import { useSolanaWallet } from "@/hooks/useSolanaWallet";
+
 import { cn, displayAmount } from "@/utils";
 import type { Asset, Strategy } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
+import { InfoCircleIcon } from "../icons/info-circle";
 import { ReloadIcon } from "../icons/reload";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -55,7 +59,9 @@ export const InputComponent = ({
 }) => {
   const assetValue = useMemo(() => {
     if (!selectedAsset) return 0;
-    return Number(currentValue) * prices?.[selectedAsset?.id || ""] || 0;
+    const price = prices?.[selectedAsset?.id || ""];
+    console.log("price", price, prices, selectedAsset);
+    return Number(currentValue) * price || 0;
   }, [currentValue, prices, selectedAsset]);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
@@ -118,16 +124,17 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
   const { allocation, depositAmount, vaults } = currentStrategy;
   const totalAllocation = allocation?.reduce((acc, curr) => acc + curr, 0);
   const fees = getFees(0.01, 0.05);
-
+  const { mutateAsync: getQuote } = useQuote();
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [prices] = useState<Record<string, number>>({
     USDC: 1,
     USDS: 1,
   });
 
+  const { address: walletAddress } = useSolanaWallet();
   const userAssets: Asset[] = [
-    { id: "USDC", symbol: "USDC", price: 1, balance: 10, icon: "" },
-    { id: "USDS", symbol: "USDS", price: 1, balance: 11, icon: "" },
+    { id: "USDC", symbol: "USDC", price: 1, balance: 100, icon: "" },
+    { id: "USDS", symbol: "USDS", price: 1, balance: 112, icon: "" },
   ];
 
   const averageApy = useMemo(() => {
@@ -222,20 +229,33 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
           <div className="flex w-full flex-row items-center justify-between">
             <span className="justify-start font-bold text-neutral-800 text-sm">Allocation</span>
             <div className="flex flex-row items-center font-bold text-neutral-800 text-sm">
-              <span className="font-bold text-sm text-zinc-400">{totalAllocation}</span>
+              <span className={cn("font-bold text-sm text-zinc-400", totalAllocation > 100 && "text-pink-800")}>
+                {totalAllocation}
+              </span>
               /100%
             </div>
           </div>
           {vaults.map((vault, index) => (
             <VaultCard
               allocation={allocation?.[index]}
-              depositAmount={Number(depositAmount) / (allocation?.length || 1)}
+              depositAmount={(Number(depositAmount) / 100) * allocation?.[index]}
+              isAllocationError={totalAllocation > 100}
               key={vault.id}
               removeVaultFromStrategy={handleRemoveVault}
               setAllocation={(amount) => setAllocation(index, amount)}
               vault={vault}
             />
           ))}
+          {totalAllocation > 100 && (
+            <div className="inline-flex flex-col items-start justify-center gap-1.5 rounded-2xl bg-zinc-100 p-[2px] pl-[5px]">
+              <div className="inline-flex items-center justify-start gap-1 pb-px">
+                <InfoCircleIcon backgroundColor="#A03152" className="size-2.5" fillColor="#FFF" />
+                <div className="justify-center font-['Product_Sans'] font-bold text-[10px] text-pink-800">
+                  The total allocation amount must be 100%. Reduce allocation
+                </div>
+              </div>
+            </div>
+          )}
         </>
       )}
       <div className="flex flex-row items-center justify-between">
@@ -293,7 +313,15 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
 
       <div className="flex flex-col gap-[9px] rounded-2xl border-1 border-zinc-100 bg-white">
         <Button
-          disabled={!depositAmount || allocation?.length === 0 || !vaults?.length || !selectedAsset}
+          disabled={!depositAmount || allocation?.length === 0 || !vaults?.length || !selectedAsset || !walletAddress}
+          onClick={async () => {
+            if (!walletAddress) return;
+            const data = await getQuote({
+              walletAddress: walletAddress,
+              deposits: [selectedAsset?.id || ""],
+            });
+            console.log(data);
+          }}
           size="xl"
           variant="tertiary"
         >
