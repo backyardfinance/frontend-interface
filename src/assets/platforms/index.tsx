@@ -16,7 +16,7 @@ export const getPlatformImage = (platform: string) => {
       return (
         <img
           alt="Kamino"
-          className="h-full w-full"
+          className="h-full max-h-[16px] w-full max-w-[16px]"
           src="https://docs.kamino.finance/~gitbook/image?url=https%3A%2F%2F741543836-files.gitbook.io%2F%7E%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FDGxGrFuaWUFzMv9IjZMP%252Ficon%252FAkQpadHH8WGKd86ZtmOC%252FKMNO%2520Token%2520PNG.png%3Falt%3Dmedia%26token%3D64074a90-31e0-46ce-955c-ecb484344fa2&width=32&dpr=2&quality=100&sign=7ffe783c&sv=2"
         />
       );

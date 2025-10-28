@@ -38,7 +38,9 @@ export default function VaultIdPage() {
   const { data: vaults } = useVaults();
   const vault = vaults?.find((el) => el.id === vaultId);
 
-  const { data: vaultWithUser } = useVaultByIdWithUser(vaultId ?? "", { enabled: !!vault });
+  const { data: vaultWithUser } = useVaultByIdWithUser(vaultId ?? "", {
+    enabled: !!vault,
+  });
 
   if (!vaultId || !vault) return <div>No found</div>;
 
@@ -129,7 +131,7 @@ export default function VaultIdPage() {
         </div>
       </div>
       <div className="flex w-[396px] flex-col gap-6">
-        <VaultControl />
+        <VaultControl vault={vault} />
         {/* <div className="h-[485px] rounded-[23px] border-2 border-[#F6F6F6] border-solid bg-[#FAFAFA] px-4 pt-4 pb-6" /> */}
         <RecentActivity />
       </div>

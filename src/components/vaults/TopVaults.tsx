@@ -19,7 +19,7 @@ type Props = {
 export const TopVaults: React.FC<Props> = ({ vaults, onAdd, currentStrategy }) => {
   const navigate = useNavigate();
   if (!vaults) return null;
-
+  console.log(vaults);
   return (
     <div className="mb-4 flex w-full flex-row items-center justify-center gap-4">
       {vaults?.map((vault) => {

@@ -15,6 +15,7 @@ import { InfoCircleIcon } from "../icons/info-circle";
 import { ReloadIcon } from "../icons/reload";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Switch } from "../ui/switch";
 
 export interface StrategySetupProps {
   currentStrategy: Strategy;
@@ -96,6 +97,106 @@ export const InputComponent = ({
             className={cn(
               "rounded-[8px] border-none bg-white shadow-none outline-none ring-none",
               isSelectOpen && "rounded-b-none"
+            )}
+          >
+            <SelectValue placeholder="Select asset" />
+          </SelectTrigger>
+          <SelectContent
+            className={cn(
+              "max-w-full rounded-t-none rounded-b-2xl border-none bg-white shadow-none outline-none ring-none"
+            )}
+            sideOffset={-4}
+          >
+            {assets.map((asset) => (
+              <SelectItem key={asset.id} value={asset.id}>
+                <div className="flex flex-row items-center gap-2">
+                  <div className="size-[14px]">{getTokenImage(asset.id)}</div>
+                  {asset.symbol}
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </div>
+  );
+};
+
+export const StrategyWithdrawComponent = ({
+  assets,
+  strategy,
+  currentValue,
+  setCurrentValue,
+  isActive,
+  selectedAsset,
+  setSelectedAsset,
+  setIsActive,
+  prices,
+}: {
+  assets: Asset[];
+  strategy: {
+    name: string;
+    availableAmount: number;
+    availableAmountSymbol: string;
+    amountWithdraw: number;
+  };
+  currentValue: number;
+  setCurrentValue: (value: number) => void;
+  isActive: boolean;
+  setIsActive: (isActive: boolean) => void;
+  selectedAsset: Asset;
+  setSelectedAsset: (value: Asset) => void;
+  prices: Record<string, number>;
+}) => {
+  const assetValue = useMemo(() => {
+    if (!selectedAsset) return 0;
+    const price = prices?.[selectedAsset?.id || ""];
+    return Number(currentValue) * price || 0;
+  }, [currentValue, prices, selectedAsset]);
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+
+  const balance = useMemo(() => {
+    return assets.find((asset) => asset.id === selectedAsset?.id)?.balance;
+  }, [assets, selectedAsset]);
+
+  return (
+    <div className="flex w-full flex-col items-center justify-between gap-[14px] rounded-3xl bg-white p-[14px]">
+      <div className={cn("flex w-full flex-row items-center justify-start", balance && "justify-between")}>
+        <div className="flex flex-row items-center gap-2 font-bold text-neutral-400 text-xs">
+          {strategy.name}
+          <Switch checked={isActive} onCheckedChange={setIsActive} />
+        </div>
+        {balance && (
+          <div className="flex flex-row gap-1 font-normal text-neutral-400 text-xs">
+            <span className="font-bold text-neutral-800 text-xs">Available: </span>
+            {Big(strategy.availableAmount?.toString() || "0").toFixed(2)}{" "}
+            {strategy.availableAmountSymbol?.toString() || ""}
+          </div>
+        )}
+      </div>
+      <div className="flex w-full flex-row items-center justify-between rounded-xl border-1 border-zinc-100 bg-neutral-50 px-2 py-1.5">
+        <div className="flex flex-col">
+          <input
+            className={cn(
+              "w-full font-bold text-sm text-zinc-800 outline-none",
+              !isActive && "text-zinc-400 opacity-50"
+            )}
+            disabled={!isActive}
+            onChange={(e) => setCurrentValue(Number(e.target.value))}
+            value={isActive ? currentValue : 0}
+          />
+          <span className="font-normal text-[9px] text-stone-300">${isActive ? assetValue : 0}</span>
+        </div>
+        <Select
+          onOpenChange={setIsSelectOpen}
+          onValueChange={(value) => setSelectedAsset(assets.find((asset) => asset.id === value) as Asset)}
+          value={selectedAsset?.id}
+        >
+          <SelectTrigger
+            className={cn(
+              "rounded-[8px] border-none bg-white shadow-none outline-none ring-none",
+              isSelectOpen && "rounded-b-none",
+              !isActive && "text-zinc-400 opacity-50"
             )}
           >
             <SelectValue placeholder="Select asset" />
