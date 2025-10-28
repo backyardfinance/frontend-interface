@@ -205,7 +205,7 @@ export const StrategyApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async strategyControllerGetStrategies(userId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<StrategyInfoResponse>> {
+        async strategyControllerGetStrategies(userId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<StrategyInfoResponse>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerGetStrategies(userId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['StrategyApi.strategyControllerGetStrategies']?.[localVarOperationServerIndex]?.url;
@@ -257,7 +257,7 @@ export const StrategyApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        strategyControllerGetStrategies(requestParameters: StrategyApiStrategyControllerGetStrategiesRequest, options?: RawAxiosRequestConfig): AxiosPromise<StrategyInfoResponse> {
+        strategyControllerGetStrategies(requestParameters: StrategyApiStrategyControllerGetStrategiesRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<StrategyInfoResponse>> {
             return localVarFp.strategyControllerGetStrategies(requestParameters.userId, options).then((request) => request(axios, basePath));
         },
         /**

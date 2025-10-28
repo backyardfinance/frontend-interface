@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { VaultHistoryUserSlice } from './vault-history-user-slice';
 
 /**
  * 
@@ -49,6 +52,18 @@ export interface VaultHistoryInfoResponse {
      * @type {string}
      * @memberof VaultHistoryInfoResponse
      */
+    'publicKey': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VaultHistoryInfoResponse
+     */
     'recordedAt': string;
+    /**
+     * 
+     * @type {VaultHistoryUserSlice}
+     * @memberof VaultHistoryInfoResponse
+     */
+    'user': VaultHistoryUserSlice;
 }
 

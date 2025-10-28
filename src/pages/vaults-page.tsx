@@ -1,3 +1,4 @@
+import Big from "big.js";
 import { MinusIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
@@ -23,7 +24,7 @@ export default function VaultsPage() {
   const [slippage, setSlippage] = useState(0.1);
   const navigate = useNavigate();
   const topVaults = vaults?.slice(0, 3);
-
+  const [search, setSearch] = useState("");
   const headers = ["Vault", "Platform", "TVL", "APY"];
 
   const handleAdd = (e: React.MouseEvent<HTMLDivElement>, rowIndex: number, isAdded: boolean) => {
@@ -58,33 +59,37 @@ export default function VaultsPage() {
 
   const rows = useMemo(
     () => [
-      ...(vaults?.map((vault) => [
-        <div className="inline-flex flex-2 items-center justify-start gap-2" key={vault.id}>
-          <div className="relative flex items-center justify-center">
-            <div className="h-[27px] w-[27px] p-[3px]">{getTokenImage(vault.name)}</div>
-          </div>
-          <div className="inline-flex items-start justify-start gap-[0.67px]">
-            <div className="justify-start font-bold text-neutral-800 text-xs">{vault.name}</div>
-          </div>
-        </div>,
-        <div className="inline-flex w-full items-center justify-start gap-2.5" key={vault.id}>
-          <div className="inline-flex items-center justify-start gap-1">
-            <div className="size-4">{getPlatformImage(vault.platform)}</div>
-            <div className="justify-start font-normal text-neutral-800 text-xs">{vault.platform}</div>
-          </div>
-        </div>,
-        <div className="inline-flex flex-2 items-center justify-start gap-1.5" key={vault.id}>
-          <div className="justify-center text-center font-bold text-neutral-800 text-xs">{formatNumber(vault.tvl)}</div>
-        </div>,
-        <div className="inline-flex flex-2 items-center justify-start gap-0.5" key={vault.id}>
-          <div className="flex flex-row items-center justify-start gap-0.5 font-bold text-neutral-800 text-xs">
-            {vault.apy}%
-            <StarsIcon className="h-3.5 w-3.5" />
-          </div>
-        </div>,
-      ]) || []),
+      ...(vaults
+        ?.filter((vault) => vault.name.toLowerCase().includes(search.toLowerCase()))
+        ?.map((vault) => [
+          <div className="inline-flex flex-2 items-center justify-start gap-2" key={vault.id}>
+            <div className="relative flex items-center justify-center">
+              <div className="h-[27px] w-[27px] p-[3px]">{getTokenImage(vault.name)}</div>
+            </div>
+            <div className="inline-flex items-start justify-start gap-[0.67px]">
+              <div className="justify-start font-bold text-neutral-800 text-xs">{vault.name}</div>
+            </div>
+          </div>,
+          <div className="inline-flex w-full items-center justify-start gap-2.5" key={vault.id}>
+            <div className="inline-flex items-center justify-start gap-1">
+              <div className="size-4">{getPlatformImage(vault.platform)}</div>
+              <div className="justify-start font-normal text-neutral-800 text-xs">{vault.platform}</div>
+            </div>
+          </div>,
+          <div className="inline-flex flex-2 items-center justify-start gap-1.5" key={vault.id}>
+            <div className="justify-center text-center font-bold text-neutral-800 text-xs">
+              {formatNumber(vault.tvl)}
+            </div>
+          </div>,
+          <div className="inline-flex flex-2 items-center justify-start gap-0.5" key={vault.id}>
+            <div className="flex flex-row items-center justify-start gap-0.5 font-bold text-neutral-800 text-xs">
+              {Big(vault.apy).toFixed(2)}%
+              <StarsIcon className="h-3.5 w-3.5" />
+            </div>
+          </div>,
+        ]) || []),
     ],
-    [vaults]
+    [vaults, search]
   );
 
   if (!vaults) return <div>No vaults matching the filters</div>;
@@ -93,7 +98,12 @@ export default function VaultsPage() {
     <div className="flex select-none flex-row gap-4">
       <section className="flex-3">
         <TopVaults currentStrategy={currentStrategy} onAdd={handleAddClick} vaults={topVaults} />
-        <Input leftIcon={<SearchIcon />} placeholder="Search for vault" />
+        <Input
+          leftIcon={<SearchIcon />}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search for vault"
+          value={search}
+        />
         <Table
           action={(rowIndex: number) => {
             const isAdded = currentStrategy?.vaults.find((v) => v.id === vaults?.[rowIndex].id);

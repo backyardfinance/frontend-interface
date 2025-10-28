@@ -10,7 +10,7 @@ import {
 import { queryKeys } from "@/api/query-keys";
 import { useSolanaWallet } from "./useSolanaWallet";
 
-const mockData: VaultInfoResponse[] = [
+export const mockData: VaultInfoResponse[] = [
   {
     id: "1",
     name: "USDT",
@@ -48,14 +48,29 @@ const mockData: VaultInfoResponse[] = [
 
 type UseVaultsOptions = Omit<UseQueryOptions<VaultInfoResponse[], Error>, "queryKey" | "queryFn">;
 
+const fillDescriptions = (data: VaultInfoResponse[]): VaultInfoResponse[] => {
+  const descriptions = {
+    USDT: "This vault holds USDT, one of the most widely used stablecoins pegged 1:1 to the U.S. dollar. It offers deep liquidity and broad integration across exchanges and DeFi protocols.",
+    USDG: "The USDG Vault holds USDG, a synthetic or protocol-native stablecoin (depending on your platform) pegged to the U.S. dollar and often backed by a basket of crypto collateral.",
+    USDC: "This vault contains USDC, a regulated stablecoin issued by Circle and backed by fully reserved U.S. dollar assets. Known for transparency and strong compliance.",
+    "Sentora PYUSD":
+      "This vault stores PYUSD, PayPal’s fully backed and regulated stablecoin. Built on Ethereum, it bridges traditional payment infrastructure with decentralized finance.",
+    "CASH Earn":
+      "Represents physical or off-chain cash reserves, held as part of the portfolio’s most liquid and risk-free assets. Used to manage liquidity, hedge volatility, and support operational needs.",
+  };
+  return data.map((vault) => ({
+    ...vault,
+    description: descriptions[vault.name as keyof typeof descriptions] || "",
+  }));
+};
+
 export const useVaults = (options?: UseVaultsOptions) => {
   return useQuery({
     queryKey: queryKeys.vaults.all,
     queryFn: async () => {
-      //TODO
-      // const { data } = await vaultApi.vaultControllerGetAllVaults();
-      // console.log("vaults", data);
-      return mockData;
+      const { data } = await vaultApi.vaultControllerGetAllVaults();
+      const filledData = fillDescriptions(data as unknown as VaultInfoResponse[]);
+      return filledData as unknown as VaultInfoResponse[]; // TODO: remove types
     },
     ...options,
   });
@@ -85,7 +100,7 @@ export const useVaultHistory = (vaultId: string, options?: UseVaultHistoryOption
   return useQuery({
     queryKey: queryKeys.vaults.vaultHistory(vaultId),
     queryFn: async () => {
-      const { data } = await vaultApi.vaultControllerGetVaultHistory({ vaultId });
+      const { data } = await vaultApi.vaultControllerGetVaultHistory({ vaultId, userId: "" });
       return data as unknown as VaultHistoryInfoResponse[]; // TODO: remove types
     },
     ...options,

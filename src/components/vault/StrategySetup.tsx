@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { VaultCard } from "@/components/vault/VaultCard";
 import { useQuote } from "@/hooks/useDeposit";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
-
+import { useTimer } from "@/hooks/useTimer";
 import { cn, displayAmount } from "@/utils";
 import type { Asset, Strategy } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
@@ -40,7 +40,6 @@ const getFees = (depositFee: number, routeFee: number) => [
 
 export const InputComponent = ({
   title,
-  balance,
   assets,
   currentValue,
   setCurrentValue,
@@ -49,7 +48,6 @@ export const InputComponent = ({
   prices,
 }: {
   title: string;
-  balance?: string;
   assets: Asset[];
   currentValue: bigint;
   setCurrentValue: (value: bigint) => void;
@@ -60,19 +58,22 @@ export const InputComponent = ({
   const assetValue = useMemo(() => {
     if (!selectedAsset) return 0;
     const price = prices?.[selectedAsset?.id || ""];
-    console.log("price", price, prices, selectedAsset);
     return Number(currentValue) * price || 0;
   }, [currentValue, prices, selectedAsset]);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
+
+  const balance = useMemo(() => {
+    return assets.find((asset) => asset.id === selectedAsset?.id)?.balance;
+  }, [assets, selectedAsset]);
 
   return (
     <div className="flex w-full flex-col items-center justify-between gap-[14px] rounded-3xl bg-white p-[14px]">
       <div className={cn("flex w-full flex-row items-center justify-start", balance && "justify-between")}>
         <span className="font-bold text-neutral-400 text-xs">{title}</span>
         {balance && (
-          <div className="flex flex-row font-normal text-neutral-400 text-xs">
-            <span className="font-bold text-neutral-800 text-xs">Balance</span>
-            {balance}
+          <div className="flex flex-row gap-1 font-normal text-neutral-400 text-xs">
+            <span className="font-bold text-neutral-800 text-xs">Balance: </span>
+            {balance} {selectedAsset?.symbol}
           </div>
         )}
       </div>
@@ -178,6 +179,8 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
     });
   };
 
+  const { seconds, minutes } = useTimer(12);
+
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border-1 border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
       <div className="flex flex-row items-start justify-between font-bold text-neutral-800 text-sm">
@@ -261,7 +264,7 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-2">
           <span className="font-bold text-neutral-700 text-xs">Route</span>
-          <span className="font-normal text-xs text-zinc-400">12:12</span>
+          <span className="font-normal text-xs text-zinc-400">{`${minutes}:${seconds}`}</span>
           <button className="cursor-pointer rounded border-1 border-zinc-100 bg-white" type="button">
             <ReloadIcon />
           </button>

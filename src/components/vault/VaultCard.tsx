@@ -1,3 +1,4 @@
+import Big from "big.js";
 import { MinusIcon } from "lucide-react";
 import type { VaultInfoResponse } from "@/api";
 import { getPlatformImage } from "@/assets/platforms";
@@ -35,7 +36,7 @@ export const VaultCard = ({
             <span className="justify-start font-normal text-neutral-800 text-xs">{vault.platform}</span>
           </div>
           <div className="flex flex-row items-center justify-between gap-[2px] rounded-2xl bg-[#FBFBFB] p-[4px] font-bold text-neutral-500 text-xs">
-            {vault.apy}%<span className="font-bold text-stone-300 text-xs">APY</span>
+            {Big(vault.apy).toFixed(2)}%<span className="font-bold text-stone-300 text-xs">APY</span>
             <StarsIcon className="ml-1 h-3 w-3" />
           </div>
         </div>

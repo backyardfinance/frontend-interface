@@ -1,3 +1,4 @@
+import Big from "big.js";
 import { MinusIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 import type { VaultInfoResponse } from "@/api";
@@ -69,7 +70,7 @@ export const TopVaults: React.FC<Props> = ({ vaults, onAdd, currentStrategy }) =
               <div className="flex flex-1 flex-row items-center justify-center">
                 <div className="flex flex-col items-start justify-between">
                   <div className="flex flex-row items-center justify-start font-bold text-base text-neutral-800">
-                    {vault.apy}%
+                    {Big(vault.apy).toFixed(2)}%
                     <StarsIcon className="ml-2 h-3.5 w-3.5" />
                   </div>
                   <div className="w-14 justify-start font-normal text-xs text-zinc-500 uppercase">APY</div>

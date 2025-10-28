@@ -49,6 +49,12 @@ export interface VaultInfoResponse {
      * @type {string}
      * @memberof VaultInfoResponse
      */
+    'publicKey': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VaultInfoResponse
+     */
     'id': string;
     /**
      * 

@@ -1,6 +1,7 @@
 import EURCIcon from "./EURC.svg?react";
 import HYUSDIcon from "./HYUSD.svg?react";
 import USDCIcon from "./USDC.svg?react";
+import USDGIcon from "./USDG.svg?react";
 import USDSIcon from "./USDS.svg?react";
 import USDTIcon from "./USDT.svg?react";
 
@@ -16,5 +17,7 @@ export const getTokenImage = (name: string) => {
       return <USDSIcon className="h-full w-full" />;
     case "USDT":
       return <USDTIcon className="h-full w-full" />;
+    case "USDG":
+      return <USDGIcon className="h-full w-full" />;
   }
 };

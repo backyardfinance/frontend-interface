@@ -52,6 +52,12 @@ export interface VaultInfoStrategyResponse {
      * @type {string}
      * @memberof VaultInfoStrategyResponse
      */
+    'publicKey': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VaultInfoStrategyResponse
+     */
     'id': string;
     /**
      * 
@@ -71,5 +77,17 @@ export interface VaultInfoStrategyResponse {
      * @memberof VaultInfoStrategyResponse
      */
     'strategies': Array<UserStrategyInfoResponse>;
+    /**
+     * 
+     * @type {number}
+     * @memberof VaultInfoStrategyResponse
+     */
+    'myPositionUsd': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof VaultInfoStrategyResponse
+     */
+    'myOwnershipFraction': number;
 }
 
