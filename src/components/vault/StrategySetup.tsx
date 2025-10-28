@@ -74,7 +74,7 @@ export const InputComponent = ({
         {balance && (
           <div className="flex flex-row gap-1 font-normal text-neutral-400 text-xs">
             <span className="font-bold text-neutral-800 text-xs">Balance: </span>
-            {balance} {selectedAsset?.symbol}
+            {Big(balance?.toString() || "0").toFixed(2)} {selectedAsset?.symbol}
           </div>
         )}
       </div>
@@ -125,7 +125,7 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
   const [isRouteOpen, setIsRouteOpen] = useState(false);
   const { allocation, depositAmount, vaults } = currentStrategy;
   const totalAllocation = allocation?.reduce((acc, curr) => acc + curr, 0);
-  const fees = getFees(0.0, 0.0);
+  const fees = getFees(0.0, 0.05);
 
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [prices] = useState<Record<string, number>>({

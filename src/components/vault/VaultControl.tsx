@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
+import { useTimer } from "@/hooks/useTimer";
 import { cn } from "@/utils";
 import type { Asset } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
@@ -33,7 +34,7 @@ export const VaultControl = () => {
 
   const [isRouteOpen, setIsRouteOpen] = useState(false);
 
-  const fees = getFees(0.0, 0.0);
+  const fees = getFees(0.0, 0.05);
 
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [prices] = useState<Record<string, number>>({
@@ -63,6 +64,8 @@ export const VaultControl = () => {
   ];
 
   const isMultipleTokens = withdrawTokens.length > 1;
+
+  const { seconds, minutes } = useTimer(10);
 
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border-1 border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
@@ -119,7 +122,7 @@ export const VaultControl = () => {
       <div className="flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-2">
           <span className="font-bold text-neutral-700 text-xs">Route</span>
-          <span className="font-normal text-xs text-zinc-400">12:12</span>
+          <span className="font-normal text-xs text-zinc-400">{`${minutes}:${seconds}`}</span>
           <button className="cursor-pointer rounded border-1 border-zinc-100 bg-white" type="button">
             <ReloadIcon />
           </button>

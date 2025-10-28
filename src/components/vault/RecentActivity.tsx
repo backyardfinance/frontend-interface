@@ -30,34 +30,34 @@ export const RecentActivity = () => {
       strategy: "STR-02",
       status: "Deposited",
     },
-    {
-      id: "4",
-      token: "USDT",
-      amount: "1000",
-      strategy: "STR-02",
-      status: "Deposited",
-    },
-    {
-      id: "5",
-      token: "USDT",
-      amount: "1000",
-      strategy: "STR-02",
-      status: "Withdrawn",
-    },
-    {
-      id: "6",
-      token: "USDT",
-      amount: "1000",
-      strategy: "STR-02",
-      status: "Deposited",
-    },
-    {
-      id: "7",
-      token: "USDT",
-      amount: "1000",
-      strategy: "STR-02",
-      status: "Deposited",
-    },
+    // {
+    //   id: "4",
+    //   token: "USDT",
+    //   amount: "1000",
+    //   strategy: "STR-02",
+    //   status: "Deposited",
+    // },
+    // {
+    //   id: "5",
+    //   token: "USDT",
+    //   amount: "1000",
+    //   strategy: "STR-02",
+    //   status: "Withdrawn",
+    // },
+    // {
+    //   id: "6",
+    //   token: "USDT",
+    //   amount: "1000",
+    //   strategy: "STR-02",
+    //   status: "Deposited",
+    // },
+    // {
+    //   id: "7",
+    //   token: "USDT",
+    //   amount: "1000",
+    //   strategy: "STR-02",
+    //   status: "Deposited",
+    // },
   ];
 
   const table = {
@@ -102,7 +102,11 @@ export const RecentActivity = () => {
               );
             }}
             headers={table.headers}
-            pagination={{ currentPage: page, totalPages: Math.ceil(activity.length / 5), onPageChange: setPage }}
+            pagination={{
+              currentPage: page,
+              totalPages: Math.ceil(activity.length / 5),
+              onPageChange: setPage,
+            }}
             rowClassName="bg-white"
             rows={table.rows.slice((page - 1) * 5, page * 5)}
           />

@@ -135,7 +135,7 @@ export const StrategyControl = ({
 
   const [isRouteOpen, setIsRouteOpen] = useState(false);
   const totalAllocation = allocations?.reduce((acc, curr) => acc + curr, 0);
-  const fees = getFees(0.01, 0.05);
+  const fees = getFees(0.0, 0.05);
 
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [prices] = useState<Record<string, number>>({
