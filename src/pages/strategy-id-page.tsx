@@ -1,5 +1,6 @@
 import { useParams } from "react-router";
-import { getTokenImage } from "@/assets/tokens";
+import BigLogo from "@/assets/images/big-logo.png";
+
 import { InfoCircleIcon } from "@/components/icons/info-circle";
 import { StarsIcon } from "@/components/icons/stars";
 import { Chart } from "@/components/strategy/Chart";
@@ -35,8 +36,48 @@ export default function DashboardStrategyIdPage() {
   if (!strategyId || !strategy) return <div>No found</div>;
 
   const uniquePlatforms = new Set(strategy.vaults.map((v) => v.platform)).size;
-  const uniqueTokens = new Set(strategy.vaults.map((v) => v.name)).size;
-  console.log(strategy);
+  const uniqueTokens = new Set(strategy.vaults.map((v) => v.name)).size; // TODO: USDC Prime should be USDC
+  const recentActivity =
+    strategy.strategyId === "STR-01"
+      ? [
+          {
+            id: "1",
+            token: "USDC",
+            amount: "200",
+            strategy: "STR-02",
+            status: "Withdrawing",
+          },
+          {
+            id: "2",
+            token: "USDG",
+            amount: "100",
+            strategy: "STR-02",
+            status: "Withdrawn",
+          },
+        ]
+      : [
+          {
+            id: "1",
+            token: "USDC",
+            amount: "100",
+            strategy: "STR-02",
+            status: "Withdrawing",
+          },
+          {
+            id: "2",
+            token: "CASH Earn",
+            amount: "200",
+            strategy: "STR-02",
+            status: "Withdrawn",
+          },
+          {
+            id: "3",
+            token: "USDC Prime",
+            amount: "700",
+            strategy: "STR-02",
+            status: "Deposited",
+          },
+        ];
   const data = [
     {
       title: "My Position",
@@ -80,9 +121,8 @@ export default function DashboardStrategyIdPage() {
       <div className="flex flex-1 flex-col gap-3">
         <div className="flex h-36 gap-4">
           <div className="relative flex h-full w-48 shrink-0 flex-col justify-center gap-5 rounded-3xl bg-[#FAFAFA] p-3">
-            <div className="-translate-x-1/2 -top-12 absolute left-1/2 h-24 w-24">
-              {getTokenImage("USDC")}
-              {/* {getTokenImage(strategy.strategy)} */}
+            <div className="-translate-x-1/2 -top-[0px] absolute left-1/2 h-24 w-24">
+              <img alt="Big Logo" src={BigLogo} />
             </div>
             <p className="text-center font-bold text-neutral-800 text-xl">{strategy.strategyId}</p>
           </div>
@@ -131,7 +171,7 @@ export default function DashboardStrategyIdPage() {
           vaults={[]}
         />
         {/* <div className="h-[485px] rounded-[23px] border-2 border-[#F6F6F6] border-solid bg-[#FAFAFA] px-4 pt-4 pb-6" /> */}
-        <RecentActivity />
+        <RecentActivity activity={recentActivity} />
       </div>
     </section>
   );

@@ -44,7 +44,10 @@ export default function VaultIdPage() {
 
   if (!vaultId || !vault) return <div>No found</div>;
 
-  const myPosition = (vaultWithUser?.strategies ?? []).reduce((acc, strategy) => acc + strategy.depositedAmount, 0);
+  const myPosition = (vaultWithUser?.strategies ?? []).reduce(
+    (acc, strategy) => acc + strategy.depositedAmount + strategy.interestEarned,
+    0
+  );
 
   const data = [
     {

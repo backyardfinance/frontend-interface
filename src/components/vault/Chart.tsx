@@ -7,6 +7,7 @@ import { Table } from "@/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toStrategyRoute } from "@/config/routes";
 import { useVaultByIdWithUser, useVaultHistory } from "@/hooks/useVaults";
+import { formatWithPrecision } from "@/utils";
 import { ArrowIcon } from "../icons/arrow";
 import { Button } from "../ui/button";
 
@@ -52,7 +53,9 @@ export const Chart: React.FC<Props> = ({ vault }) => {
       </div>,
       `${strategy.vaultWeight}%`,
       <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>
-        <div className="justify-start font-bold text-neutral-800 text-sm">{strategy.interestEarned}</div>
+        <div className="justify-start font-bold text-neutral-800 text-sm">
+          {formatWithPrecision(strategy.interestEarned)}
+        </div>
         <div className="size-3">{getTokenImage(vault.name)}</div>
       </div>,
       <Button

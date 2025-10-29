@@ -2,63 +2,13 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { getTokenImage } from "@/assets/tokens";
 import { toVaultRoute } from "@/config/routes";
+import { formatWithPrecision } from "@/utils";
 import { ArrowIcon } from "../icons/arrow";
 import { Table } from "../table";
 import { Badge } from "../ui/badge";
 
-export const RecentActivity = () => {
+export const RecentActivity = ({ activity }: { activity: any[] }) => {
   const [page, setPage] = useState(1);
-  const activity = [
-    {
-      id: "1",
-      token: "USDT",
-      amount: "1000",
-      strategy: "STR-02",
-      status: "Withdrawing",
-    },
-    {
-      id: "2",
-      token: "USDC",
-      amount: "1000",
-      strategy: "STR-02",
-      status: "Withdrawn",
-    },
-    {
-      id: "3",
-      token: "USDT",
-      amount: "1000",
-      strategy: "STR-02",
-      status: "Deposited",
-    },
-    // {
-    //   id: "4",
-    //   token: "USDT",
-    //   amount: "1000",
-    //   strategy: "STR-02",
-    //   status: "Deposited",
-    // },
-    // {
-    //   id: "5",
-    //   token: "USDT",
-    //   amount: "1000",
-    //   strategy: "STR-02",
-    //   status: "Withdrawn",
-    // },
-    // {
-    //   id: "6",
-    //   token: "USDT",
-    //   amount: "1000",
-    //   strategy: "STR-02",
-    //   status: "Deposited",
-    // },
-    // {
-    //   id: "7",
-    //   token: "USDT",
-    //   amount: "1000",
-    //   strategy: "STR-02",
-    //   status: "Deposited",
-    // },
-  ];
 
   const table = {
     headers: ["token", "amount", "strategy", "status"],
@@ -67,7 +17,7 @@ export const RecentActivity = () => {
         <span className="size-3">{getTokenImage(item.token)}</span>
         {item.token}
       </span>,
-      item.amount,
+      formatWithPrecision(item.amount),
       <Badge key={item.id} variant="secondary">
         {item.strategy}
       </Badge>,

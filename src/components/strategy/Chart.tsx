@@ -5,6 +5,7 @@ import { getTokenImage } from "@/assets/tokens";
 import { ChartArea } from "@/components/charts/ChartArea";
 import { Table } from "@/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatWithPrecision } from "@/utils";
 import { buildChartDataByKey, calculateWeights } from "@/utils/calculations";
 import { ChartPieDonut } from "../charts/ChartPieDonut";
 
@@ -14,7 +15,6 @@ type MetricType = (typeof positionMetrics)[number];
 type Props = {
   strategy: StrategyInfoResponse;
 };
-
 export const Chart: React.FC<Props> = ({ strategy }) => {
   const [selectedMetric, setSelectedMetric] = useState<MetricType>("performance");
 
@@ -38,9 +38,11 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
         <div className="size-3">{getPlatformImage(vault.platform)}</div> {vault.platform}
       </div>,
       `${vault.apy}%`,
-      calculateWeights(strategy.strategyDepositedAmount, vault.depositedAmount).weightPercent.toFixed(0),
+      <>{calculateWeights(strategy.strategyDepositedAmount, vault.depositedAmount).weightPercent.toFixed(0)}%</>,
       <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
-        <div className="justify-start font-bold text-neutral-800 text-sm">{vault.depositedAmount}</div>
+        <div className="justify-start font-bold text-neutral-800 text-sm">
+          {formatWithPrecision(vault.depositedAmount)}
+        </div>
       </div>,
     ]),
   };
@@ -86,15 +88,25 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
               color: "var(--chart-1)",
             },
           }}
-          chartData={[
-            { date: "2024-04-01", [selectedMetric]: 222 },
-            { date: "2024-04-02", [selectedMetric]: 97 },
-            { date: "2024-04-03", [selectedMetric]: 167 },
-            { date: "2024-04-04", [selectedMetric]: 13 },
-            { date: "2024-04-05", [selectedMetric]: 322 },
-          ]}
+          chartData={
+            selectedMetric === "apy"
+              ? [
+                  { date: "2025-11-25", [selectedMetric]: 0 },
+                  { date: "2025-11-26", [selectedMetric]: 0 },
+                  { date: "2025-11-27", [selectedMetric]: 0 },
+                  { date: "2025-11-28", [selectedMetric]: 0 },
+                  { date: "2025-11-29", [selectedMetric]: 9.5 },
+                ]
+              : [
+                  { date: "2025-11-25", [selectedMetric]: 0 },
+                  { date: "2025-11-26", [selectedMetric]: 0 },
+                  { date: "2025-11-27", [selectedMetric]: 0 },
+                  { date: "2025-11-28", [selectedMetric]: 0 },
+                  { date: "2025-11-29", [selectedMetric]: 1000 },
+                ]
+          }
           title={selectedMetric}
-          value="6.04%"
+          value={selectedMetric === "apy" ? "9.5%" : "1k"}
           valueTooltip="APY"
         />
       )}

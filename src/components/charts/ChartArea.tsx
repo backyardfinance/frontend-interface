@@ -72,7 +72,7 @@ export const ChartArea: React.FC<Props> = ({ title, value, valueTooltip, chartCo
       </CardHeader>
       <CardContent className="pt-3">
         <ChartContainer className="h-[220px] w-full" config={chartConfig}>
-          <AreaChart data={chartData} margin={{ left: -5 }}>
+          <AreaChart data={chartData} margin={{ left: -4 }}>
             <defs>
               {dataKeys.map((key) => (
                 <linearGradient id={`fill${key}`} key={key} x1="0" x2="0" y1="0" y2="1">

@@ -32,6 +32,10 @@ export const shortFormIntegerFormatter = Intl.NumberFormat("en-US", {
   notation: "compact",
 });
 
+export const formatWithPrecision = (number: number, precision = 2): string => {
+  return Big(number).toFixed(precision);
+};
+
 export const formatUsdAmount = (value: number): string => {
   try {
     let maximumFractionDigits = 2;

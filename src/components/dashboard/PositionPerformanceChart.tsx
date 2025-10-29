@@ -1,6 +1,7 @@
 import { ChartArea } from "../charts/ChartArea";
 
 export const PositionPerformanceChart = () => {
+  //fix height
   return (
     <ChartArea
       chartConfig={{
@@ -10,17 +11,17 @@ export const PositionPerformanceChart = () => {
         },
       }}
       chartData={[
-        { date: "2024-04-01", position: 50 },
-        { date: "2024-04-02", position: 500 },
+        { date: "2024-04-01", position: 1000 },
+        { date: "2024-04-02", position: 1000 },
         { date: "2024-04-03", position: 1000 },
-        { date: "2024-04-04", position: 1500 },
-        { date: "2024-04-05", position: 1000 },
-        { date: "2024-04-06", position: 1200 },
-        { date: "2024-04-07", position: 200 },
-        { date: "2024-04-08", position: 333 },
+        { date: "2024-04-04", position: 1004 },
+        { date: "2024-04-05", position: 2000 },
+        { date: "2024-04-06", position: 2000 },
+        { date: "2024-04-07", position: 2000 },
+        { date: "2024-04-08", position: 2000 },
       ]}
       title="Position Performance"
-      value="10.46$"
+      value="2004$"
       valueTooltip="“Positions” indicator consists of the sum of all deposits and profits. “YARD reward” is calculated based on the projected FDV."
     />
   );

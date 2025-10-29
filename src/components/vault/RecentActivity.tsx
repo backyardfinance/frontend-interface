@@ -6,6 +6,8 @@ import { ArrowIcon } from "../icons/arrow";
 import { Table } from "../table";
 import { Badge } from "../ui/badge";
 
+const isSecondStrategyActive = localStorage.getItem("isSecondStrategyActive") || false;
+
 export const RecentActivity = () => {
   const [page, setPage] = useState(1);
   const activity = [
@@ -16,13 +18,17 @@ export const RecentActivity = () => {
       strategy: "STR-01",
       status: "Deposited",
     },
-    {
-      id: "2",
-      token: "USDC",
-      amount: "100",
-      strategy: "STR-02",
-      status: "Deposited",
-    },
+    ...(isSecondStrategyActive === "true"
+      ? [
+          {
+            id: "2",
+            token: "USDC",
+            amount: "100",
+            strategy: "STR-02",
+            status: "Deposited",
+          },
+        ]
+      : []),
     // {
     //   id: "3",
     //   token: "USDT",

@@ -102,7 +102,7 @@ export const mockStrategies: Record<string, StrategyInfoResponse> = {
   "STR-01": {
     strategyName: "STR-01",
     strategyId: "STR-01",
-    strategyDepositedAmount: 200,
+    strategyDepositedAmount: 1004,
     strategyApy: 10,
     strategyTvl: 199.99,
     vaults: [
@@ -113,15 +113,15 @@ export const mockStrategies: Record<string, StrategyInfoResponse> = {
         platform: "Jupiter",
         tvl: 373984669.0167509,
         apy: 7.36,
-        depositedAmount: 100,
+        depositedAmount: 200,
       },
       {
-        token: "USDC",
+        token: "USDG",
         id: "1c962265-4854-433a-8c38-9ed6497e9b90",
-        name: "USDC Prime",
-        platform: "Kamino",
-        tvl: 313664485.22565323,
-        apy: 8.66,
+        name: "USDG",
+        platform: "Jupiter",
+        tvl: 36667876.99236106,
+        apy: 9.95,
         depositedAmount: 100,
       },
     ],
@@ -166,6 +166,8 @@ export const mockStrategies: Record<string, StrategyInfoResponse> = {
   }),
 };
 
+//str 1 kamin0 usdc -> usdg jupiter weight 80%
+
 export const vaultInfo: Record<string, VaultInfoStrategyResponse> = {
   "b74ec1c2-9865-4a78-a44a-28cc2074e4f9": {
     apy: 7.36,
@@ -182,7 +184,7 @@ export const vaultInfo: Record<string, VaultInfoStrategyResponse> = {
         strategyName: "STR-01",
         depositedAmount: 200,
         interestEarned: 2.94,
-        vaultWeight: 66.66,
+        vaultWeight: isSecondStrategyActive === "true" ? 66.66 : 100,
       },
       ...(isSecondStrategyActive === "true"
         ? [
