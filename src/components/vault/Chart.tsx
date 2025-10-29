@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 import type { VaultInfoResponse } from "@/api";
 import { getTokenImage } from "@/assets/tokens";
 import { ChartArea } from "@/components/charts/ChartArea";
 import { Table } from "@/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toStrategyRoute } from "@/config/routes";
 import { useVaultByIdWithUser, useVaultHistory } from "@/hooks/useVaults";
 import { ArrowIcon } from "../icons/arrow";
 import { Button } from "../ui/button";
@@ -23,36 +25,13 @@ type Props = {
   vault: VaultInfoResponse;
 };
 
-export const mockStrategies = [
-  {
-    id: "1",
-    name: "STR-01",
-    depositedAmount: 200,
-    apy: 10,
-    vaultWeight: 66.6,
-    interestEarned: 2.94,
-    strategyId: "STR-01",
-    usdValue: 199.99,
-  },
-  {
-    id: "2",
-    name: "STR-02",
-    depositedAmount: 100,
-    apy: 10,
-    vaultWeight: 33.3,
-    interestEarned: 0,
-    strategyId: "STR-02",
-    usdValue: 99.99,
-  },
-];
-
 export const Chart: React.FC<Props> = ({ vault }) => {
   const { data: vaultHistory } = useVaultHistory(vault.id);
   const { data: vaultWithUser } = useVaultByIdWithUser(vault.id);
 
   const [selectedCategory, setSelectedCategory] = useState<ChartCategory>("overview");
   const [selectedMetric, setSelectedMetric] = useState<MetricType>("apy");
-
+  const navigate = useNavigate();
   const handleCategoryChange = (val: string) => {
     const newCategory = val as ChartCategory;
     setSelectedCategory(newCategory);
@@ -61,14 +40,14 @@ export const Chart: React.FC<Props> = ({ vault }) => {
 
   const table = {
     headers: ["Deposited", "Vault weight", "Interest earned", "Parent Strategy"],
-    rows: mockStrategies.map((strategy) => [
+    rows: vaultWithUser?.strategies?.map((strategy) => [
       <div className="flex flex-col items-start justify-between" key={strategy.strategyId}>
         <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>
           <div className="size-3">{getTokenImage(vault.name)}</div>
           <div className="justify-start font-bold text-neutral-800 text-sm">{strategy.depositedAmount}</div>
         </div>
         <div className="w-16 justify-start font-normal text-xs text-zinc-500 uppercase">
-          ${strategy.usdValue.toFixed(2)}
+          ${strategy.depositedAmount.toFixed(2)}
         </div>
       </div>,
       `${strategy.vaultWeight}%`,
@@ -76,7 +55,12 @@ export const Chart: React.FC<Props> = ({ vault }) => {
         <div className="justify-start font-bold text-neutral-800 text-sm">{strategy.interestEarned}</div>
         <div className="size-3">{getTokenImage(vault.name)}</div>
       </div>,
-      <Button key={strategy.strategyId} size="sm" variant="white">
+      <Button
+        key={strategy.strategyId}
+        onClick={() => navigate(toStrategyRoute(strategy.strategyId))}
+        size="sm"
+        variant="white"
+      >
         <span className="overflow-ellipsis">{strategy.strategyId.slice(0, 10)}...</span>
         <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
           <ArrowIcon className="size-2 rotate-45" />
@@ -159,6 +143,7 @@ export const Chart: React.FC<Props> = ({ vault }) => {
 
     switch (selectedMetric) {
       case "apy":
+        return vault.apy;
       case "price":
         return values.reduce((a, b) => a + b, 0) / values.length;
       case "tvl":
@@ -214,7 +199,7 @@ export const Chart: React.FC<Props> = ({ vault }) => {
         />
       </div>
       <div>
-        <Table headers={table.headers} rows={table.rows} />
+        <Table headers={table.headers} rows={table?.rows ?? []} />
       </div>
     </>
   );

@@ -5,6 +5,7 @@ import { StarsIcon } from "@/components/icons/stars";
 import { Chart } from "@/components/strategy/Chart";
 import { RecentActivity } from "@/components/strategy/RecentActivity";
 import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
+import { StrategyControl } from "@/components/vault/StrategyControl";
 import { useStrategyById } from "@/hooks/useStrategy";
 import { formatMonetaryAmount } from "@/utils";
 
@@ -35,7 +36,7 @@ export default function DashboardStrategyIdPage() {
 
   const uniquePlatforms = new Set(strategy.vaults.map((v) => v.platform)).size;
   const uniqueTokens = new Set(strategy.vaults.map((v) => v.name)).size;
-
+  console.log(strategy);
   const data = [
     {
       title: "My Position",
@@ -112,8 +113,24 @@ export default function DashboardStrategyIdPage() {
         </div>
       </div>
       <div className="flex w-[396px] flex-col gap-6">
-        {/* //TODO: add deposit and withdraw */}
-        <div className="h-[485px] rounded-[23px] border-2 border-[#F6F6F6] border-solid bg-[#FAFAFA] px-4 pt-4 pb-6" />
+        <StrategyControl
+          allocations={strategy.vaults.map((v) => v.depositedAmount)}
+          currentStrategy={{
+            id: strategy.strategyId,
+            vaults: [],
+            depositAmount: BigInt(strategy.strategyDepositedAmount),
+            allocation: strategy.vaults.map((v) => v.depositedAmount),
+          }}
+          depositAmount={BigInt(strategy.strategyDepositedAmount)}
+          isAllocationShown={false}
+          setAllocation={() => {}}
+          setCurrentStrategy={() => {}}
+          setDepositAmount={() => {}}
+          setSlippage={() => {}}
+          slippage={0}
+          vaults={[]}
+        />
+        {/* <div className="h-[485px] rounded-[23px] border-2 border-[#F6F6F6] border-solid bg-[#FAFAFA] px-4 pt-4 pb-6" /> */}
         <RecentActivity />
       </div>
     </section>

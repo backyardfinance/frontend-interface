@@ -34,6 +34,7 @@ export interface VaultInfoResponse {
   platform: string;
   token: string;
   description: string;
+  publicKey?: string;
 }
 
 export interface StrategyInfoResponse {

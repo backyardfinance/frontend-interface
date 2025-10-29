@@ -1,9 +1,12 @@
+import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
+import Big from "big.js";
 import { useMemo, useState } from "react";
 import type { VaultInfoResponse } from "@/api";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
 import { VaultCard } from "@/components/vault/VaultCard";
-import { cn } from "@/utils";
+import { useSolanaWallet } from "@/hooks/useSolanaWallet";
+import { cn, displayAmount } from "@/utils";
 import type { Asset, Strategy } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { ReloadIcon } from "../icons/reload";
@@ -128,15 +131,14 @@ export const StrategyControl = ({
   setCurrentStrategy,
   isAllocationShown = true,
   setDepositAmount,
-  headerTextShown = false,
   currentStrategy,
 }: StrategySetupProps) => {
-  const [currentAction, setCurrentAction] = useState<Action>("Withdraw");
+  const [currentAction, setCurrentAction] = useState<Action>("Deposit");
 
   const [isRouteOpen, setIsRouteOpen] = useState(false);
   const totalAllocation = allocations?.reduce((acc, curr) => acc + curr, 0);
   const fees = getFees(0.0, 0.05);
-
+  const { address: walletAddress, sendTransaction } = useSolanaWallet();
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [prices] = useState<Record<string, number>>({
     USDC: 1,
@@ -147,36 +149,26 @@ export const StrategyControl = ({
     { id: "USDC", symbol: "USDC", price: 1, balance: 10, icon: "" },
     { id: "USDS", symbol: "USDS", price: 1, balance: 11, icon: "" },
   ];
-  const withdrawTokens = [
-    { tokenId: "USDC", amount: 10 },
-    { tokenId: "USDS", amount: 11 },
-  ];
-
-  const userAssetsMap = userAssets.reduce(
-    (acc, curr) => {
-      acc[curr.id] = curr;
-      return acc;
-    },
-    {} as Record<string, Asset>
-  );
 
   const averageApy = useMemo(() => {
     return (allocations?.reduce((acc, curr) => acc + curr, 0) || vaults[0].apy) / (allocations?.length || 1);
   }, [allocations, vaults]);
 
+  const estAnnualReturn = useMemo(() => {
+    if (!vaults || !averageApy) return 0;
+    return Number(depositAmount) * (averageApy / 100);
+  }, [depositAmount, averageApy]);
+
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border-1 border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
       <div className="flex flex-row items-start justify-between font-bold text-neutral-800 text-sm">
-        {headerTextShown ? (
-          " Strategy setup"
-        ) : (
-          <Tabs onValueChange={(val) => setCurrentAction(val as Action)} value={currentAction} variant="gray">
-            <TabsList>
-              <TabsTrigger value="Deposit">Deposit</TabsTrigger>
-              <TabsTrigger value="Withdraw">Withdraw</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        )}
+        <Tabs onValueChange={(val) => setCurrentAction(val as Action)} value={currentAction} variant="gray">
+          <TabsList>
+            <TabsTrigger value="Deposit">Deposit</TabsTrigger>
+            <TabsTrigger value="Withdraw">Withdraw</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
         <Popover>
           <PopoverTrigger asChild>
             <div className="cursor-pointer rounded-xl border-1 border-zinc-100 bg-white p-1.5">
@@ -273,106 +265,63 @@ export const StrategyControl = ({
       {currentAction === "Withdraw" && <>Withdraw by strategy</>}
 
       <div className="h-px w-80 rounded-2xl bg-zinc-100" />
-      <StrategyFooter
-        assets={userAssetsMap}
-        averageApy={averageApy}
-        currentAction={currentAction}
-        depositAmount={depositAmount}
-        fees={fees}
-        prices={prices}
-        withdrawTokens={withdrawTokens}
-      />
-    </div>
-  );
-};
-
-export const StrategyFooter = ({
-  currentAction,
-  fees,
-  averageApy,
-  depositAmount,
-  withdrawTokens,
-  assets,
-  prices,
-}: {
-  currentAction: Action;
-  fees: { name: string; value: string }[];
-  averageApy: number;
-  depositAmount: bigint;
-  withdrawTokens: { tokenId: string; amount: number }[];
-  assets: Record<string, Asset>;
-  prices: Record<string, number>;
-}) => {
-  const isMultipleTokens = withdrawTokens.length > 1;
-
-  return (
-    <>
-      {currentAction === "Deposit" ? (
-        <div className="flex w-full flex-col justify-start gap-[3px]">
-          <div className="flex flex-row items-start justify-between">
-            <span className="font-bold text-neutral-700 text-xs">Total deposited</span>
-            <div className="flex flex-col items-end">
-              <span className="font-bold text-neutral-700 text-xs">1000.12 USDC</span>
-              <span className="font-normal text-[9px] text-stone-300">$1000</span>
-            </div>
-          </div>
-          <div className="flex flex-row items-start justify-between">
-            <span className="font-bold text-neutral-700 text-xs">Est. Annual return</span>
-            <div className="flex flex-col items-end">
-              <span className="font-bold text-emerald-500 text-xs">1000.12 USDC</span>
-              <span className="font-normal text-[9px] text-stone-300">$1000</span>
-            </div>
-          </div>
-          <div className="flex flex-row items-start justify-between">
-            <span className="font-bold text-neutral-700 text-xs">Avg APY</span>
-            <span className="font-bold text-neutral-700 text-xs">{averageApy}%</span>
+      <div className="flex w-full flex-col justify-start gap-[3px]">
+        <div className="flex flex-row items-start justify-between">
+          <span className="font-bold text-neutral-700 text-xs">Total deposited</span>
+          <div className="flex flex-col items-end">
+            <span className="font-bold text-neutral-700 text-xs">{depositAmount} USDC</span>
+            <span className="font-normal text-[9px] text-stone-300">
+              ${Big(depositAmount.toString()).mul(prices.USDC).toFixed(2)}
+            </span>
           </div>
         </div>
-      ) : (
-        <div className="flex w-full flex-col justify-start gap-[3px]">
-          {!isMultipleTokens ? (
-            <div className="flex flex-row items-start justify-between">
-              <span className="font-bold text-neutral-700 text-xs">Total to withdraw</span>
-              <div className="flex flex-col items-end">
-                <span className="font-bold text-neutral-700 text-xs">1000.12 USDC</span>
-                <span className="font-normal text-[9px] text-stone-300">$1000</span>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col items-start justify-between gap-2">
-              <span className="font-bold text-neutral-700 text-xs">Tokens to withdraw</span>
-              <div className="flex w-full flex-col items-start justify-between">
-                {withdrawTokens.map((token) => {
-                  const asset = assets[token.tokenId];
-                  return (
-                    <div className="flex w-full flex-row items-start justify-between" key={token.tokenId}>
-                      <div className="flex flex-row items-center gap-1">
-                        <div className="size-[10px]">{getTokenImage(asset.symbol)}</div>
-                        <div className="font-normal text-xs text-zinc-500">{asset.symbol}</div>
-                      </div>
-                      <div className="flex flex-col items-end">
-                        <span className="font-bold text-neutral-700 text-xs">
-                          {token.amount} {asset.symbol}
-                        </span>
-                        <span className="font-normal text-[9px] text-stone-300">
-                          ${token.amount * prices[token.tokenId]}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-          <div className="flex flex-row items-start justify-between">
-            <span className="font-bold text-neutral-700 text-xs">Cooldown period</span>
-            <div className="flex flex-col items-end font-bold text-neutral-700 text-xs">7D</div>
+        <div className="flex flex-row items-start justify-between">
+          <span className="font-bold text-neutral-700 text-xs">Est. Annual return</span>
+          <div className="flex flex-col items-end">
+            <span className="font-bold text-emerald-500 text-xs">{Big(estAnnualReturn).toFixed(2)} USDC</span>
+            <span className="font-normal text-[9px] text-stone-300">
+              ${Big(estAnnualReturn).mul(prices.USDC).toFixed(2)}
+            </span>
           </div>
         </div>
-      )}
+        <div className="flex flex-row items-start justify-between">
+          <span className="font-bold text-neutral-700 text-xs">Avg APY</span>
+          <span className="font-bold text-neutral-700 text-xs">
+            {displayAmount(averageApy?.toString() || "0", 0, 3)}%
+          </span>
+        </div>
+      </div>
       <div className="flex flex-col gap-[9px] rounded-2xl border-1 border-zinc-100 bg-white">
-        <Button size="xl" variant="tertiary">
-          Deposit {depositAmount} USDC
+        <Button
+          disabled={!depositAmount || allocations?.length === 0 || !vaults?.length || !selectedAsset || !walletAddress}
+          onClick={async () => {
+            if (!walletAddress) return;
+            // const data = await getQuote({
+            //   walletAddress: walletAddress,
+            //   deposits: [selectedAsset?.id || ""],
+            // });
+            const tx = new Transaction();
+            tx.add(
+              new TransactionInstruction({
+                keys: [],
+                programId: new PublicKey("9J4gV4TL8EifN1PJGtysh1wp4wgzYoprZ4mYo8kS2PSv"),
+                data: Buffer.from([]),
+              })
+            );
+            sendTransaction(tx);
+            // console.log(data);
+          }}
+          size="xl"
+          variant="tertiary"
+        >
+          {walletAddress ? (
+            <>
+              {" "}
+              Deposit {depositAmount} {selectedAsset?.symbol} {getTokenImage(selectedAsset?.id || "")}
+            </>
+          ) : (
+            "Connect wallet"
+          )}
         </Button>
         <div className="flex flex-col gap-[7px] px-[14px] pb-[14px] font-normal text-xs text-zinc-400">
           {fees.map((fee) => (
@@ -383,6 +332,6 @@ export const StrategyFooter = ({
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 };

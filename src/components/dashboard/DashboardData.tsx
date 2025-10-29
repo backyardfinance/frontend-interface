@@ -1,3 +1,4 @@
+import Big from "big.js";
 import React from "react";
 import { useUserStrategies } from "@/hooks/useStrategy";
 import { formatMonetaryAmount } from "@/utils";
@@ -27,7 +28,7 @@ export const DashboardData = () => {
     },
     {
       title: "Avg APY",
-      value: `${avgAPY}%`,
+      value: `${Big(avgAPY).toFixed(2)}%`,
       icon: <StarsIcon className="h-3.5 w-3.5" />,
     },
     {
@@ -60,7 +61,14 @@ export const DashboardData = () => {
         <img alt="pattern" className="pointer-events-none absolute top-0 left-0 size-full" src="/pattern.webp" />
         <Button
           className="z-10 flex min-w-[164px] shrink-0 items-center gap-1 self-center rounded-[13px] border border-[#F4F4F4] border-solid py-[9px] pr-2.5 pl-3 text-[#383838] text-[11px]"
-          onClick={() => console.log("CLAIM YARD")}
+          onClick={() => {
+            const isSecondStrategyActive = localStorage.getItem("isSecondStrategyActive");
+            if (isSecondStrategyActive === "true") {
+              localStorage.setItem("isSecondStrategyActive", "false");
+            } else {
+              localStorage.setItem("isSecondStrategyActive", "true");
+            }
+          }}
           variant="secondary"
         >
           Claim YARD

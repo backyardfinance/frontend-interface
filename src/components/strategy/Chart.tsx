@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { StrategyInfoResponse } from "@/api";
+import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { ChartArea } from "@/components/charts/ChartArea";
 import { Table } from "@/components/table";
@@ -33,7 +34,9 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
         <div className="size-3">{getTokenImage(vault.token)}</div>
         <div className="justify-start font-bold text-neutral-800 text-sm">{vault.token}</div>
       </div>,
-      vault.name,
+      <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
+        <div className="size-3">{getPlatformImage(vault.platform)}</div> {vault.platform}
+      </div>,
       `${vault.apy}%`,
       calculateWeights(strategy.strategyDepositedAmount, vault.depositedAmount).weightPercent.toFixed(0),
       <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
