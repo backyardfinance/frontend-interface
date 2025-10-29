@@ -47,7 +47,7 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
   });
 
   const userAssets: Asset[] = [
-    { id: "USDC", symbol: "USDC", price: 1, balance: 10, icon: "" },
+    { id: "USDC", symbol: "USDC", price: 0.99, balance: 302.94, icon: "" },
     { id: "USDS", symbol: "USDS", price: 1, balance: 11, icon: "" },
   ]; // TODO: get user assets from backend
 
@@ -61,12 +61,13 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
     },
     {} as Record<string, Asset>
   ); // TODO: get assets from backend
+
   const strategiesMock = {
     "STR-01": {
       id: "1",
       name: "STR-01",
       price: 1,
-      availableAmount: 12,
+      availableAmount: 202.94,
       availableAmountSymbol: "USDC",
       amountWithdraw: 0,
       selectedAsset: "USDC",
@@ -76,21 +77,11 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
       id: "2",
       name: "STR-02",
       price: 1,
-      availableAmount: 1234,
+      availableAmount: 100,
       availableAmountSymbol: "USDC",
       amountWithdraw: 0,
       selectedAsset: "USDC",
       isActive: true,
-    },
-    "STR-03": {
-      id: "3",
-      name: "STR-03",
-      price: 1,
-      availableAmount: 123,
-      availableAmountSymbol: "USDC",
-      amountWithdraw: 0,
-      isActive: true,
-      selectedAsset: "USDC",
     },
   };
 
