@@ -73,41 +73,40 @@ export const Chart: React.FC<Props> = ({ vault }) => {
   };
 
   const fillVaultHistory = () => {
-    const daysToGenerate = 30; // Generate data for the last 30 days
     const mockData = [];
 
     // Base values from the vault
     const baseApy = vault.apy || 5.0;
     const baseTvl = vault.tvl || 100000;
     const basePrice = vault.assetPrice || 1.0;
-    const baseYardReward = vaultWithUser?.myPositionUsd || 0;
 
-    for (let i = daysToGenerate - 1; i >= 0; i--) {
+    // Yard reward exact values: 0, 200, 202.94, 302.94
+    const yardRewardValues = [0, 200, 202.94, 302.94];
+    const daysApart = 10; // Days between each data point
+
+    for (let i = 0; i < yardRewardValues.length; i++) {
       const date = new Date();
-      date.setDate(date.getDate() - i);
+      date.setDate(date.getDate() - (yardRewardValues.length - 1 - i) * daysApart);
 
-      // Generate random variations
+      // Generate random variations for each point
       // APY: ±0.1
-      const apyVariation = (Math.random() - 0.1) * 0.9; // -0.1 to +0.1
+      const apyVariation = (Math.random() - 0.5) * 0.2; // -0.1 to +0.1
       const apy = baseApy + apyVariation;
 
       // TVL: ±1%
-      const tvlVariation = (Math.random() - 0.5) * 0.9; // -0.01 to +0.01 (1%)
+      const tvlVariation = (Math.random() - 0.5) * 0.02; // -0.01 to +0.01 (1%)
       const tvl = baseTvl * (1 + tvlVariation);
 
       // Price: ±0.5% for more stable variation
       const priceVariation = (Math.random() - 0.5) * 0.01;
       const assetPrice = basePrice * (1 + priceVariation);
 
-      // YardReward: gradually increasing
-      const yardReward = baseYardReward * (1 + ((daysToGenerate - i) / daysToGenerate) * 0.05);
-
       mockData.push({
         recordedAt: date.toISOString(),
         apy: Number(apy.toFixed(2)),
         tvl: Number(tvl.toFixed(2)),
         assetPrice: Number(assetPrice.toFixed(4)),
-        yardReward: Number(yardReward.toFixed(2)),
+        yardReward: yardRewardValues[i],
       });
     }
 

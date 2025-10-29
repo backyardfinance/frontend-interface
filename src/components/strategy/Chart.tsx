@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 import type { StrategyInfoResponse } from "@/api";
 import { getPlatformImage } from "@/assets/platforms";
 import { getTokenImage } from "@/assets/tokens";
 import { ChartArea } from "@/components/charts/ChartArea";
 import { Table } from "@/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toVaultRoute } from "@/config/routes";
 import { formatWithPrecision } from "@/utils";
 import { buildChartDataByKey, calculateWeights } from "@/utils/calculations";
 import { ChartPieDonut } from "../charts/ChartPieDonut";
@@ -26,6 +28,7 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
     return buildChartDataByKey(strategy.vaults, "token");
   }, [strategy.vaults]);
 
+  const navigate = useNavigate();
   const table = {
     headers: ["Markets Exposure", "Platform", "APY", "Strategy weight", "My Position"],
     rows: strategy.vaults.map((vault) => [
@@ -44,6 +47,10 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
         </div>
       </div>,
     ]),
+  };
+
+  const handleRowClick = (rowIndex: number) => {
+    navigate(toVaultRoute(strategy.vaults[rowIndex].id));
   };
 
   return (
@@ -110,7 +117,7 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
         />
       )}
       <div>
-        <Table headers={table.headers} rows={table.rows} />
+        <Table handleRowClick={handleRowClick} headers={table.headers} rows={table.rows} />
       </div>
     </>
   );

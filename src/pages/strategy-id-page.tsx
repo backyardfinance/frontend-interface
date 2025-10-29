@@ -66,7 +66,7 @@ export default function DashboardStrategyIdPage() {
           },
           {
             id: "2",
-            token: "CASH Earn",
+            token: "CASH",
             amount: "200",
             strategy: "STR-02",
             status: "Withdrawn",
