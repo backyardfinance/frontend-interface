@@ -36,7 +36,8 @@ export default function DashboardStrategyIdPage() {
   if (!strategyId || !strategy) return <div>No found</div>;
 
   const uniquePlatforms = new Set(strategy.vaults.map((v) => v.platform)).size;
-  const uniqueTokens = new Set(strategy.vaults.map((v) => v.name)).size; // TODO: USDC Prime should be USDC
+
+  const uniqueTokens = new Set(strategy.vaults.map((v) => v.token)).size;
   const recentActivity =
     strategy.strategyId === "STR-01"
       ? [
@@ -72,7 +73,7 @@ export default function DashboardStrategyIdPage() {
           },
           {
             id: "3",
-            token: "USDC Prime",
+            token: "USDC",
             amount: "700",
             strategy: "STR-02",
             status: "Deposited",

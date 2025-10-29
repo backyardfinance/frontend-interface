@@ -13,8 +13,6 @@ type Props = {
   className?: string;
 };
 
-//TODO: USDC Prime -> USDC
-
 export const ChartPieDonut: React.FC<Props> = ({ title, chartData, chartConfig, nameKey, className }) => {
   // Add fill property based on chartConfig and format data with colors
   const formattedChartData = useMemo(() => {

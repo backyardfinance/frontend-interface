@@ -26,7 +26,6 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
     return buildChartDataByKey(strategy.vaults, "token");
   }, [strategy.vaults]);
 
-  //TODO: token
   const table = {
     headers: ["Markets Exposure", "Platform", "APY", "Strategy weight", "My Position"],
     rows: strategy.vaults.map((vault) => [

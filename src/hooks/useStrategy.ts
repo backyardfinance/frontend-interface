@@ -153,7 +153,7 @@ export const mockStrategies: Record<string, StrategyInfoResponse> = {
           depositedAmount: 200,
         },
         {
-          token: "USDC Prime",
+          token: "USDC",
           id: "1c962265-4854-433a-8c38-9ed6497e9b90",
           name: "USDC Prime",
           platform: "Kamino",
