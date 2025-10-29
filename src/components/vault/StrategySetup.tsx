@@ -1,14 +1,14 @@
 import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { Big } from "big.js";
+import { Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { VaultCard } from "@/components/vault/VaultCard";
-
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useTimer } from "@/hooks/useTimer";
-import { cn, displayAmount, sleep } from "@/utils";
+import { cn, displayAmount } from "@/utils";
 import type { Asset, Strategy } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { InfoCircleIcon } from "../icons/info-circle";
@@ -224,6 +224,7 @@ export const StrategyWithdrawComponent = ({
 };
 
 export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurrentStrategy }: StrategySetupProps) => {
+  const [depositLoading, setDepositLoading] = useState(false);
   const [isRouteOpen, setIsRouteOpen] = useState(false);
   const { allocation, depositAmount, vaults } = currentStrategy;
   const totalAllocation = allocation?.reduce((acc, curr) => acc + curr, 0);
@@ -423,44 +424,59 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
 
       <div className="flex flex-col gap-[9px] rounded-2xl border-1 border-zinc-100 bg-white">
         <Button
-          disabled={!depositAmount || allocation?.length === 0 || !vaults?.length || !selectedAsset || !walletAddress}
+          disabled={
+            !depositAmount ||
+            allocation?.length === 0 ||
+            !vaults?.length ||
+            !selectedAsset ||
+            !walletAddress ||
+            depositLoading
+          }
           onClick={async () => {
             if (!walletAddress) return;
             // const data = await getQuote({
             //   walletAddress: walletAddress,
             //   deposits: [selectedAsset?.id || ""],
             // });
-            const tx = new Transaction();
-            tx.add(
-              new TransactionInstruction({
-                keys: [],
-                programId: new PublicKey("9J4gV4TL8EifN1PJGtysh1wp4wgzYoprZ4mYo8kS2PSv"),
-                data: Buffer.from([]),
-              })
-            );
-            sendTransaction(tx);
-            // console.log(data);
+            try {
+              setDepositLoading(true);
+              const tx = new Transaction();
+              tx.add(
+                new TransactionInstruction({
+                  keys: [],
+                  programId: new PublicKey("9J4gV4TL8EifN1PJGtysh1wp4wgzYoprZ4mYo8kS2PSv"),
+                  data: Buffer.from([]),
+                })
+              );
+              const hash = await sendTransaction(tx);
+              // console.log(data);
+              console.log("hash", hash);
 
-            await sleep(5000);
-            toast({
-              title: "Deposited",
-              description: depositAmount.toString(),
-              tokenIcon: getTokenImage(selectedAsset?.id || ""),
-              leftAction: {
-                label: "Check tx on scan",
-                onClick: () => console.log("Check tx on scan"),
-              },
-              rightAction: {
-                label: "Go to my  positions",
-                onClick: () => console.log("Go to my  positions"),
-              },
-            });
+              toast({
+                title: "Deposited",
+                description: depositAmount.toString(),
+                tokenIcon: getTokenImage(selectedAsset?.id || ""),
+                leftAction: {
+                  label: "Check tx on scan",
+                  onClick: () => console.log("Check tx on scan"),
+                },
+                rightAction: {
+                  label: "Go to my  positions",
+                  onClick: () => console.log("Go to my  positions"),
+                },
+              });
+            } catch (error) {
+              console.error("Error while deposit", error);
+            } finally {
+              setDepositLoading(false);
+            }
           }}
           size="xl"
           variant="tertiary"
         >
           {walletAddress ? (
             <>
+              {depositLoading && <Loader2 className="animate-spin" />}
               Deposit {depositAmount.toString()} {selectedAsset?.symbol} {getTokenImage(selectedAsset?.id || "")}
             </>
           ) : (
