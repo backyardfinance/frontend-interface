@@ -5,6 +5,7 @@ import { StarsIcon } from "@/components/icons/stars";
 import { Table } from "@/components/table";
 import { toStrategyRoute } from "@/config/routes";
 import { useUserStrategies } from "@/hooks/useStrategy";
+import { formatNumber } from "@/utils";
 
 export const DashboardTable = () => {
   const { data: strategies } = useUserStrategies();
@@ -31,7 +32,7 @@ export const DashboardTable = () => {
           className="flex items-center gap-0.5 font-bold text-neutral-800 text-xs"
           key={`${item.strategyId}-position`}
         >
-          {item.strategyDepositedAmount}
+          {formatNumber(item.strategyDepositedAmount)}
           <StarsIcon className="size-3.5" color="#2ED650" />
         </div>,
         <div className="flex items-center gap-0.5 font-bold text-neutral-800 text-xs" key={`${item.strategyId}-apy`}>
