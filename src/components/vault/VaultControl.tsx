@@ -222,22 +222,24 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
         </div>
       )}
 
-      <div className="flex flex-row items-center justify-between">
-        <div className="flex flex-row items-center gap-2">
-          <span className="font-bold text-neutral-700 text-xs">Route</span>
-          <span className="font-normal text-xs text-zinc-400">{`${minutes}:${seconds}`}</span>
-          <button className="cursor-pointer rounded border-1 border-zinc-100 bg-white" type="button">
-            <ReloadIcon />
+      {depositAmount > 0 && selectedAsset && (
+        <div className="flex flex-row items-center justify-between">
+          <div className="flex flex-row items-center gap-2">
+            <span className="font-bold text-neutral-700 text-xs">Route</span>
+            <span className="font-normal text-xs text-zinc-400">{`${minutes}:${seconds}`}</span>
+            <button className="cursor-pointer rounded border-1 border-zinc-100 bg-white" type="button">
+              <ReloadIcon />
+            </button>
+          </div>
+          <button
+            className="cursor-pointer rounded-full border-1 border-zinc-100 bg-white p-2"
+            onClick={() => setIsRouteOpen(!isRouteOpen)}
+            type="button"
+          >
+            <ChevronIcon />
           </button>
         </div>
-        <button
-          className="cursor-pointer rounded-full border-1 border-zinc-100 bg-white p-2"
-          onClick={() => setIsRouteOpen(!isRouteOpen)}
-          type="button"
-        >
-          <ChevronIcon />
-        </button>
-      </div>
+      )}
       {isRouteOpen && (
         <div className="mx-[20px] flex flex-col gap-[16px] rounded-3xl border-2 border-zinc-300/25 bg-white p-[13px]">
           <ol className="flex list-inside list-decimal flex-col gap-[7px] font-normal text-xs text-zinc-400">
@@ -303,7 +305,6 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
               <div className="flex w-full flex-col items-start justify-between">
                 {tokensToWithdraw.map((token) => {
                   const asset = assets[token.tokenId];
-                  console.log(assets, token.tokenId);
                   if (!asset) return null;
                   return (
                     <div className="flex w-full flex-row items-start justify-between" key={token.tokenId}>
@@ -332,7 +333,7 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
         </div>
       )}
       <div className="flex flex-col gap-[9px] rounded-2xl border-1 border-zinc-100 bg-white">
-        <Button size="xl" variant="tertiary">
+        <Button disabled={Number(depositAmount) === 0 || !selectedAsset} size="xl" variant="tertiary">
           {currentAction === "Deposit"
             ? `Deposit ${depositAmount > 0 ? depositAmount : ""} ${selectedAsset?.symbol ?? ""}`
             : `Withdraw ${depositAmount > 0 ? depositAmount : ""} ${selectedAsset?.symbol ?? ""}`}

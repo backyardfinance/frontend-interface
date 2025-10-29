@@ -23,6 +23,29 @@ type Props = {
   vault: VaultInfoResponse;
 };
 
+export const mockStrategies = [
+  {
+    id: "1",
+    name: "STR-01",
+    depositedAmount: 200,
+    apy: 10,
+    vaultWeight: 66.6,
+    interestEarned: 2.94,
+    strategyId: "STR-01",
+    usdValue: 199.99,
+  },
+  {
+    id: "2",
+    name: "STR-02",
+    depositedAmount: 100,
+    apy: 10,
+    vaultWeight: 33.3,
+    interestEarned: 0,
+    strategyId: "STR-02",
+    usdValue: 99.99,
+  },
+];
+
 export const Chart: React.FC<Props> = ({ vault }) => {
   const { data: vaultHistory } = useVaultHistory(vault.id);
   const { data: vaultWithUser } = useVaultByIdWithUser(vault.id);
@@ -38,10 +61,15 @@ export const Chart: React.FC<Props> = ({ vault }) => {
 
   const table = {
     headers: ["Deposited", "Vault weight", "Interest earned", "Parent Strategy"],
-    rows: (vaultWithUser?.strategies ?? []).map((strategy) => [
-      <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>
-        <div className="size-3">{getTokenImage(vault.name)}</div>
-        <div className="justify-start font-bold text-neutral-800 text-sm">{strategy.depositedAmount}</div>
+    rows: mockStrategies.map((strategy) => [
+      <div className="flex flex-col items-start justify-between" key={strategy.strategyId}>
+        <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>
+          <div className="size-3">{getTokenImage(vault.name)}</div>
+          <div className="justify-start font-bold text-neutral-800 text-sm">{strategy.depositedAmount}</div>
+        </div>
+        <div className="w-16 justify-start font-normal text-xs text-zinc-500 uppercase">
+          ${strategy.usdValue.toFixed(2)}
+        </div>
       </div>,
       `${strategy.vaultWeight}%`,
       <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>

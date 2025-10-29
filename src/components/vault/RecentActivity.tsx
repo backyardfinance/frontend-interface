@@ -11,25 +11,25 @@ export const RecentActivity = () => {
   const activity = [
     {
       id: "1",
-      token: "USDT",
-      amount: "1000",
-      strategy: "STR-02",
-      status: "Withdrawing",
+      token: "USDC",
+      amount: "200",
+      strategy: "STR-01",
+      status: "Deposited",
     },
     {
       id: "2",
       token: "USDC",
-      amount: "1000",
-      strategy: "STR-02",
-      status: "Withdrawn",
-    },
-    {
-      id: "3",
-      token: "USDT",
-      amount: "1000",
+      amount: "100",
       strategy: "STR-02",
       status: "Deposited",
     },
+    // {
+    //   id: "3",
+    //   token: "USDT",
+    //   amount: "1000",
+    //   strategy: "STR-02",
+    //   status: "Deposited",
+    // },
     // {
     //   id: "4",
     //   token: "USDT",

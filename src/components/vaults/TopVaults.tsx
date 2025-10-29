@@ -40,7 +40,7 @@ export const TopVaults: React.FC<Props> = ({ vaults, onAdd, currentStrategy }) =
             <div className="flex flex-row items-center justify-center gap-[7px] rounded-2xl bg-white p-[8px] outline outline-zinc-100 outline-offset-[-1px]">
               <div className="relative h-[30px] w-[30px]">
                 {getTokenImage(vault.name)}
-                <div className="absolute right-0 bottom-0 rounded-full bg-white">
+                <div className="-right-[2px] -bottom-[2px] absolute h-[12px] w-[12px] rounded-full bg-white shadow-[0px_0px_2.0160000324249268px_0px_rgba(0,0,0,0.49)]">
                   {getPlatformImage(vault.platform)}
                 </div>
               </div>
