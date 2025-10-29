@@ -53,13 +53,13 @@ function Toast({ title, description, leftAction, rightAction, id, tokenIcon }: T
       <div className="flex w-full gap-2">
         <img alt="check" className="size-9" src={CheckIcon} />
         <div className="flex w-full flex-1 flex-col">
-          <p className="flex justify-between font-bold text-neutral-800 text-sm leading-[normal]">
+          <div className="flex justify-between font-bold text-neutral-800 text-sm leading-[normal]">
             {title}
             <X className="size-4 text-[#8A8A8A]" onClick={() => sonnerToast.dismiss(id)} />
-          </p>
-          <p className="mt-1 flex items-center gap-1 font-normal text-[#8A8A8A] text-[11px] leading-[normal]">
+          </div>
+          <div className="mt-1 flex items-center gap-1 font-normal text-[#8A8A8A] text-[11px] leading-[normal]">
             {description} <div className="size-3">{tokenIcon}</div>
-          </p>
+          </div>
         </div>
       </div>
       <div className="flex gap-2">
