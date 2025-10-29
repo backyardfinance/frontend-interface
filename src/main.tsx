@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router";
 import App from "@/App.tsx";
 import { TouchProvider } from "@/components/ui/hybrid-tooltip";
+import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/providers/query-provider.tsx";
 import SolanaWalletProvider from "@/providers/solana-provider.tsx";
 
@@ -14,6 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <SolanaWalletProvider>
         <QueryProvider>
           <TouchProvider>
+            <Toaster />
             <App />
           </TouchProvider>
         </QueryProvider>

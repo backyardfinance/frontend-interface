@@ -8,13 +8,14 @@ import { VaultCard } from "@/components/vault/VaultCard";
 
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useTimer } from "@/hooks/useTimer";
-import { cn, displayAmount } from "@/utils";
+import { cn, displayAmount, sleep } from "@/utils";
 import type { Asset, Strategy } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { InfoCircleIcon } from "../icons/info-circle";
 import { ReloadIcon } from "../icons/reload";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { toast } from "../ui/sonner";
 import { Switch } from "../ui/switch";
 
 export interface StrategySetupProps {
@@ -439,14 +440,28 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
             );
             sendTransaction(tx);
             // console.log(data);
+
+            await sleep(5000);
+            toast({
+              title: "Deposited",
+              description: depositAmount.toString(),
+              tokenIcon: getTokenImage(selectedAsset?.id || ""),
+              leftAction: {
+                label: "Check tx on scan",
+                onClick: () => console.log("Check tx on scan"),
+              },
+              rightAction: {
+                label: "Go to my  positions",
+                onClick: () => console.log("Go to my  positions"),
+              },
+            });
           }}
           size="xl"
           variant="tertiary"
         >
           {walletAddress ? (
             <>
-              {" "}
-              Deposit {depositAmount} {selectedAsset?.symbol} {getTokenImage(selectedAsset?.id || "")}
+              Deposit {depositAmount.toString()} {selectedAsset?.symbol} {getTokenImage(selectedAsset?.id || "")}
             </>
           ) : (
             "Connect wallet"

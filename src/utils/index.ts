@@ -99,3 +99,7 @@ export function formatMonetaryAmount(value: number | string): string {
   }
   return "0";
 }
+
+export const sleep = async (time = 1000): Promise<void> => {
+  return new Promise((res) => setTimeout(res, time));
+};
