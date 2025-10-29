@@ -236,8 +236,8 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
 
   const { address: walletAddress } = useSolanaWallet();
   const userAssets: Asset[] = [
-    { id: "USDC", symbol: "USDC", price: 1, balance: 100, icon: "" },
-    { id: "USDS", symbol: "USDS", price: 1, balance: 112, icon: "" },
+    { id: "USDC", symbol: "USDC", price: 1, balance: 1000, icon: "" },
+    { id: "USDS", symbol: "USDS", price: 1, balance: 1000, icon: "" },
   ];
 
   const averageApy = useMemo(() => {
