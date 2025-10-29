@@ -24,6 +24,8 @@ import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError
 // @ts-ignore
 import type { CreateStrategyDto } from '../types';
 // @ts-ignore
+import type { StrategyHistoryPoint } from '../types';
+// @ts-ignore
 import type { StrategyInfoResponse } from '../types';
 /**
  * StrategyApi - axios parameter creator
@@ -105,6 +107,39 @@ export const StrategyApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        strategyControllerGetPortfolioHistory: async (userId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'userId' is not null or undefined
+            assertParamExists('strategyControllerGetPortfolioHistory', 'userId', userId)
+            const localVarPath = `/strategies/portfolio/history/{userId}`
+                .replace(`{${"userId"}}`, encodeURIComponent(String(userId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} userId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         strategyControllerGetStrategies: async (userId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'userId' is not null or undefined
             assertParamExists('strategyControllerGetStrategies', 'userId', userId)
@@ -142,6 +177,39 @@ export const StrategyApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'strategyId' is not null or undefined
             assertParamExists('strategyControllerGetStrategy', 'strategyId', strategyId)
             const localVarPath = `/strategies/{strategyId}`
+                .replace(`{${"strategyId"}}`, encodeURIComponent(String(strategyId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} strategyId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        strategyControllerGetStrategyHistory: async (strategyId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'strategyId' is not null or undefined
+            assertParamExists('strategyControllerGetStrategyHistory', 'strategyId', strategyId)
+            const localVarPath = `/strategies/{strategyId}/history`
                 .replace(`{${"strategyId"}}`, encodeURIComponent(String(strategyId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -205,6 +273,18 @@ export const StrategyApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
+        async strategyControllerGetPortfolioHistory(userId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<StrategyHistoryPoint>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerGetPortfolioHistory(userId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StrategyApi.strategyControllerGetPortfolioHistory']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} userId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
         async strategyControllerGetStrategies(userId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<StrategyInfoResponse>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerGetStrategies(userId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
@@ -221,6 +301,18 @@ export const StrategyApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerGetStrategy(strategyId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['StrategyApi.strategyControllerGetStrategy']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} strategyId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async strategyControllerGetStrategyHistory(strategyId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<StrategyHistoryPoint>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerGetStrategyHistory(strategyId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['StrategyApi.strategyControllerGetStrategyHistory']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -253,6 +345,15 @@ export const StrategyApiFactory = function (configuration?: Configuration, baseP
         },
         /**
          * 
+         * @param {StrategyApiStrategyControllerGetPortfolioHistoryRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        strategyControllerGetPortfolioHistory(requestParameters: StrategyApiStrategyControllerGetPortfolioHistoryRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<StrategyHistoryPoint>> {
+            return localVarFp.strategyControllerGetPortfolioHistory(requestParameters.userId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {StrategyApiStrategyControllerGetStrategiesRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -268,6 +369,15 @@ export const StrategyApiFactory = function (configuration?: Configuration, baseP
          */
         strategyControllerGetStrategy(requestParameters: StrategyApiStrategyControllerGetStrategyRequest, options?: RawAxiosRequestConfig): AxiosPromise<StrategyInfoResponse> {
             return localVarFp.strategyControllerGetStrategy(requestParameters.strategyId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {StrategyApiStrategyControllerGetStrategyHistoryRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        strategyControllerGetStrategyHistory(requestParameters: StrategyApiStrategyControllerGetStrategyHistoryRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<StrategyHistoryPoint>> {
+            return localVarFp.strategyControllerGetStrategyHistory(requestParameters.strategyId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -301,6 +411,20 @@ export interface StrategyApiStrategyControllerDeleteStrategyRequest {
 }
 
 /**
+ * Request parameters for strategyControllerGetPortfolioHistory operation in StrategyApi.
+ * @export
+ * @interface StrategyApiStrategyControllerGetPortfolioHistoryRequest
+ */
+export interface StrategyApiStrategyControllerGetPortfolioHistoryRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof StrategyApiStrategyControllerGetPortfolioHistory
+     */
+    readonly userId: string
+}
+
+/**
  * Request parameters for strategyControllerGetStrategies operation in StrategyApi.
  * @export
  * @interface StrategyApiStrategyControllerGetStrategiesRequest
@@ -324,6 +448,20 @@ export interface StrategyApiStrategyControllerGetStrategyRequest {
      * 
      * @type {string}
      * @memberof StrategyApiStrategyControllerGetStrategy
+     */
+    readonly strategyId: string
+}
+
+/**
+ * Request parameters for strategyControllerGetStrategyHistory operation in StrategyApi.
+ * @export
+ * @interface StrategyApiStrategyControllerGetStrategyHistoryRequest
+ */
+export interface StrategyApiStrategyControllerGetStrategyHistoryRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof StrategyApiStrategyControllerGetStrategyHistory
      */
     readonly strategyId: string
 }
@@ -359,6 +497,17 @@ export class StrategyApi extends BaseAPI {
 
     /**
      * 
+     * @param {StrategyApiStrategyControllerGetPortfolioHistoryRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StrategyApi
+     */
+    public strategyControllerGetPortfolioHistory(requestParameters: StrategyApiStrategyControllerGetPortfolioHistoryRequest, options?: RawAxiosRequestConfig) {
+        return StrategyApiFp(this.configuration).strategyControllerGetPortfolioHistory(requestParameters.userId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {StrategyApiStrategyControllerGetStrategiesRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -377,6 +526,17 @@ export class StrategyApi extends BaseAPI {
      */
     public strategyControllerGetStrategy(requestParameters: StrategyApiStrategyControllerGetStrategyRequest, options?: RawAxiosRequestConfig) {
         return StrategyApiFp(this.configuration).strategyControllerGetStrategy(requestParameters.strategyId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {StrategyApiStrategyControllerGetStrategyHistoryRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof StrategyApi
+     */
+    public strategyControllerGetStrategyHistory(requestParameters: StrategyApiStrategyControllerGetStrategyHistoryRequest, options?: RawAxiosRequestConfig) {
+        return StrategyApiFp(this.configuration).strategyControllerGetStrategyHistory(requestParameters.strategyId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

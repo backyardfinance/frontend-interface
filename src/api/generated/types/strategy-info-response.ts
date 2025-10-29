@@ -40,19 +40,13 @@ export interface StrategyInfoResponse {
      * @type {number}
      * @memberof StrategyInfoResponse
      */
-    'strategyApy': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof StrategyInfoResponse
-     */
     'strategyDepositedAmount': number;
     /**
      * 
      * @type {number}
      * @memberof StrategyInfoResponse
      */
-    'strategyTvl': number;
+    'strategyApy': number;
     /**
      * List of vaults that is used in this strategy
      * @type {Array<StrategyVaultInfo>}

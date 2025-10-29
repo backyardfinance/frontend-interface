@@ -13,48 +13,57 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { VaultHistoryUserSlice } from './vault-history-user-slice';
 
 /**
  * 
  * @export
- * @interface VaultHistoryInfoResponse
+ * @interface UserVaultHistoryInfoResponse
  */
-export interface VaultHistoryInfoResponse {
+export interface UserVaultHistoryInfoResponse {
     /**
      * 
      * @type {number}
-     * @memberof VaultHistoryInfoResponse
+     * @memberof UserVaultHistoryInfoResponse
      */
     'apy': number;
     /**
      * 
      * @type {number}
-     * @memberof VaultHistoryInfoResponse
+     * @memberof UserVaultHistoryInfoResponse
      */
     'assetPrice': number;
     /**
      * 
      * @type {number}
-     * @memberof VaultHistoryInfoResponse
+     * @memberof UserVaultHistoryInfoResponse
      */
     'tvl': number;
     /**
      * 
      * @type {number}
-     * @memberof VaultHistoryInfoResponse
+     * @memberof UserVaultHistoryInfoResponse
      */
     'yardReward': number;
     /**
      * 
      * @type {string}
-     * @memberof VaultHistoryInfoResponse
+     * @memberof UserVaultHistoryInfoResponse
      */
     'publicKey': string;
     /**
      * 
      * @type {string}
-     * @memberof VaultHistoryInfoResponse
+     * @memberof UserVaultHistoryInfoResponse
      */
     'recordedAt': string;
+    /**
+     * 
+     * @type {VaultHistoryUserSlice}
+     * @memberof UserVaultHistoryInfoResponse
+     */
+    'user': VaultHistoryUserSlice;
 }
 

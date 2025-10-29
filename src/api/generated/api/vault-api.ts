@@ -22,6 +22,8 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
+import type { UserVaultHistoryInfoResponse } from '../types';
+// @ts-ignore
 import type { VaultHistoryInfoResponse } from '../types';
 // @ts-ignore
 import type { VaultInfoResponse } from '../types';
@@ -136,6 +138,39 @@ export const VaultApiAxiosParamCreator = function (configuration?: Configuration
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {string} vaultId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        vaultControllerGetVaultHistoryByVaultId: async (vaultId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'vaultId' is not null or undefined
+            assertParamExists('vaultControllerGetVaultHistoryByVaultId', 'vaultId', vaultId)
+            const localVarPath = `/vaults/history/{vaultId}`
+                .replace(`{${"vaultId"}}`, encodeURIComponent(String(vaultId)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -177,10 +212,22 @@ export const VaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async vaultControllerGetVaultHistory(userId: string, vaultId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<VaultHistoryInfoResponse>>> {
+        async vaultControllerGetVaultHistory(userId: string, vaultId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UserVaultHistoryInfoResponse>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.vaultControllerGetVaultHistory(userId, vaultId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['VaultApi.vaultControllerGetVaultHistory']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} vaultId 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async vaultControllerGetVaultHistoryByVaultId(vaultId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<VaultHistoryInfoResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.vaultControllerGetVaultHistoryByVaultId(vaultId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['VaultApi.vaultControllerGetVaultHistoryByVaultId']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -216,8 +263,17 @@ export const VaultApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        vaultControllerGetVaultHistory(requestParameters: VaultApiVaultControllerGetVaultHistoryRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<VaultHistoryInfoResponse>> {
+        vaultControllerGetVaultHistory(requestParameters: VaultApiVaultControllerGetVaultHistoryRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<UserVaultHistoryInfoResponse>> {
             return localVarFp.vaultControllerGetVaultHistory(requestParameters.userId, requestParameters.vaultId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {VaultApiVaultControllerGetVaultHistoryByVaultIdRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        vaultControllerGetVaultHistoryByVaultId(requestParameters: VaultApiVaultControllerGetVaultHistoryByVaultIdRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<VaultHistoryInfoResponse>> {
+            return localVarFp.vaultControllerGetVaultHistoryByVaultId(requestParameters.vaultId, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -265,6 +321,20 @@ export interface VaultApiVaultControllerGetVaultHistoryRequest {
 }
 
 /**
+ * Request parameters for vaultControllerGetVaultHistoryByVaultId operation in VaultApi.
+ * @export
+ * @interface VaultApiVaultControllerGetVaultHistoryByVaultIdRequest
+ */
+export interface VaultApiVaultControllerGetVaultHistoryByVaultIdRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof VaultApiVaultControllerGetVaultHistoryByVaultId
+     */
+    readonly vaultId: string
+}
+
+/**
  * VaultApi - object-oriented interface
  * @export
  * @class VaultApi
@@ -301,6 +371,17 @@ export class VaultApi extends BaseAPI {
      */
     public vaultControllerGetVaultHistory(requestParameters: VaultApiVaultControllerGetVaultHistoryRequest, options?: RawAxiosRequestConfig) {
         return VaultApiFp(this.configuration).vaultControllerGetVaultHistory(requestParameters.userId, requestParameters.vaultId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {VaultApiVaultControllerGetVaultHistoryByVaultIdRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof VaultApi
+     */
+    public vaultControllerGetVaultHistoryByVaultId(requestParameters: VaultApiVaultControllerGetVaultHistoryByVaultIdRequest, options?: RawAxiosRequestConfig) {
+        return VaultApiFp(this.configuration).vaultControllerGetVaultHistoryByVaultId(requestParameters.vaultId, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
