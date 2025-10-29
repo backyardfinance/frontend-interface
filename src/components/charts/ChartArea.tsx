@@ -71,8 +71,8 @@ export const ChartArea: React.FC<Props> = ({ title, value, valueTooltip, chartCo
         </Select> */}
       </CardHeader>
       <CardContent className="pt-3">
-        <ChartContainer className="h-[220px] w-full" config={chartConfig}>
-          <AreaChart data={chartData} margin={{ left: -4 }}>
+        <ChartContainer className="w-full" config={chartConfig}>
+          <AreaChart data={chartData} margin={{ left: -4, top: 10 }}>
             <defs>
               {dataKeys.map((key) => (
                 <linearGradient id={`fill${key}`} key={key} x1="0" x2="0" y1="0" y2="1">
@@ -124,7 +124,7 @@ export const ChartArea: React.FC<Props> = ({ title, value, valueTooltip, chartCo
                 key={key}
                 stackId="a"
                 stroke={`var(--color-${key})`}
-                type="natural"
+                type="bump"
               />
             ))}
           </AreaChart>
