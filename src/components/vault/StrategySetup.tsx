@@ -25,9 +25,9 @@ export interface StrategySetupProps {
 }
 
 const mockRouteSteps = [
-  "Swap 800.00 USDC for 800.32 USDS",
+  "Swap 200.00 USDC for 200.04 CASH",
   <>
-    You will get ~<span className="font-bold text-neutral-700 text-xs">800.32 USDS</span>
+    You will get ~<span className="font-bold text-neutral-700 text-xs">200.04 CASH</span>
   </>,
 ];
 

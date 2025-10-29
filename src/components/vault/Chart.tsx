@@ -72,7 +72,7 @@ export const Chart: React.FC<Props> = ({ vault }) => {
     ]),
   };
 
-  const fillVaultHistory = () => {
+  const fillVaultHistory = (variant: "1" | "2") => {
     const mockData = [];
 
     // Base values from the vault
@@ -81,7 +81,8 @@ export const Chart: React.FC<Props> = ({ vault }) => {
     const basePrice = vault.assetPrice || 1.0;
 
     // Yard reward exact values: 0, 200, 202.94, 302.94
-    const yardRewardValues = [0, 200, 202.94, 302.94];
+
+    const yardRewardValues = variant === "1" ? [0, 200, 202.94, 302.94] : [0, 200, 202.94, 202.94];
     const daysApart = 10; // Days between each data point
 
     for (let i = 0; i < yardRewardValues.length; i++) {
@@ -114,7 +115,7 @@ export const Chart: React.FC<Props> = ({ vault }) => {
   };
 
   const chartData = useMemo(() => {
-    const dataToUse = vaultHistory?.length ? vaultHistory : fillVaultHistory();
+    const dataToUse = fillVaultHistory(vaultHistory?.length ? "1" : "2");
 
     if (!dataToUse.length) return [];
 
