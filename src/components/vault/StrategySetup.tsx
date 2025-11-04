@@ -1,22 +1,21 @@
 import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { Big } from "big.js";
 import { useMemo, useState } from "react";
-import { getTokenImage } from "@/assets/tokens";
+import type { TokenInfoResponse } from "@/api";
 import { SettingsIcon } from "@/components/icons/settings";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { VaultCard } from "@/components/vault/VaultCard";
-
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useTimer } from "@/hooks/useTimer";
+import { useUserTokens } from "@/hooks/useUserTokens";
 import { cn, displayAmount, sleep } from "@/utils";
-import type { Asset, Strategy } from "@/utils/types";
+import type { Strategy } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { InfoCircleIcon } from "../icons/info-circle";
 import { ReloadIcon } from "../icons/reload";
 import { Button } from "../ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { toast } from "../ui/sonner";
-import { Switch } from "../ui/switch";
 
 export interface StrategySetupProps {
   currentStrategy: Strategy;
@@ -48,35 +47,29 @@ export const InputComponent = ({
   setCurrentValue,
   selectedAsset,
   setSelectedAsset,
-  prices,
 }: {
   title: string;
-  assets: Asset[];
-  currentValue: bigint;
-  setCurrentValue: (value: bigint) => void;
-  selectedAsset: Asset;
-  setSelectedAsset: (value: Asset) => void;
-  prices: Record<string, number>;
+  assets: TokenInfoResponse[];
+  currentValue: number;
+  setCurrentValue: (value: number) => void;
+  selectedAsset: TokenInfoResponse | null;
+  setSelectedAsset: (value: TokenInfoResponse) => void;
 }) => {
-  const assetValue = useMemo(() => {
-    if (!selectedAsset) return 0;
-    const price = prices?.[selectedAsset?.id || ""];
-    return Number(currentValue) * price || 0;
-  }, [currentValue, prices, selectedAsset]);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
-
-  const balance = useMemo(() => {
-    return assets.find((asset) => asset.id === selectedAsset?.id)?.balance;
-  }, [assets, selectedAsset]);
 
   return (
     <div className="flex w-full flex-col items-center justify-between gap-[14px] rounded-3xl bg-white p-[14px]">
-      <div className={cn("flex w-full flex-row items-center justify-start", balance && "justify-between")}>
+      <div
+        className={cn(
+          "flex w-full flex-row items-center justify-start",
+          selectedAsset?.tokenAmount.uiAmount && "justify-between"
+        )}
+      >
         <span className="font-bold text-neutral-400 text-xs">{title}</span>
-        {balance && (
+        {selectedAsset?.tokenAmount.uiAmount && (
           <div className="flex flex-row gap-1 font-normal text-neutral-400 text-xs">
             <span className="font-bold text-neutral-800 text-xs">Balance: </span>
-            {Big(balance?.toString() || "0").toFixed(2)} {selectedAsset?.symbol}
+            {Big(selectedAsset?.tokenAmount.uiAmount.toString() || "0").toFixed(2)} {selectedAsset?.symbol}
           </div>
         )}
       </div>
@@ -84,15 +77,17 @@ export const InputComponent = ({
         <div className="flex flex-col">
           <input
             className="w-full font-bold text-sm text-zinc-800 outline-none"
-            onChange={(e) => setCurrentValue(BigInt(e.target.value))}
+            onChange={(e) => setCurrentValue(Number(e.target.value))}
             value={currentValue.toString()}
           />
-          <span className="font-normal text-[9px] text-stone-300">${assetValue}</span>
+          <span className="font-normal text-[9px] text-stone-300">${selectedAsset?.valueUsd || 0}</span>
         </div>
         <Select
           onOpenChange={setIsSelectOpen}
-          onValueChange={(value) => setSelectedAsset(assets.find((asset) => asset.id === value) as Asset)}
-          value={selectedAsset?.id}
+          onValueChange={(value) =>
+            setSelectedAsset(assets.find((asset) => asset.address === value) as TokenInfoResponse)
+          }
+          value={selectedAsset?.address}
         >
           <SelectTrigger
             className={cn(
@@ -109,109 +104,11 @@ export const InputComponent = ({
             sideOffset={-4}
           >
             {assets.map((asset) => (
-              <SelectItem key={asset.id} value={asset.id}>
+              <SelectItem key={asset.address} value={asset.address}>
                 <div className="flex flex-row items-center gap-2">
-                  <div className="size-[14px]">{getTokenImage(asset.id)}</div>
-                  {asset.symbol}
-                </div>
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
-  );
-};
-
-export const StrategyWithdrawComponent = ({
-  assets,
-  strategy,
-  currentValue,
-  setCurrentValue,
-  isActive,
-  selectedAsset,
-  setSelectedAsset,
-  setIsActive,
-  prices,
-}: {
-  assets: Asset[];
-  strategy: {
-    name: string;
-    availableAmount: number;
-    availableAmountSymbol: string;
-    amountWithdraw: number;
-  };
-  currentValue: number;
-  setCurrentValue: (value: number) => void;
-  isActive: boolean;
-  setIsActive: (isActive: boolean) => void;
-  selectedAsset: Asset;
-  setSelectedAsset: (value: Asset) => void;
-  prices: Record<string, number>;
-}) => {
-  const assetValue = useMemo(() => {
-    if (!selectedAsset) return 0;
-    const price = prices?.[selectedAsset?.id || ""];
-    return Number(currentValue) * price || 0;
-  }, [currentValue, prices, selectedAsset]);
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
-
-  const balance = useMemo(() => {
-    return assets.find((asset) => asset.id === selectedAsset?.id)?.balance;
-  }, [assets, selectedAsset]);
-
-  return (
-    <div className="flex w-full flex-col items-center justify-between gap-[14px] rounded-3xl bg-white p-[14px]">
-      <div className={cn("flex w-full flex-row items-center justify-start", balance && "justify-between")}>
-        <div className="flex flex-row items-center gap-2 font-bold text-neutral-400 text-xs">
-          {strategy.name}
-          <Switch checked={isActive} onCheckedChange={setIsActive} />
-        </div>
-        {balance && (
-          <div className="flex flex-row gap-1 font-normal text-neutral-400 text-xs">
-            <span className="font-bold text-neutral-800 text-xs">Available: </span>
-            {Big(strategy.availableAmount?.toString() || "0").toFixed(2)}{" "}
-            {strategy.availableAmountSymbol?.toString() || ""}
-          </div>
-        )}
-      </div>
-      <div className="flex w-full flex-row items-center justify-between rounded-xl border-1 border-zinc-100 bg-neutral-50 px-2 py-1.5">
-        <div className="flex flex-col">
-          <input
-            className={cn(
-              "w-full font-bold text-sm text-zinc-800 outline-none",
-              !isActive && "text-zinc-400 opacity-50"
-            )}
-            disabled={!isActive}
-            onChange={(e) => setCurrentValue(Number(e.target.value))}
-            value={isActive ? currentValue : 0}
-          />
-          <span className="font-normal text-[9px] text-stone-300">${isActive ? assetValue : 0}</span>
-        </div>
-        <Select
-          onOpenChange={setIsSelectOpen}
-          onValueChange={(value) => setSelectedAsset(assets.find((asset) => asset.id === value) as Asset)}
-          value={selectedAsset?.id}
-        >
-          <SelectTrigger
-            className={cn(
-              "rounded-[8px] border-none bg-white shadow-none outline-none ring-none",
-              isSelectOpen && "rounded-b-none",
-              !isActive && "text-zinc-400 opacity-50"
-            )}
-          >
-            <SelectValue placeholder="Select asset" />
-          </SelectTrigger>
-          <SelectContent
-            className={cn(
-              "max-w-full rounded-t-none rounded-b-2xl border-none bg-white shadow-none outline-none ring-none"
-            )}
-            sideOffset={-4}
-          >
-            {assets.map((asset) => (
-              <SelectItem key={asset.id} value={asset.id}>
-                <div className="flex flex-row items-center gap-2">
-                  <div className="size-[14px]">{getTokenImage(asset.id)}</div>
+                  <div className="size-[14px]">
+                    <img alt={asset.symbol} className="size-[14px]" src={asset.logoURI} />
+                  </div>
                   {asset.symbol}
                 </div>
               </SelectItem>
@@ -228,18 +125,12 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
   const { allocation, depositAmount, vaults } = currentStrategy;
   const totalAllocation = allocation?.reduce((acc, curr) => acc + curr, 0);
   const fees = getFees(0.0, 0.05);
-
-  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
-  const [prices] = useState<Record<string, number>>({
-    USDC: 1,
-    USDS: 1,
-  });
+  const [, setIsLoading] = useState(false);
+  const [selectedAsset, setSelectedAsset] = useState<TokenInfoResponse | null>(null);
 
   const { address: walletAddress } = useSolanaWallet();
-  const userAssets: Asset[] = [
-    { id: "USDC", symbol: "USDC", price: 1, balance: 1000, icon: "" },
-    { id: "USDS", symbol: "USDS", price: 1, balance: 1000, icon: "" },
-  ];
+  const { data: userTokens } = useUserTokens();
+  const userAssets = userTokens?.tokens;
 
   const averageApy = useMemo(() => {
     if (!vaults || !allocation || !vaults.length) return 0;
@@ -251,7 +142,7 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
     return Number(depositAmount) * (averageApy / 100);
   }, [depositAmount, averageApy]);
 
-  const setDepositAmount = (amount: bigint) => {
+  const setDepositAmount = (amount: number) => {
     setCurrentStrategy({
       ...currentStrategy,
       depositAmount: amount,
@@ -322,16 +213,16 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
           </PopoverContent>
         </Popover>
       </div>
-      <InputComponent
-        assets={userAssets}
-        currentValue={depositAmount}
-        prices={prices}
-        selectedAsset={selectedAsset as Asset}
-        setCurrentValue={setDepositAmount}
-        setSelectedAsset={setSelectedAsset}
-        title="Total deposit amount"
-      />
-
+      {userAssets && (
+        <InputComponent
+          assets={userAssets}
+          currentValue={depositAmount}
+          selectedAsset={selectedAsset}
+          setCurrentValue={setDepositAmount}
+          setSelectedAsset={setSelectedAsset}
+          title="Total deposit amount"
+        />
+      )}
       {allocation && allocation.length > 0 && (
         <>
           <div className="flex w-full flex-row items-center justify-between">
@@ -391,16 +282,17 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
           </ol>
         </div>
       )}
-
       <div className="h-px w-80 rounded-2xl bg-zinc-100" />
-
       <div className="flex w-full flex-col justify-start gap-[3px]">
         <div className="flex flex-row items-start justify-between">
           <span className="font-bold text-neutral-700 text-xs">Total deposited</span>
           <div className="flex flex-col items-end">
             <span className="font-bold text-neutral-700 text-xs">{depositAmount} USDC</span>
             <span className="font-normal text-[9px] text-stone-300">
-              ${Big(depositAmount.toString()).mul(prices.USDC).toFixed(2)}
+              $
+              {Big(depositAmount.toString())
+                .mul(selectedAsset?.priceUsd || 0)
+                .toFixed(2)}
             </span>
           </div>
         </div>
@@ -409,7 +301,10 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
           <div className="flex flex-col items-end">
             <span className="font-bold text-emerald-500 text-xs">{Big(estAnnualReturn).toFixed(2)} USDC</span>
             <span className="font-normal text-[9px] text-stone-300">
-              ${Big(estAnnualReturn).mul(prices.USDC).toFixed(2)}
+              $
+              {Big(estAnnualReturn)
+                .mul(selectedAsset?.priceUsd || 0)
+                .toFixed(2)}
             </span>
           </div>
         </div>
@@ -420,7 +315,6 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
           </span>
         </div>
       </div>
-
       <div className="flex flex-col gap-[9px] rounded-2xl border-1 border-zinc-100 bg-white">
         <Button
           disabled={!depositAmount || allocation?.length === 0 || !vaults?.length || !selectedAsset || !walletAddress}
@@ -430,6 +324,7 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
             //   walletAddress: walletAddress,
             //   deposits: [selectedAsset?.id || ""],
             // });
+            setIsLoading(true);
             const tx = new Transaction();
             tx.add(
               new TransactionInstruction({
@@ -445,7 +340,9 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
             toast({
               title: "Deposited",
               description: depositAmount.toString(),
-              tokenIcon: getTokenImage(selectedAsset?.id || ""),
+              tokenIcon: (
+                <img alt={selectedAsset?.symbol || ""} className="size-full" src={selectedAsset?.logoURI || ""} />
+              ),
               leftAction: {
                 label: "Check tx on scan",
                 onClick: () => console.log("Check tx on scan"),
@@ -455,13 +352,17 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
                 onClick: () => console.log("Go to my  positions"),
               },
             });
+            setIsLoading(false);
           }}
           size="xl"
           variant="tertiary"
         >
           {walletAddress ? (
             <>
-              Deposit {depositAmount.toString()} {selectedAsset?.symbol} {getTokenImage(selectedAsset?.id || "")}
+              Deposit {depositAmount.toString()} {selectedAsset?.symbol}{" "}
+              {selectedAsset?.logoURI && (
+                <img alt={selectedAsset?.symbol || ""} className="size-[14px]" src={selectedAsset?.logoURI || ""} />
+              )}
             </>
           ) : (
             "Connect wallet"

@@ -1,3 +1,5 @@
+import type { TokenInfoResponse } from "./generated";
+
 export * from "./apis";
 export * from "./generated";
 
@@ -20,7 +22,7 @@ export interface UserTokenView {
 }
 
 export interface UserPortfolioView {
-  tokens: UserTokenView[];
+  tokens: TokenInfoResponse[];
   totalValueUsd: number;
 }
 
@@ -35,21 +37,4 @@ export interface VaultInfoResponse {
   token: string;
   description: string;
   publicKey?: string;
-}
-
-export interface StrategyInfoResponse {
-  strategyName: string;
-  strategyId: string;
-  strategyApy: number;
-  strategyDepositedAmount: number;
-  strategyTvl: number;
-  vaults: {
-    token: string;
-    id: string;
-    name: string;
-    platform: string;
-    tvl: number;
-    apy: number;
-    depositedAmount: number;
-  }[];
 }

@@ -1,6 +1,9 @@
+export * from './create-deposit-transactions-dto';
 export * from './create-strategy-dto';
 export * from './create-user-dto';
 export * from './get-quote-dto';
+export * from './quote-response-dto';
+export * from './quote-vault-dto';
 export * from './strategy-history-point';
 export * from './strategy-info-response';
 export * from './strategy-vault-info';
@@ -9,6 +12,7 @@ export * from './token-info-response';
 export * from './user-strategy-info-response';
 export * from './user-vault-history-info-response';
 export * from './usert-info-response';
+export * from './vault-deposit-dto';
 export * from './vault-history-info-response';
 export * from './vault-history-user-slice';
 export * from './vault-info-response';

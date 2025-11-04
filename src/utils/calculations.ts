@@ -19,10 +19,7 @@ type ChartResult = {
   chartConfig: ChartConfig;
 };
 
-export const buildChartDataByKey = <T extends Record<string, unknown>>(
-  items: T[],
-  groupByKey: keyof T
-): ChartResult => {
+export const buildChartDataByKey = <T extends object, K extends keyof T>(items: T[], groupByKey: K): ChartResult => {
   if (!items?.length) {
     return { chartData: [], chartConfig: {} };
   }

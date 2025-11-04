@@ -8,7 +8,7 @@ import { RecentActivity } from "@/components/strategy/RecentActivity";
 import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
 import { StrategyControl } from "@/components/vault/StrategyControl";
 import { useStrategyById } from "@/hooks/useStrategy";
-import { formatMonetaryAmount } from "@/utils";
+import { formatMonetaryAmount, formatWithPrecision } from "@/utils";
 
 type Props = {
   title: string;
@@ -37,7 +37,7 @@ export default function DashboardStrategyIdPage() {
 
   const uniquePlatforms = new Set(strategy.vaults.map((v) => v.platform)).size;
 
-  const uniqueTokens = new Set(strategy.vaults.map((v) => v.token)).size;
+  const uniqueTokens = new Set(strategy.vaults.map((v) => v.name)).size;
   const recentActivity =
     strategy.strategyId === "STR-01"
       ? [
@@ -87,7 +87,7 @@ export default function DashboardStrategyIdPage() {
     },
     {
       title: "APY",
-      value: `${strategy.strategyApy}%`,
+      value: `${formatWithPrecision(strategy.strategyApy)}%`,
       valueComponent: <StarsIcon />,
     },
     {
@@ -125,7 +125,7 @@ export default function DashboardStrategyIdPage() {
             <div className="-translate-x-1/2 -top-[0px] absolute left-1/2 h-24 w-24">
               <img alt="Big Logo" src={BigLogo} />
             </div>
-            <p className="text-center font-bold text-neutral-800 text-xl">{strategy.strategyId}</p>
+            <p className="text-center font-bold text-neutral-800 text-xl">{strategy.strategyName}</p>
           </div>
           <div className="relative flex h-full w-full items-center justify-between gap-5 rounded-3xl bg-[#FAFAFA] px-6 py-4.5">
             {data.map((el) => (
@@ -159,10 +159,10 @@ export default function DashboardStrategyIdPage() {
           currentStrategy={{
             id: strategy.strategyId,
             vaults: [],
-            depositAmount: BigInt(strategy.strategyDepositedAmount),
+            depositAmount: strategy.strategyDepositedAmount,
             allocation: strategy.vaults.map((v) => v.depositedAmount),
           }}
-          depositAmount={BigInt(strategy.strategyDepositedAmount)}
+          depositAmount={strategy.strategyDepositedAmount}
           isAllocationShown={false}
           setAllocation={() => {}}
           setCurrentStrategy={() => {}}

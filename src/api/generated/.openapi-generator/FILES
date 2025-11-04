@@ -15,10 +15,13 @@ common.ts
 configuration.ts
 git_push.sh
 index.ts
+types/create-deposit-transactions-dto.ts
 types/create-strategy-dto.ts
 types/create-user-dto.ts
 types/get-quote-dto.ts
 types/index.ts
+types/quote-response-dto.ts
+types/quote-vault-dto.ts
 types/strategy-history-point.ts
 types/strategy-info-response.ts
 types/strategy-vault-info.ts
@@ -27,6 +30,7 @@ types/token-info-response.ts
 types/user-strategy-info-response.ts
 types/user-vault-history-info-response.ts
 types/usert-info-response.ts
+types/vault-deposit-dto.ts
 types/vault-history-info-response.ts
 types/vault-history-user-slice.ts
 types/vault-info-response.ts

@@ -1,19 +1,20 @@
 import Big from "big.js";
-import { useMemo, useState } from "react";
-import type { VaultInfoResponse } from "@/api";
+import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from "react";
+import type { StrategyInfoResponse, TokenInfoResponse, VaultInfoResponse } from "@/api";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
+import { useUserStrategies } from "@/hooks/useStrategy";
 import { useTimer } from "@/hooks/useTimer";
-import { cn } from "@/utils";
-import type { Asset } from "@/utils/types";
+import { useUserTokens } from "@/hooks/useUserTokens";
+import { cn, formatWithPrecision } from "@/utils";
 import { ChevronIcon } from "../icons/chevron";
 import { ReloadIcon } from "../icons/reload";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Switch } from "../ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
-import { InputComponent, StrategyWithdrawComponent } from "./StrategySetup";
+import { InputComponent } from "./StrategySetup";
 
 const mockRouteSteps = [
   "Swap 1000.00 USDC for 1000.12 USDS via Uniswap",
@@ -31,61 +32,49 @@ const getFees = (depositFee: number, routeFee: number) => [
   { name: "Route fee", value: `${routeFee}%` },
 ];
 
+export type Strategy = StrategyInfoResponse & {
+  isActive: boolean;
+  selectedAsset: string;
+  amountWithdraw: number;
+};
+
 export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
-  const [depositAmount, setDepositAmount] = useState<bigint>(BigInt(0));
+  const [depositAmount, setDepositAmount] = useState<number>(0);
   const [slippage, setSlippage] = useState<number>(0);
   const [currentAction, setCurrentAction] = useState<Action>("Deposit");
   const [isWithdrawByStrategy, setIsWithdrawByStrategy] = useState(false);
   const [isRouteOpen, setIsRouteOpen] = useState(false);
-
   const fees = getFees(0.0, 0.05);
 
-  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
-  const [prices] = useState<Record<string, number>>({
-    USDC: 1,
-    USDS: 1,
-  });
+  const [selectedAsset, setSelectedAsset] = useState<TokenInfoResponse | null>(null);
+  const { data: userStrategies } = useUserStrategies();
 
-  const userAssets: Asset[] = [
-    { id: "USDC", symbol: "USDC", price: 0.99, balance: 302.94, icon: "" },
-    { id: "USDS", symbol: "USDS", price: 1, balance: 11, icon: "" },
-  ]; // TODO: get user assets from backend
+  const [strategies, setStrategies] = useState<Strategy[]>(
+    userStrategies?.map((strategy) => {
+      return {
+        ...strategy,
+        isActive: true,
+        selectedAsset: vault.token,
+        amountWithdraw: 0,
+      };
+    }) || []
+  );
+  useEffect(() => {
+    if (userStrategies) {
+      setStrategies(
+        userStrategies.map((strategy) => {
+          return {
+            ...strategy,
+            isActive: true,
+            selectedAsset: vault.token,
+            amountWithdraw: 0,
+          };
+        })
+      );
+    }
+  }, [userStrategies]);
 
-  const assets = [
-    { id: "USDC", symbol: "USDC", price: 1, balance: 10, icon: "" },
-    { id: "USDS", symbol: "USDS", price: 1, balance: 11, icon: "" },
-  ].reduce(
-    (acc, curr) => {
-      acc[curr.id] = curr;
-      return acc;
-    },
-    {} as Record<string, Asset>
-  ); // TODO: get assets from backend
-
-  const strategiesMock = {
-    "STR-01": {
-      id: "1",
-      name: "STR-01",
-      price: 1,
-      availableAmount: 202.94,
-      availableAmountSymbol: "USDC",
-      amountWithdraw: 0,
-      selectedAsset: "USDC",
-      isActive: true,
-    },
-    "STR-02": {
-      id: "2",
-      name: "STR-02",
-      price: 1,
-      availableAmount: 100,
-      availableAmountSymbol: "USDC",
-      amountWithdraw: 0,
-      selectedAsset: "USDC",
-      isActive: true,
-    },
-  };
-
-  const [strategies, setStrategies] = useState(strategiesMock);
+  const { data: userAssets } = useUserTokens();
 
   const { seconds, minutes } = useTimer(10);
 
@@ -94,28 +83,18 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
     return Number(depositAmount) * (vault.apy / 100);
   }, [depositAmount, vault.apy]);
 
-  const tokensToWithdraw = useMemo(() => {
-    return isWithdrawByStrategy
-      ? Object.values(
-          Object.values(strategies)
-            .filter((strategy) => strategy.isActive)
-            .reduce(
-              (acc, strategy) => {
-                if (acc[strategy.selectedAsset as keyof typeof acc]) {
-                  acc[strategy.selectedAsset as keyof typeof acc].amount += strategy.amountWithdraw;
-                } else {
-                  acc[strategy.selectedAsset as keyof typeof acc] = {
-                    tokenId: strategy.selectedAsset,
-                    amount: strategy.amountWithdraw,
-                  };
-                }
-                return acc;
-              },
-              {} as Record<string, { tokenId: string; amount: number }>
-            )
-        )
-      : [{ tokenId: selectedAsset?.id ?? "", amount: Number(depositAmount) }];
-  }, [strategies, isWithdrawByStrategy]);
+  const selectedTokens = useMemo(() => {
+    return strategies
+      .filter((strategy) => strategy.isActive)
+      .map((strategy) => {
+        const token = userAssets?.tokens?.find((token) => token.address === strategy.selectedAsset);
+        return {
+          tokenId: strategy.selectedAsset,
+          amount: strategy.amountWithdraw,
+          token,
+        };
+      });
+  }, [strategies]);
 
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border-1 border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
@@ -167,10 +146,9 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
       )}
       {(currentAction === "Deposit" || !isWithdrawByStrategy) && (
         <InputComponent
-          assets={userAssets}
+          assets={userAssets?.tokens || []}
           currentValue={depositAmount}
-          prices={prices}
-          selectedAsset={selectedAsset as Asset}
+          selectedAsset={selectedAsset as TokenInfoResponse}
           setCurrentValue={setDepositAmount}
           setSelectedAsset={setSelectedAsset}
           title={currentAction === "Deposit" ? "Total deposit amount" : "Total withdraw amount"}
@@ -178,35 +156,11 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
       )}
       {currentAction === "Withdraw" && isWithdrawByStrategy && (
         <div className="flex flex-col gap-2">
-          {Object.values(strategies).map((strategy) => (
+          {strategies?.map((strategy) => (
             <StrategyWithdrawComponent
-              assets={userAssets}
-              currentValue={strategy.amountWithdraw}
-              isActive={strategy.isActive}
-              key={strategy.id}
-              prices={prices}
-              selectedAsset={assets[strategy.selectedAsset as keyof typeof assets]}
-              setCurrentValue={(amount: number) => {
-                setStrategies((prev) => {
-                  const newStrategies = { ...prev };
-                  newStrategies[strategy.name as keyof typeof prev].amountWithdraw = amount;
-                  return newStrategies;
-                });
-              }}
-              setIsActive={(isActive: boolean) => {
-                setStrategies((prev) => {
-                  const newStrategies = { ...prev };
-                  newStrategies[strategy.name as keyof typeof prev].isActive = isActive;
-                  return newStrategies;
-                });
-              }}
-              setSelectedAsset={(asset: Asset) => {
-                setStrategies((prev) => {
-                  const newStrategies = { ...prev };
-                  newStrategies[strategy.name as keyof typeof prev].selectedAsset = asset.id;
-                  return newStrategies;
-                });
-              }}
+              assets={userAssets?.tokens || []}
+              key={strategy.strategyId}
+              setStrategy={setStrategies}
               strategy={strategy}
             />
           ))}
@@ -253,7 +207,7 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
               <span className="font-normal text-[9px] text-stone-300">
                 $
                 {Big(depositAmount.toString())
-                  .mul(prices[selectedAsset?.id ?? ""] ?? 0)
+                  .mul(selectedAsset?.priceUsd ?? 0)
                   .toFixed(2)}
               </span>
             </div>
@@ -267,7 +221,7 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
               <span className="font-normal text-[9px] text-stone-300">
                 $
                 {Big(estAnnualReturn.toString())
-                  .mul(prices[selectedAsset?.id ?? ""] ?? 0)
+                  .mul(selectedAsset?.priceUsd ?? 0)
                   .toFixed(2)}
               </span>
             </div>
@@ -275,7 +229,7 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
         </div>
       ) : (
         <div className="flex w-full flex-col justify-start gap-[3px]">
-          {tokensToWithdraw.length === 1 && !isWithdrawByStrategy ? (
+          {selectedTokens.length === 1 && !isWithdrawByStrategy ? (
             <div className="flex flex-row items-start justify-between">
               <span className="font-bold text-neutral-700 text-xs">Total to withdraw</span>
               <div className="flex flex-col items-end">
@@ -285,7 +239,7 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
                 <span className="font-normal text-[9px] text-stone-300">
                   $
                   {Big(depositAmount?.toString() ?? "0")
-                    .mul(prices[selectedAsset?.id ?? ""] ?? 0)
+                    .mul(selectedAsset?.priceUsd ?? 0)
                     .toFixed(2)}
                 </span>
               </div>
@@ -294,21 +248,26 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
             <div className="flex flex-col items-start justify-between gap-2">
               <span className="font-bold text-neutral-700 text-xs">Tokens to withdraw</span>
               <div className="flex w-full flex-col items-start justify-between">
-                {tokensToWithdraw.map((token) => {
-                  const asset = assets[token.tokenId];
-                  if (!asset) return null;
+                {selectedTokens.map(({ token, amount, tokenId }) => {
+                  if (!token) return null;
                   return (
-                    <div className="flex w-full flex-row items-start justify-between" key={token.tokenId}>
+                    <div className="flex w-full flex-row items-start justify-between" key={tokenId}>
                       <div className="flex flex-row items-center gap-1">
-                        <div className="size-[10px]">{getTokenImage(asset.symbol)}</div>
-                        <div className="font-normal text-xs text-zinc-500">{asset.symbol}</div>
+                        <div className="size-[10px]">
+                          {token.logoURI ? (
+                            <img alt={token.symbol} className="size-full" src={token.logoURI} />
+                          ) : (
+                            getTokenImage(token.address)
+                          )}
+                        </div>
+                        <div className="font-normal text-xs text-zinc-500">{token.symbol}</div>
                       </div>
                       <div className="flex flex-col items-end">
                         <span className="font-bold text-neutral-700 text-xs">
-                          {token.amount} {asset.symbol}
+                          {amount} {token.symbol}
                         </span>
                         <span className="font-normal text-[9px] text-stone-300">
-                          ${token.amount * prices[token.tokenId]}
+                          ${Big(amount.toString()).mul(token.priceUsd).toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -337,6 +296,113 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
+};
+
+export const StrategyWithdrawComponent = ({
+  assets,
+  strategy,
+  setStrategy,
+}: {
+  assets: TokenInfoResponse[];
+  strategy: Strategy;
+  setStrategy: Dispatch<SetStateAction<Strategy[]>>;
+}) => {
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
+  const vault = strategy.vaults.find((v) => v.name === strategy.selectedAsset);
+
+  const selectedAsset = assets.find((asset) => asset.address === strategy.selectedAsset);
+
+  const tokenUsdValue = useMemo(() => {
+    if (!selectedAsset?.priceUsd || !vault?.depositedAmount) return 0;
+    return formatWithPrecision(selectedAsset?.priceUsd * vault?.depositedAmount);
+  }, [selectedAsset?.priceUsd, vault?.depositedAmount]);
+
+  return (
+    <div className="flex w-full flex-col items-center justify-between gap-[14px] rounded-3xl bg-white p-[14px]">
+      <div
+        className={cn(
+          "flex w-full flex-row items-center justify-start",
+          selectedAsset?.tokenAmount.uiAmount && "justify-between"
+        )}
+      >
+        <div className="flex flex-row items-center gap-2 font-bold text-neutral-400 text-xs">
+          {strategy.strategyName}
+          <Switch
+            checked={strategy.isActive}
+            onCheckedChange={(isActive) =>
+              setStrategy((prev) => prev.map((s) => (s.strategyId === strategy.strategyId ? { ...s, isActive } : s)))
+            }
+          />
+        </div>
+        {selectedAsset?.tokenAmount.uiAmount && (
+          <div className="flex flex-row gap-1 font-normal text-neutral-400 text-xs">
+            <span className="font-bold text-neutral-800 text-xs">Available: </span>
+            {Big(vault?.depositedAmount?.toString() || "0").toFixed(2)} {vault?.name?.toString() || ""}
+          </div>
+        )}
+      </div>
+      <div className="flex w-full flex-row items-center justify-between rounded-xl border-1 border-zinc-100 bg-neutral-50 px-2 py-1.5">
+        <div className="flex flex-col">
+          <input
+            className={cn(
+              "w-full font-bold text-sm text-zinc-800 outline-none",
+              !strategy.isActive && "text-zinc-400 opacity-50"
+            )}
+            disabled={!strategy.isActive}
+            onChange={(e) =>
+              setStrategy((prev) =>
+                prev.map((s) =>
+                  s.strategyId === strategy.strategyId ? { ...s, amountWithdraw: Number(e.target.value) } : s
+                )
+              )
+            }
+            value={strategy.amountWithdraw.toString()}
+          />
+          <span className="font-normal text-[9px] text-stone-300">${strategy.isActive ? tokenUsdValue : 0}</span>
+        </div>
+        <Select
+          onOpenChange={setIsSelectOpen}
+          onValueChange={(value) =>
+            setStrategy((prev) =>
+              prev.map((s) => (s.strategyId === strategy.strategyId ? { ...s, selectedAsset: value } : s))
+            )
+          }
+          value={strategy.selectedAsset}
+        >
+          <SelectTrigger
+            className={cn(
+              "rounded-[8px] border-none bg-white shadow-none outline-none ring-none",
+              isSelectOpen && "rounded-b-none",
+              !strategy.isActive && "text-zinc-400 opacity-50"
+            )}
+          >
+            <SelectValue placeholder="Select asset" />
+          </SelectTrigger>
+          <SelectContent
+            className={cn(
+              "max-w-full rounded-t-none rounded-b-2xl border-none bg-white shadow-none outline-none ring-none"
+            )}
+            sideOffset={-4}
+          >
+            {assets.map((asset) => (
+              <SelectItem key={asset.address} value={asset.address}>
+                <div className="flex flex-row items-center gap-2">
+                  <div className="size-[14px]">
+                    {asset.logoURI ? (
+                      <img alt={asset.symbol} className="size-full" src={asset.logoURI} />
+                    ) : (
+                      getTokenImage(asset.address)
+                    )}
+                  </div>
+                  {asset.symbol}
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

@@ -10,6 +10,9 @@ export const queryKeys = {
     strategyById: (strategyId: string) => [...queryKeys.strategies.all, strategyId],
     strategyByUser: (userId: string) => [...queryKeys.strategies.all, "user", userId],
   },
+  users: {
+    all: ["users"],
+  },
 
   userTokens: (userId: string) => ["user-tokens", userId],
   quoteDeposit: (data: object) => ["quote-deposit", ...Object.values(data)],

@@ -15,39 +15,39 @@
 
 // May contain unused imports in some cases
 // @ts-ignore
-import type { VaultDepositDto } from './vault-deposit-dto';
+import type { QuoteVaultDto } from './quote-vault-dto';
 
 /**
  * 
  * @export
- * @interface GetQuoteDto
+ * @interface QuoteResponseDto
  */
-export interface GetQuoteDto {
+export interface QuoteResponseDto {
     /**
      * 
      * @type {string}
-     * @memberof GetQuoteDto
+     * @memberof QuoteResponseDto
      */
-    'walletAddress': string;
+    'signer': string;
     /**
      * 
      * @type {string}
-     * @memberof GetQuoteDto
+     * @memberof QuoteResponseDto
      */
-    'type': GetQuoteDtoTypeEnum;
+    'type': QuoteResponseDtoTypeEnum;
     /**
      * 
-     * @type {Array<VaultDepositDto>}
-     * @memberof GetQuoteDto
+     * @type {QuoteVaultDto}
+     * @memberof QuoteResponseDto
      */
-    'deposits': Array<VaultDepositDto>;
+    'vaults': QuoteVaultDto;
 }
 
-export const GetQuoteDtoTypeEnum = {
+export const QuoteResponseDtoTypeEnum = {
     DEPOSIT: 'DEPOSIT',
     WITHDRAW: 'WITHDRAW'
 } as const;
 
-export type GetQuoteDtoTypeEnum = typeof GetQuoteDtoTypeEnum[keyof typeof GetQuoteDtoTypeEnum];
+export type QuoteResponseDtoTypeEnum = typeof QuoteResponseDtoTypeEnum[keyof typeof QuoteResponseDtoTypeEnum];
 
 

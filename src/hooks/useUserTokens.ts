@@ -11,9 +11,10 @@ export const useUserTokens = (options?: UseUserTokensOptions) => {
   return useQuery({
     queryKey: queryKeys.userTokens(address ?? ""),
     queryFn: async () => {
-      if (!address) throw Error("useUserTokens: address is missing");
-      const { data } = await solanaApi.solanaControllerGetUserTokens({ userId: address });
-      return data as unknown as UserPortfolioView; //TODO: remove type
+      const userId = localStorage.getItem("userId");
+      if (!userId) throw Error("useUserTokens: userId is missing");
+      const { data } = await solanaApi.solanaControllerGetUserTokens({ userId });
+      return data as unknown as UserPortfolioView;
     },
     ...options,
     enabled: !!address && options?.enabled,

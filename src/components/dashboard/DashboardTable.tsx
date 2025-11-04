@@ -24,7 +24,7 @@ export const DashboardTable = () => {
               className="flex size-7.5 items-center justify-center rounded-full border border-[#F3F3F3] bg-white p-1"
               key={`${vault.id}-${vault.depositedAmount}`}
             >
-              {getTokenImage(vault.token)}
+              {getTokenImage(vault.name)}
             </div>
           ))}
         </div>,

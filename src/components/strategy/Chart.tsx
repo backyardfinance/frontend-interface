@@ -7,6 +7,7 @@ import { ChartArea } from "@/components/charts/ChartArea";
 import { Table } from "@/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toVaultRoute } from "@/config/routes";
+
 import { formatWithPrecision } from "@/utils";
 import { buildChartDataByKey, calculateWeights } from "@/utils/calculations";
 import { ChartPieDonut } from "../charts/ChartPieDonut";
@@ -25,28 +26,30 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
   }, [strategy.vaults]);
 
   const tokenExposure = useMemo(() => {
-    return buildChartDataByKey(strategy.vaults, "token");
+    return buildChartDataByKey(strategy.vaults, "name");
   }, [strategy.vaults]);
 
   const navigate = useNavigate();
   const table = {
     headers: ["Markets Exposure", "Platform", "APY", "Strategy weight", "My Position"],
-    rows: strategy.vaults.map((vault) => [
-      <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
-        <div className="size-3">{getTokenImage(vault.token)}</div>
-        <div className="justify-start font-bold text-neutral-800 text-sm">{vault.token}</div>
-      </div>,
-      <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
-        <div className="size-3">{getPlatformImage(vault.platform)}</div> {vault.platform}
-      </div>,
-      `${vault.apy}%`,
-      <>{calculateWeights(strategy.strategyDepositedAmount, vault.depositedAmount).weightPercent.toFixed(0)}%</>,
-      <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
-        <div className="justify-start font-bold text-neutral-800 text-sm">
-          {formatWithPrecision(vault.depositedAmount)}
-        </div>
-      </div>,
-    ]),
+    rows: strategy.vaults.map((vault) => {
+      return [
+        <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
+          <div className="size-3">{getTokenImage(vault.name)}</div>
+          <div className="justify-start font-bold text-neutral-800 text-sm">{vault.name}</div>
+        </div>,
+        <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
+          <div className="size-3">{getPlatformImage(vault.platform)}</div> {vault.platform}
+        </div>,
+        `${vault.apy}%`,
+        <>{calculateWeights(strategy.strategyDepositedAmount, vault.depositedAmount).weightPercent.toFixed(0)}%</>,
+        <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
+          <div className="justify-start font-bold text-neutral-800 text-sm">
+            {formatWithPrecision(vault.depositedAmount)}
+          </div>
+        </div>,
+      ];
+    }),
   };
 
   const handleRowClick = (rowIndex: number) => {

@@ -1,22 +1,14 @@
-import type { VaultInfoResponse } from "@/api";
+import type { TokenInfoResponse, VaultInfoResponse } from "@/api";
 
 export interface Strategy {
   id: string;
   vaults: VaultInfoResponse[];
-  depositAmount: bigint;
+  depositAmount: number;
   allocation: number[];
 }
 
-export interface Asset {
-  id: string;
-  symbol: string;
-  price: number;
-  balance: number;
-  icon: string;
-}
-
 export interface User {
-  balances: { [key: string]: Asset };
+  balances: { [key: string]: TokenInfoResponse };
   strategies: Strategy[];
 }
 

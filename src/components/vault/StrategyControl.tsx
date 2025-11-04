@@ -1,29 +1,30 @@
 import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
 import Big from "big.js";
 import { useMemo, useState } from "react";
-import type { VaultInfoResponse } from "@/api";
+import type { TokenInfoResponse, VaultInfoResponse } from "@/api";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
 import { VaultCard } from "@/components/vault/VaultCard";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
+import { useUserTokens } from "@/hooks/useUserTokens";
 import { cn, displayAmount } from "@/utils";
-import type { Asset, Strategy } from "@/utils/types";
+import type { Strategy } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { ReloadIcon } from "../icons/reload";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { InputComponent } from "./StrategySetup";
 
 export interface StrategySetupProps {
   allocations?: number[];
-  depositAmount: bigint;
+  depositAmount: number;
   setAllocation: (index: number, allocation: number) => void;
   vaults: VaultInfoResponse[];
   slippage: number;
   setSlippage: (slippage: number) => void;
   isAllocationShown?: boolean;
-  setDepositAmount: (amount: bigint) => void;
+  setDepositAmount: (amount: number) => void;
   headerTextShown?: boolean;
   currentStrategy: Strategy;
   setCurrentStrategy: (strategy: Strategy) => void;
@@ -45,82 +46,6 @@ const getFees = (depositFee: number, routeFee: number) => [
   { name: "Route fee", value: `${routeFee}%` },
 ];
 
-const InputComponent = ({
-  title,
-  balance,
-  assets,
-  currentValue,
-  setCurrentValue,
-  selectedAsset,
-  setSelectedAsset,
-  prices,
-}: {
-  title: string;
-  balance?: string;
-  assets: Asset[];
-  currentValue: bigint;
-  setCurrentValue: (value: bigint) => void;
-  selectedAsset: Asset;
-  setSelectedAsset: (value: Asset) => void;
-  prices: Record<string, number>;
-}) => {
-  const assetValue = useMemo(() => {
-    if (!selectedAsset) return 0;
-    return Number(currentValue) * prices?.[selectedAsset?.id || ""] || 0;
-  }, [currentValue, prices, selectedAsset]);
-  const [isSelectOpen, setIsSelectOpen] = useState(false);
-
-  return (
-    <div className="flex w-full flex-col items-center justify-between gap-[14px] rounded-3xl bg-white p-[14px]">
-      <div className={cn("flex w-full flex-row items-center justify-start", balance && "justify-between")}>
-        <span className="font-bold text-neutral-400 text-xs">{title}</span>
-        {balance && (
-          <div className="flex flex-row font-normal text-neutral-400 text-xs">
-            <span className="font-bold text-neutral-800 text-xs">Balance</span>
-            {balance}
-          </div>
-        )}
-      </div>
-      <div className="flex w-full flex-row items-center justify-between rounded-xl border-1 border-zinc-100 bg-neutral-50 px-2 py-1.5">
-        <div className="flex flex-col">
-          <input
-            className="w-full font-bold text-sm text-zinc-800 outline-none"
-            onChange={(e) => setCurrentValue(BigInt(e.target.value))}
-            value={currentValue.toString()}
-          />
-          <span className="font-normal text-[9px] text-stone-300">{assetValue}</span>
-        </div>
-        <Select
-          onOpenChange={setIsSelectOpen}
-          onValueChange={(value) => setSelectedAsset(assets.find((asset) => asset.id === value) as Asset)}
-          value={selectedAsset?.id}
-        >
-          <SelectTrigger
-            className={cn(
-              "rounded-3xl border-none bg-white shadow-none outline-none ring-none",
-              isSelectOpen && "rounded-b-none"
-            )}
-          >
-            <SelectValue placeholder="Select asset" />
-          </SelectTrigger>
-          <SelectContent
-            className={cn(
-              "max-w-full rounded-t-none rounded-b-3xl border-none bg-white shadow-none outline-none ring-none"
-            )}
-            sideOffset={-4}
-          >
-            {assets.map((asset) => (
-              <SelectItem key={asset.id} value={asset.id}>
-                {asset.symbol}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
-  );
-};
-
 export const StrategyControl = ({
   allocations,
   depositAmount,
@@ -139,16 +64,8 @@ export const StrategyControl = ({
   const totalAllocation = allocations?.reduce((acc, curr) => acc + curr, 0);
   const fees = getFees(0.0, 0.05);
   const { address: walletAddress, sendTransaction } = useSolanaWallet();
-  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
-  const [prices] = useState<Record<string, number>>({
-    USDC: 1,
-    USDS: 1,
-  });
-
-  const userAssets: Asset[] = [
-    { id: "USDC", symbol: "USDC", price: 1, balance: 10, icon: "" },
-    { id: "USDS", symbol: "USDS", price: 1, balance: 11, icon: "" },
-  ];
+  const [selectedAsset, setSelectedAsset] = useState<TokenInfoResponse | null>(null);
+  const { data: userAssets } = useUserTokens();
 
   const averageApy = useMemo(() => {
     return (allocations?.reduce((acc, curr) => acc + curr, 0) || vaults[0].apy) / (allocations?.length || 1);
@@ -202,10 +119,9 @@ export const StrategyControl = ({
         </Popover>
       </div>
       <InputComponent
-        assets={userAssets}
+        assets={userAssets?.tokens || []}
         currentValue={depositAmount}
-        prices={prices}
-        selectedAsset={selectedAsset as Asset}
+        selectedAsset={selectedAsset as TokenInfoResponse}
         setCurrentValue={setDepositAmount}
         setSelectedAsset={setSelectedAsset}
         title="Total deposit amount"
@@ -271,7 +187,10 @@ export const StrategyControl = ({
           <div className="flex flex-col items-end">
             <span className="font-bold text-neutral-700 text-xs">{depositAmount} USDC</span>
             <span className="font-normal text-[9px] text-stone-300">
-              ${Big(depositAmount.toString()).mul(prices.USDC).toFixed(2)}
+              $
+              {Big(depositAmount.toString())
+                .mul(selectedAsset?.priceUsd || 0)
+                .toFixed(2)}
             </span>
           </div>
         </div>
@@ -280,7 +199,10 @@ export const StrategyControl = ({
           <div className="flex flex-col items-end">
             <span className="font-bold text-emerald-500 text-xs">{Big(estAnnualReturn).toFixed(2)} USDC</span>
             <span className="font-normal text-[9px] text-stone-300">
-              ${Big(estAnnualReturn).mul(prices.USDC).toFixed(2)}
+              $
+              {Big(estAnnualReturn)
+                .mul(selectedAsset?.priceUsd || 0)
+                .toFixed(2)}
             </span>
           </div>
         </div>
@@ -317,7 +239,12 @@ export const StrategyControl = ({
           {walletAddress ? (
             <>
               {" "}
-              Deposit {depositAmount} {selectedAsset?.symbol} {getTokenImage(selectedAsset?.id || "")}
+              Deposit {depositAmount} {selectedAsset?.symbol}{" "}
+              {selectedAsset?.logoURI ? (
+                <img alt={selectedAsset?.symbol} className="size-full" src={selectedAsset?.logoURI} />
+              ) : (
+                getTokenImage(selectedAsset?.address || "")
+              )}
             </>
           ) : (
             "Connect wallet"

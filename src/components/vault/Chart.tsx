@@ -51,7 +51,7 @@ export const Chart: React.FC<Props> = ({ vault }) => {
           ${strategy.depositedAmount.toFixed(2)}
         </div>
       </div>,
-      `${strategy.vaultWeight}%`,
+      `${formatWithPrecision(strategy.vaultWeight)}%`,
       <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>
         <div className="justify-start font-bold text-neutral-800 text-sm">
           {formatWithPrecision(strategy.interestEarned)}
