@@ -109,7 +109,12 @@ const HeroSection: FC = () => {
         <Button className="w-full" onClick={() => navigate(APP_ROUTES.WHITELIST)} variant="joinWhitelist">
           Join whitelist
         </Button>
-        <Button className="w-full" hover="green" variant="readDocs">
+        <Button
+          className="w-full"
+          hover="green"
+          onClick={() => window.open("https://backyard-fi.gitbook.io/backyard-finance")}
+          variant="readDocs"
+        >
           / Read docs /
         </Button>
       </div>
@@ -199,7 +204,12 @@ const CTASection: FC = () => {
         <Button className="w-full" onClick={() => navigate(APP_ROUTES.WHITELIST)} variant="joinWhitelist">
           Join whitelist
         </Button>
-        <Button className="w-full" hover="green" variant="readDocs">
+        <Button
+          className="w-full"
+          hover="green"
+          onClick={() => window.open("https://backyard-fi.gitbook.io/backyard-finance")}
+          variant="readDocs"
+        >
           / Read docs /
         </Button>
       </div>
