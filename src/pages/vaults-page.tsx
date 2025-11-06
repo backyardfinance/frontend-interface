@@ -37,7 +37,7 @@ export default function VaultsPage() {
   const handleAddClick = (e: React.MouseEvent<HTMLButtonElement>, vault: VaultInfoResponse, isAdded: boolean) => {
     e.stopPropagation();
 
-    setCurrentStrategy((prev) => {
+    setCurrentStrategy((prev: Strategy | null) => {
       const vaults = prev?.vaults || [];
       const updatedVaults = isAdded ? vaults.filter((v) => v.id !== vault.id) : [...vaults, vault];
 
@@ -46,7 +46,7 @@ export default function VaultsPage() {
 
       return {
         id: prev?.id || "",
-        depositAmount: prev?.depositAmount || BigInt(0),
+        depositAmount: prev?.depositAmount || Number(0),
         vaults: updatedVaults,
         allocation: newAllocation,
       };

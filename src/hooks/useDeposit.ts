@@ -10,9 +10,9 @@ export const useQuote = () => {
   });
 };
 
-export const useCreateDeposit = () => {
-  return useMutation({
-    //TODO: add type. Response quoteControllerGetQuote
-    mutationFn: (data: any) => transactionApi.transactionControllerCreateDepositTransactions({ body: data }),
-  });
-};
+// export const useCreateDeposit = () => {
+//   return useMutation({
+//     //TODO: add type. Response quoteControllerGetQuote
+//     mutationFn: (data: any) => transactionApi.transactionControllerCreateDepositTransactions({ body: data }),
+//   });
+// };
