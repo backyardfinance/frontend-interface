@@ -3,6 +3,7 @@ export const STRATEGY_ID = ":strategyId";
 
 export const APP_ROUTES = {
   HOME: "/",
+  WHITELIST: "/whitelist",
   VAULTS: "/vaults",
   VAULT_BY_ID: `/vaults/${VAULT_ID}`,
   DASHBOARD: "/dashboard",
