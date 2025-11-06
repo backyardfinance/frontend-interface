@@ -75,7 +75,7 @@ export const Header: FC = () => {
   const navigate = useNavigate();
 
   return (
-    <header className="flex items-center justify-between pt-8.5">
+    <header className="mx-auto flex w-full max-w-[1350px] items-center justify-between pt-8.5">
       <Button onClick={() => navigate(APP_ROUTES.HOME)}>
         <img alt="Backyard logo" className="size-[11px]" src={BackyardLogo} />
         Backyard
@@ -98,14 +98,14 @@ const HeroSection: FC = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="flex flex-col items-start gap-9.5">
+    <section className="mx-auto flex w-full max-w-[1350px] select-none flex-col items-start gap-9.5">
       <div className="flex flex-col items-start gap-4.5">
-        <p className="font-bold text-[76px] uppercase leading-[116%]">{`//SAME FLOW BETTER APy/`}</p>
+        <p className="font-bold text-[48px] uppercase leading-[116%] md:text-[76px]">{`//SAME FLOW BETTER APy/`}</p>
         <p className="font-bold text-[#898989] text-xl leading-[128%]">
           Self-curated stablecoin yield infrastructure on Solana
         </p>
       </div>
-      <div className="flex w-[564px] items-start gap-4.5">
+      <div className="flex w-full flex-col items-start gap-4.5 md:w-[564px] md:flex-row">
         <Button className="w-full" onClick={() => navigate(APP_ROUTES.WHITELIST)} variant="joinWhitelist">
           Join whitelist
         </Button>
@@ -124,12 +124,12 @@ const HeroSection: FC = () => {
 
 const WhatIsBackyardSection: FC = () => {
   return (
-    <section className="flex flex-col items-start gap-21">
-      <p className="font-bold text-[56px] uppercase leading-[116%]">What is Backyard?</p>
-      <div className="grid grid-cols-3 gap-[37px]">
+    <section className="mx-auto flex w-full max-w-[1350px] flex-col items-start gap-21">
+      <p className="font-bold text-[28px] uppercase leading-[116%] md:text-[56px]">What is Backyard?</p>
+      <div className="grid grid-rows-3 gap-[37px] md:grid-cols-3">
         {WHAT_IS_DATA.map(({ title, description, color }) => (
           <div
-            className="flex flex-col items-start gap-7 border border-white/30 border-dashed p-[31px] backdrop-blur-[2px] [background:rgba(171,171,171,0.07)]"
+            className="flex select-none flex-col items-start gap-7 border border-white/30 border-dashed px-[23px] py-[31px] backdrop-blur-[2px] [background:rgba(171,171,171,0.07)]"
             key={title}
           >
             <p className={cn("font-bold text-[20px] leading-[128%]", color)}>{title}</p>
@@ -149,14 +149,14 @@ const HowItWorksSection: FC = () => {
   const [activeTab, setActiveTab] = useState<number>(1);
 
   return (
-    <section className="flex flex-col items-start gap-[49px]">
+    <section className="mx-auto flex w-full max-w-[1350px] flex-col items-start gap-[49px]">
       <div className="flex flex-col items-start gap-[38px] self-stretch">
-        <p className="font-bold text-[56px] uppercase leading-[116%]">How it works</p>
-        <div className="flex items-center gap-[30px]">
+        <p className="font-bold text-[28px] uppercase leading-[116%] md:text-[56px]">How it works</p>
+        <div className="flex flex-wrap items-center gap-[10px] md:gap-[30px]">
           {HOW_IT_WORKS_DATA.map(({ tab }, index) => (
             <button
               className={cn(
-                "cursor-pointer font-bold text-2xl text-white/36 leading-[128%] transition-all duration-300 hover:opacity-100 active:opacity-15",
+                "cursor-pointer font-bold text-[14px] text-white/36 leading-[128%] transition-all duration-300 hover:opacity-100 active:opacity-15 md:text-2xl",
                 activeTab === index ? HOW_IT_WORKS_DATA[index].color : "opacity-30"
               )}
               key={tab}
@@ -168,8 +168,8 @@ const HowItWorksSection: FC = () => {
           ))}
         </div>
       </div>
-      <div className="flex h-[304px] w-full items-center justify-between">
-        <ul className="flex h-full w-[462px] flex-col justify-between border-[0.803px] border-white/30 border-dashed p-[31px] backdrop-blur-[2px] [background:rgba(171,171,171,0.07)]">
+      <div className="flex h-[304px] w-full flex-col items-center justify-between md:flex-row">
+        <ul className="flex h-full w-full flex-col justify-between border-[0.803px] border-white/30 border-dashed p-[31px] backdrop-blur-[2px] [background:rgba(171,171,171,0.07)] md:min-w-[462px]">
           {HOW_IT_WORKS_DATA[activeTab].list.map((item) => (
             <li
               className={cn(
@@ -183,7 +183,7 @@ const HowItWorksSection: FC = () => {
           ))}
         </ul>
 
-        <img alt="how it works" className="h-full" src={HOW_IT_WORKS_DATA[activeTab].image} />
+        <img alt="how it works" className="mt-[23px] h-full md:mt-0" src={HOW_IT_WORKS_DATA[activeTab].image} />
       </div>
     </section>
   );
@@ -193,14 +193,14 @@ const CTASection: FC = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="flex flex-col items-start gap-9.5">
+    <section className="mx-auto flex w-full max-w-[1350px] flex-col items-start gap-9.5">
       <div className="flex flex-col items-start gap-4.5">
-        <p className="font-bold text-[76px] uppercase leading-[116%]">{`//Real yield starts early/`}</p>
+        <p className="mt-[100px] font-bold text-[48px] uppercase leading-[116%] md:mt-0 md:text-[76px]">{`//Real yield starts early/`}</p>
         <p className="font-bold text-[#898989] text-xl leading-[128%]">
           Self-curated stablecoin yield infrastructure on Solana
         </p>
       </div>
-      <div className="flex w-[564px] items-start gap-4.5">
+      <div className="flex w-full flex-col items-start gap-4.5 md:w-[564px] md:flex-row">
         <Button className="w-full" onClick={() => navigate(APP_ROUTES.WHITELIST)} variant="joinWhitelist">
           Join whitelist
         </Button>
@@ -219,7 +219,7 @@ const CTASection: FC = () => {
 
 const Footer: FC = () => {
   return (
-    <footer className="mb-16 flex items-center justify-end gap-4.5">
+    <footer className="mx-auto mb-16 flex w-full max-w-[1350px] items-center justify-between gap-4.5 md:justify-end">
       <p>© {new Date().getUTCFullYear()} Backyard</p>
       <Button asChild hover="green">
         <a href={links.x} rel="noopener" target="_blank">
@@ -232,7 +232,7 @@ const Footer: FC = () => {
 
 export default function IndexPage() {
   return (
-    <div className="relative z-0 flex flex-col gap-[190px] px-20">
+    <div className="relative z-0 flex flex-col gap-[190px] px-[16px] md:px-20">
       <div className="noise" />
       <img
         alt="coins"
