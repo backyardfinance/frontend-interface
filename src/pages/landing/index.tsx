@@ -81,9 +81,7 @@ export const Header: FC = () => {
         Backyard
       </Button>
       <div className="flex items-center gap-2.5">
-        <Button onClick={() => navigate(APP_ROUTES.VAULTS)} variant="launch">
-          Launch App/
-        </Button>
+        <Button>Coming soon</Button>
         <Button asChild hover="green">
           <a href={links.x} rel="noopener" target="_blank">
             <XIcon className="h-[14px] w-[15px]" />
