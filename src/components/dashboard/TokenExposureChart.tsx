@@ -13,7 +13,7 @@ export const TokenExposureChart = () => {
 
     const allVaults = userStrategies.flatMap((strategy) => strategy.vaults || []);
 
-    return buildChartDataByKey(allVaults, "token");
+    return buildChartDataByKey(allVaults, "name");
   }, [userStrategies]);
 
   return <ChartPieDonut chartConfig={chartConfig} chartData={chartData} nameKey="token" title="Token Exposure" />;
