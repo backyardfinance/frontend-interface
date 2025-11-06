@@ -126,7 +126,7 @@ const WhatIsBackyardSection: FC = () => {
   return (
     <section className="mx-auto flex w-full max-w-[1350px] flex-col items-start gap-21">
       <p className="font-bold text-[28px] uppercase leading-[116%] md:text-[56px]">What is Backyard?</p>
-      <div className="grid grid-rows-3 gap-[37px] md:grid-cols-3">
+      <div className="grid gap-[37px] max-md:grid-rows-3 md:grid-cols-3">
         {WHAT_IS_DATA.map(({ title, description, color }) => (
           <div
             className="flex select-none flex-col items-start gap-7 border border-white/30 border-dashed px-[23px] py-[31px] backdrop-blur-[2px] [background:rgba(171,171,171,0.07)]"
@@ -169,7 +169,7 @@ const HowItWorksSection: FC = () => {
         </div>
       </div>
       <div className="flex h-[304px] w-full flex-col items-center justify-between md:flex-row">
-        <ul className="flex h-full w-full flex-col justify-between border-[0.803px] border-white/30 border-dashed p-[31px] backdrop-blur-[2px] [background:rgba(171,171,171,0.07)] md:min-w-[462px]">
+        <ul className="flex h-full w-full flex-col justify-between border-[0.803px] border-white/30 border-dashed p-[31px] backdrop-blur-[2px] [background:rgba(171,171,171,0.07)] md:max-w-[462px]">
           {HOW_IT_WORKS_DATA[activeTab].list.map((item) => (
             <li
               className={cn(
