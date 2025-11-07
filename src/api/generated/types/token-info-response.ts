@@ -14,7 +14,7 @@
 
 
 // May contain unused imports in some cases
-// @ts-ignore
+// @ts-expect-error
 import type { TokenAmount } from './token-amount';
 
 /**

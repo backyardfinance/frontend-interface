@@ -17,18 +17,17 @@ import type { Configuration } from '../configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
-// @ts-ignore
+// @ts-expect-error
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../common';
-// @ts-ignore
+// @ts-expect-error
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
-// @ts-ignore
+// @ts-expect-error
 import type { UserXDto } from '../types';
 /**
  * AuthApi - axios parameter creator
  * @export
  */
-export const AuthApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
+export const AuthApiAxiosParamCreator = (configuration?: Configuration) => ({
         /**
          * 
          * @param {string} code 
@@ -57,7 +56,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -86,7 +85,7 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -94,14 +93,13 @@ export const AuthApiAxiosParamCreator = function (configuration?: Configuration)
                 options: localVarRequestOptions,
             };
         },
-    }
-};
+    });
 
 /**
  * AuthApi - functional programming interface
  * @export
  */
-export const AuthApiFp = function(configuration?: Configuration) {
+export const AuthApiFp = (configuration?: Configuration) => {
     const localVarAxiosParamCreator = AuthApiAxiosParamCreator(configuration)
     return {
         /**
@@ -134,7 +132,7 @@ export const AuthApiFp = function(configuration?: Configuration) {
  * AuthApi - factory interface
  * @export
  */
-export const AuthApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const AuthApiFactory = (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) => {
     const localVarFp = AuthApiFp(configuration)
     return {
         /**

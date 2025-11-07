@@ -25,7 +25,7 @@ export const useVaultByIdWithUser = (vaultId: string, options?: UseVaultOptions)
     queryKey: queryKeys.vaults.vaultByIdWithUser(vaultId, userId ?? ""),
     queryFn: async () => {
       if (!userId) throw Error("useVaultByIdWithUser: address is missing");
-      const { data } = await vaultApi.vaultControllerGetVault({ vaultId, userId });
+      const { data } = await vaultApi.vaultControllerGetVault({ vaultId, walletAddress: userId });
       return data as unknown as VaultInfoStrategyResponse;
     },
     ...options,
@@ -41,7 +41,7 @@ export const useVaultHistory = (vaultId: string, options?: UseVaultHistoryOption
     queryFn: async () => {
       const userId = localStorage.getItem("userId");
       if (!userId) throw Error("useVaultHistory: userId is missing");
-      const { data } = await vaultApi.vaultControllerGetVaultHistory({ vaultId, userId });
+      const { data } = await vaultApi.vaultControllerGetVaultHistory({ vaultId, walletAddress: userId });
       return data as unknown as VaultHistoryInfoResponse[]; // TODO: remove types
     },
     ...options,

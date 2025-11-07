@@ -123,7 +123,7 @@ const WhatIsBackyardSection: FC = () => {
 };
 
 const HowItWorksSection: FC = () => {
-  const [activeTab, setActiveTab] = useState<number>(1);
+  const [activeTab, setActiveTab] = useState<number>(0);
 
   return (
     <section className="mx-auto flex w-full max-w-[1350px] flex-col items-start gap-[49px]">

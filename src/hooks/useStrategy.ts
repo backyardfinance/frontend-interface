@@ -33,7 +33,7 @@ export const useUserStrategies = (options?: UseStrategiesOptions) => {
     queryFn: async () => {
       const userId = localStorage.getItem("userId");
       if (!userId) throw Error("useStrategies: userId is missing");
-      const { data } = await strategyApi.strategyControllerGetStrategies({ userId });
+      const { data } = await strategyApi.strategyControllerGetStrategies({ walletAddress: userId });
       return data as unknown as StrategyInfoResponse[];
     },
     ...options,

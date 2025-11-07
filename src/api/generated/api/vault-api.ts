@@ -17,24 +17,23 @@ import type { Configuration } from '../configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
-// @ts-ignore
+// @ts-expect-error
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../common';
-// @ts-ignore
+// @ts-expect-error
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
-// @ts-ignore
+// @ts-expect-error
 import type { UserVaultHistoryInfoResponse } from '../types';
-// @ts-ignore
+// @ts-expect-error
 import type { VaultHistoryInfoResponse } from '../types';
-// @ts-ignore
+// @ts-expect-error
 import type { VaultInfoResponse } from '../types';
-// @ts-ignore
+// @ts-expect-error
 import type { VaultInfoStrategyResponse } from '../types';
 /**
  * VaultApi - axios parameter creator
  * @export
  */
-export const VaultApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
+export const VaultApiAxiosParamCreator = (configuration?: Configuration) => ({
         /**
          * 
          * @param {*} [options] Override http request option.
@@ -56,7 +55,7 @@ export const VaultApiAxiosParamCreator = function (configuration?: Configuration
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -93,7 +92,7 @@ export const VaultApiAxiosParamCreator = function (configuration?: Configuration
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -130,7 +129,7 @@ export const VaultApiAxiosParamCreator = function (configuration?: Configuration
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -163,7 +162,7 @@ export const VaultApiAxiosParamCreator = function (configuration?: Configuration
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -171,14 +170,13 @@ export const VaultApiAxiosParamCreator = function (configuration?: Configuration
                 options: localVarRequestOptions,
             };
         },
-    }
-};
+    });
 
 /**
  * VaultApi - functional programming interface
  * @export
  */
-export const VaultApiFp = function(configuration?: Configuration) {
+export const VaultApiFp = (configuration?: Configuration) => {
     const localVarAxiosParamCreator = VaultApiAxiosParamCreator(configuration)
     return {
         /**
@@ -237,7 +235,7 @@ export const VaultApiFp = function(configuration?: Configuration) {
  * VaultApi - factory interface
  * @export
  */
-export const VaultApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+export const VaultApiFactory = (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) => {
     const localVarFp = VaultApiFp(configuration)
     return {
         /**
