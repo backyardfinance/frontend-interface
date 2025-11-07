@@ -14,12 +14,12 @@
 
 
 
-export * from './api/admin-api';
 export * from './api/app-api';
+export * from './api/auth-api';
 export * from './api/quote-api';
 export * from './api/solana-api';
 export * from './api/strategy-api';
 export * from './api/transactions-api';
-export * from './api/user-api';
+export * from './api/users-api';
 export * from './api/vault-api';
 

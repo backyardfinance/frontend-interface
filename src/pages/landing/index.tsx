@@ -230,7 +230,7 @@ const Footer: FC = () => {
 
 export default function IndexPage() {
   return (
-    <div className="relative z-0 flex flex-col gap-[190px] px-[16px] md:px-20">
+    <div className="relative z-0 flex flex-col gap-[190px] px-4 md:px-20">
       <div className="noise" />
       <img
         alt="coins"

@@ -10,6 +10,7 @@ export const queryKeys = {
     strategyById: (strategyId: string) => [...queryKeys.strategies.all, strategyId],
     strategyByUser: (userId: string) => [...queryKeys.strategies.all, "user", userId],
   },
+
   users: {
     all: ["users"],
   },

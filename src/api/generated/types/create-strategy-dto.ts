@@ -31,7 +31,7 @@ export interface CreateStrategyDto {
      * @type {string}
      * @memberof CreateStrategyDto
      */
-    'userId': string;
+    'walletAddress': string;
     /**
      * Record of vaultId -> deposited amount
      * @type {{ [key: string]: number; }}

@@ -31,15 +31,15 @@ export const SolanaApiAxiosParamCreator = function (configuration?: Configuratio
     return {
         /**
          * 
-         * @param {string} userId 
+         * @param {string} walletAddress 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        solanaControllerGetUserTokens: async (userId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'userId' is not null or undefined
-            assertParamExists('solanaControllerGetUserTokens', 'userId', userId)
-            const localVarPath = `/solana/user-tokens/{userId}`
-                .replace(`{${"userId"}}`, encodeURIComponent(String(userId)));
+        solanaControllerGetUserTokens: async (walletAddress: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'walletAddress' is not null or undefined
+            assertParamExists('solanaControllerGetUserTokens', 'walletAddress', walletAddress)
+            const localVarPath = `/solana/user-tokens/{walletAddress}`
+                .replace(`{${"walletAddress"}}`, encodeURIComponent(String(walletAddress)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -107,12 +107,12 @@ export const SolanaApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {string} userId 
+         * @param {string} walletAddress 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async solanaControllerGetUserTokens(userId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TokenInfoResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.solanaControllerGetUserTokens(userId, options);
+        async solanaControllerGetUserTokens(walletAddress: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TokenInfoResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.solanaControllerGetUserTokens(walletAddress, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['SolanaApi.solanaControllerGetUserTokens']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -146,7 +146,7 @@ export const SolanaApiFactory = function (configuration?: Configuration, basePat
          * @throws {RequiredError}
          */
         solanaControllerGetUserTokens(requestParameters: SolanaApiSolanaControllerGetUserTokensRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<TokenInfoResponse>> {
-            return localVarFp.solanaControllerGetUserTokens(requestParameters.userId, options).then((request) => request(axios, basePath));
+            return localVarFp.solanaControllerGetUserTokens(requestParameters.walletAddress, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -171,7 +171,7 @@ export interface SolanaApiSolanaControllerGetUserTokensRequest {
      * @type {string}
      * @memberof SolanaApiSolanaControllerGetUserTokens
      */
-    readonly userId: string
+    readonly walletAddress: string
 }
 
 /**
@@ -203,7 +203,7 @@ export class SolanaApi extends BaseAPI {
      * @memberof SolanaApi
      */
     public solanaControllerGetUserTokens(requestParameters: SolanaApiSolanaControllerGetUserTokensRequest, options?: RawAxiosRequestConfig) {
-        return SolanaApiFp(this.configuration).solanaControllerGetUserTokens(requestParameters.userId, options).then((request) => request(this.axios, this.basePath));
+        return SolanaApiFp(this.configuration).solanaControllerGetUserTokens(requestParameters.walletAddress, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -17,26 +17,20 @@
 /**
  * 
  * @export
- * @interface UsertInfoResponse
+ * @interface VerifyEmailDto
  */
-export interface UsertInfoResponse {
+export interface VerifyEmailDto {
     /**
      * 
      * @type {string}
-     * @memberof UsertInfoResponse
-     */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UsertInfoResponse
-     */
-    'wallet': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UsertInfoResponse
+     * @memberof VerifyEmailDto
      */
     'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VerifyEmailDto
+     */
+    'code': string;
 }
 

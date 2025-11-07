@@ -17,26 +17,14 @@
 /**
  * 
  * @export
- * @interface VerifySiwsDto
+ * @interface SendEmailDto
  */
-export interface VerifySiwsDto {
+export interface SendEmailDto {
     /**
      * 
      * @type {string}
-     * @memberof VerifySiwsDto
+     * @memberof SendEmailDto
      */
-    'message': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof VerifySiwsDto
-     */
-    'signature': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof VerifySiwsDto
-     */
-    'address': string;
+    'email': string;
 }
 

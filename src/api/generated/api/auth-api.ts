@@ -22,25 +22,23 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
-import type { CreateUserDto } from '../types';
-// @ts-ignore
-import type { UsertInfoResponse } from '../types';
+import type { UserXDto } from '../types';
 /**
- * AdminApi - axios parameter creator
+ * AuthApi - axios parameter creator
  * @export
  */
-export const AdminApiAxiosParamCreator = function (configuration?: Configuration) {
+export const AuthApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {CreateUserDto} createUserDto 
+         * @param {string} code 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        adminControllerCreateUser: async (createUserDto: CreateUserDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'createUserDto' is not null or undefined
-            assertParamExists('adminControllerCreateUser', 'createUserDto', createUserDto)
-            const localVarPath = `/admin/create-user`;
+        authControllerCallback: async (code: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'code' is not null or undefined
+            assertParamExists('authControllerCallback', 'code', code)
+            const localVarPath = `/auth/x/callback`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -48,18 +46,19 @@ export const AdminApiAxiosParamCreator = function (configuration?: Configuration
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            if (code !== undefined) {
+                localVarQueryParameter['code'] = code;
+            }
+
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(createUserDto, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -71,8 +70,8 @@ export const AdminApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        adminControllerGetUsers: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/admin/users`;
+        authControllerLogin: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth/x/login`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -99,22 +98,22 @@ export const AdminApiAxiosParamCreator = function (configuration?: Configuration
 };
 
 /**
- * AdminApi - functional programming interface
+ * AuthApi - functional programming interface
  * @export
  */
-export const AdminApiFp = function(configuration?: Configuration) {
-    const localVarAxiosParamCreator = AdminApiAxiosParamCreator(configuration)
+export const AuthApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = AuthApiAxiosParamCreator(configuration)
     return {
         /**
          * 
-         * @param {CreateUserDto} createUserDto 
+         * @param {string} code 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async adminControllerCreateUser(createUserDto: CreateUserDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.adminControllerCreateUser(createUserDto, options);
+        async authControllerCallback(code: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserXDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authControllerCallback(code, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['AdminApi.adminControllerCreateUser']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['AuthApi.authControllerCallback']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -122,82 +121,82 @@ export const AdminApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async adminControllerGetUsers(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UsertInfoResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.adminControllerGetUsers(options);
+        async authControllerLogin(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authControllerLogin(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['AdminApi.adminControllerGetUsers']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['AuthApi.authControllerLogin']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
 };
 
 /**
- * AdminApi - factory interface
+ * AuthApi - factory interface
  * @export
  */
-export const AdminApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = AdminApiFp(configuration)
+export const AuthApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AuthApiFp(configuration)
     return {
         /**
          * 
-         * @param {AdminApiAdminControllerCreateUserRequest} requestParameters Request parameters.
+         * @param {AuthApiAuthControllerCallbackRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        adminControllerCreateUser(requestParameters: AdminApiAdminControllerCreateUserRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.adminControllerCreateUser(requestParameters.createUserDto, options).then((request) => request(axios, basePath));
+        authControllerCallback(requestParameters: AuthApiAuthControllerCallbackRequest, options?: RawAxiosRequestConfig): AxiosPromise<UserXDto> {
+            return localVarFp.authControllerCallback(requestParameters.code, options).then((request) => request(axios, basePath));
         },
         /**
          * 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        adminControllerGetUsers(options?: RawAxiosRequestConfig): AxiosPromise<Array<UsertInfoResponse>> {
-            return localVarFp.adminControllerGetUsers(options).then((request) => request(axios, basePath));
+        authControllerLogin(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.authControllerLogin(options).then((request) => request(axios, basePath));
         },
     };
 };
 
 /**
- * Request parameters for adminControllerCreateUser operation in AdminApi.
+ * Request parameters for authControllerCallback operation in AuthApi.
  * @export
- * @interface AdminApiAdminControllerCreateUserRequest
+ * @interface AuthApiAuthControllerCallbackRequest
  */
-export interface AdminApiAdminControllerCreateUserRequest {
+export interface AuthApiAuthControllerCallbackRequest {
     /**
      * 
-     * @type {CreateUserDto}
-     * @memberof AdminApiAdminControllerCreateUser
+     * @type {string}
+     * @memberof AuthApiAuthControllerCallback
      */
-    readonly createUserDto: CreateUserDto
+    readonly code: string
 }
 
 /**
- * AdminApi - object-oriented interface
+ * AuthApi - object-oriented interface
  * @export
- * @class AdminApi
+ * @class AuthApi
  * @extends {BaseAPI}
  */
-export class AdminApi extends BaseAPI {
+export class AuthApi extends BaseAPI {
     /**
      * 
-     * @param {AdminApiAdminControllerCreateUserRequest} requestParameters Request parameters.
+     * @param {AuthApiAuthControllerCallbackRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AdminApi
+     * @memberof AuthApi
      */
-    public adminControllerCreateUser(requestParameters: AdminApiAdminControllerCreateUserRequest, options?: RawAxiosRequestConfig) {
-        return AdminApiFp(this.configuration).adminControllerCreateUser(requestParameters.createUserDto, options).then((request) => request(this.axios, this.basePath));
+    public authControllerCallback(requestParameters: AuthApiAuthControllerCallbackRequest, options?: RawAxiosRequestConfig) {
+        return AuthApiFp(this.configuration).authControllerCallback(requestParameters.code, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof AdminApi
+     * @memberof AuthApi
      */
-    public adminControllerGetUsers(options?: RawAxiosRequestConfig) {
-        return AdminApiFp(this.configuration).adminControllerGetUsers(options).then((request) => request(this.axios, this.basePath));
+    public authControllerLogin(options?: RawAxiosRequestConfig) {
+        return AuthApiFp(this.configuration).authControllerLogin(options).then((request) => request(this.axios, this.basePath));
     }
 }
 
