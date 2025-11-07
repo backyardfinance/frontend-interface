@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useUsersSendEmail, useUsersVerifyEmail } from "@/hooks/useUsers";
 
 const emailSchema = z.object({
-  email: z.string().email(),
+  email: z.email(),
 });
 
 const RESEND_TIMER_SECONDS = 120; // 2 minutes
@@ -81,25 +81,21 @@ export const useEmailVerification = (userEmail?: string) => {
   const verifyEmailErrorMessage = verifyEmailError?.response?.data.message[0];
 
   return {
-    // State
     email,
     code,
     emailSent,
     isEmailValid,
     resendTimer,
 
-    // Handlers
     handleEmailChange,
     handleSendEmail,
     handleResendCode,
     handleVerifyCode,
     setCode,
 
-    // Loading states
     isSendingEmail,
     isVerifyingEmail,
 
-    // Errors
     isSendEmailError,
     verifyEmailErrorMessage,
   };

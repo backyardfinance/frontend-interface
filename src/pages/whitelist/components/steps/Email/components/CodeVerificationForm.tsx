@@ -1,6 +1,5 @@
 import type { FC } from "react";
-import { Button } from "@/pages/landing/button";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "../../ui";
+import { Button, InputOTP, InputOTPGroup, InputOTPSlot } from "@/pages/whitelist/components/ui";
 import { ResendTimer } from "./ResendTimer";
 
 type CodeVerificationFormProps = {

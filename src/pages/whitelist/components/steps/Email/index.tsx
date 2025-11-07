@@ -1,10 +1,10 @@
 import { CheckIcon } from "lucide-react";
 import type { FC } from "react";
 import type { UsertInfoResponse } from "@/api";
-import { useEmailVerification } from "@/pages/whitelist/steps/Email/hooks/useEmailVerification";
-import { ErrorMessage, InfoMessage, LockStep, StepWrapper } from "../ui";
+import { ErrorMessage, InfoMessage, LockStep, StepWrapper } from "@/pages/whitelist/components/ui";
 import { CodeVerificationForm } from "./components/CodeVerificationForm";
 import { EmailInputForm } from "./components/EmailInputForm";
+import { useEmailVerification } from "./hooks/useEmailVerification";
 
 type Props = {
   disabled: boolean;

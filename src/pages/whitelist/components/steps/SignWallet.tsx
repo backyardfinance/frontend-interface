@@ -3,9 +3,8 @@ import type { FC } from "react";
 import { DisconnectIcon } from "@/components/icons/disconnect";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useCreateUser } from "@/hooks/useUsers";
-import { Button } from "@/pages/landing/button";
+import { Button, ErrorMessage, StepWrapper } from "@/pages/whitelist/components/ui";
 import { truncateAddress } from "@/utils";
-import { ErrorMessage, StepWrapper } from "./ui";
 
 type Props = {
   isCompleted: boolean;
@@ -33,7 +32,7 @@ export const SignWallet: FC<Props> = ({ isCompleted }) => {
 
   return (
     <StepWrapper className="flex-col">
-      <div className="flex w-full items-center gap-4">
+      <div className="flex w-full items-center justify-between gap-4">
         <p className="font-bold text-sm text-white leading-[normal]">
           /Sign wallet {address && <span className="text-[#8D8D8D] text-xs">({truncateAddress(address)})</span>}
         </p>

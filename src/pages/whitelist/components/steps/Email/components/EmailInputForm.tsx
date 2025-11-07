@@ -1,6 +1,5 @@
 import type { FC } from "react";
-import { Button } from "@/pages/landing/button";
-import { EmailInput } from "../../ui";
+import { Button, EmailInput } from "@/pages/whitelist/components/ui";
 
 type EmailInputFormProps = {
   email: string;

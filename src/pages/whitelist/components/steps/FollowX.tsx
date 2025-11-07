@@ -1,8 +1,7 @@
 import { CheckIcon } from "lucide-react";
 import type { FC } from "react";
 import { links } from "@/config/links";
-import { Button } from "@/pages/landing/button";
-import { LockStep, StepWrapper } from "./ui";
+import { Button, LockStep, StepWrapper } from "@/pages/whitelist/components/ui";
 
 const authXLoginLink = `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/auth/x/login`;
 

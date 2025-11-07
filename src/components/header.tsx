@@ -1,10 +1,15 @@
 import { useNavigate } from "react-router";
 import Logo from "@/components/icons/backyard-logo.svg";
+import BackyardLogo from "@/components/icons/backyard-logo.svg";
+import { DisconnectIcon } from "@/components/icons/disconnect";
+import { XIcon } from "@/components/icons/x";
 import { Navbar } from "@/components/navbar";
+import { Button } from "@/components/ui/button";
+import { links } from "@/config/links";
+import { APP_ROUTES } from "@/config/routes";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
+import { Button as WhitelistButton } from "@/pages/whitelist/components/ui";
 import { truncateAddress } from "@/utils";
-import { DisconnectIcon } from "./icons/disconnect";
-import { Button } from "./ui/button";
 
 const ConnectWallet = () => {
   const { signIn, signOut, address } = useSolanaWallet();
@@ -37,6 +42,27 @@ export const Header = () => {
       <Navbar />
       <div className="flex items-center justify-end gap-4 lg:basis-[360px]">
         <ConnectWallet />
+      </div>
+    </header>
+  );
+};
+
+export const LandingHeader = () => {
+  const navigate = useNavigate();
+
+  return (
+    <header className="mx-auto flex w-full max-w-[1350px] items-center justify-between pt-8.5">
+      <WhitelistButton onClick={() => navigate(APP_ROUTES.HOME)}>
+        <img alt="Backyard logo" className="size-[11px]" src={BackyardLogo} />
+        Backyard
+      </WhitelistButton>
+      <div className="flex items-center gap-2.5">
+        <WhitelistButton>Coming soon</WhitelistButton>
+        <WhitelistButton asChild hover="green">
+          <a href={links.x} rel="noopener" target="_blank">
+            <XIcon className="h-[14px] w-[15px]" />
+          </a>
+        </WhitelistButton>
       </div>
     </header>
   );

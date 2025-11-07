@@ -1,55 +1,33 @@
-import type { FC, PropsWithChildren, ReactNode } from "react";
 import ArcIcon from "@/assets/landing/arc.webp";
 import ArcLogoIcon from "@/assets/landing/arc-logo.webp";
 import MenIcon from "@/assets/landing/men.webp";
 import NFT from "@/assets/landing/nft.webp";
-import { useSolanaWallet } from "@/hooks/useSolanaWallet";
-import { useUsers, useUsersValidateTwitter } from "@/hooks/useUsers";
+import { Button } from "@/pages/whitelist/components/ui";
 import { cn } from "@/utils";
-import { Button } from "../landing/button";
+import { WHITELIST_BENEFITS } from "../constants";
+import { useWhitelistUser } from "../hooks/useWhitelistUser";
+import { Card } from "./Card";
 
-const Card: FC<PropsWithChildren<{ title?: ReactNode; className?: string }>> = ({ children, title, className }) => {
-  return (
-    <div
-      className={cn(
-        "flex h-[217px] w-[269px] flex-col items-start justify-between gap-5 border border-[#656565] border-dashed bg-[rgba(45,45,45,0.86)] px-[17px] pt-[13px] pb-[21px]",
-        className
-      )}
-    >
-      {title && <div className="w-full font-bold text-xs leading-[128%]">{title}</div>}
-      {children}
-    </div>
-  );
+const calculateFomoRotation = (fomo: number): number => {
+  const MIN_ANGLE = -100;
+  const MAX_ANGLE = 100;
+  return MIN_ANGLE + (fomo / 100) * (MAX_ANGLE - MIN_ANGLE);
 };
 
-const BENEFITS = [
-  "<span>/Early</span> contributor NFT badge",
-  "<span>/Boosted APY</span> in the season 1 LP Mining Campaign",
-  "<span>/Priority</span> access to launch updates and community events",
-];
-
-export const RightSide = ({ isGetAccess }: { isGetAccess: boolean }) => {
-  const { address } = useSolanaWallet();
-  const { data: users } = useUsers({ enabled: isGetAccess && !!address });
-  const user = users?.find((user) => user.wallet === address);
-  const { data: validateTwitter } = useUsersValidateTwitter((user as any)?.userId ?? "", { enabled: !!user }); // TODO: remove any
-
-  const steps = [!!user, !!user?.email, !!validateTwitter?.subscribed, !!validateTwitter?.retweeted];
-
-  const allTaskCompleted = steps.filter(Boolean).length === steps.length;
+export const WhitelistStats = ({ showWhitelistSteps }: { showWhitelistSteps: boolean }) => {
+  const { completedCount, totalSteps, allTasksCompleted } = useWhitelistUser({
+    enabled: showWhitelistSteps,
+  });
 
   const whitelistedUsers = 100; //TODO: get from api
 
-  // min -100, max 100
   const fomo = 37; //TODO: get from api, and add color for border
 
-  const minAngle = -100;
-  const maxAngle = 100;
-  const rotation = minAngle + (fomo / 100) * (maxAngle - minAngle);
+  const rotation = calculateFomoRotation(fomo);
 
   return (
     <div className="flex flex-col items-start justify-center gap-4">
-      {allTaskCompleted ? (
+      {allTasksCompleted ? (
         <Card className="h-[263px] w-[269px] p-4">
           <div className="relative size-full overflow-hidden">
             <img alt="nft" className="absolute" src={NFT} />
@@ -67,14 +45,14 @@ export const RightSide = ({ isGetAccess }: { isGetAccess: boolean }) => {
             <div className="flex w-full items-center justify-between gap-2 font-bold text-xs leading-[128%]">
               <p>Completed tasks</p>
               <p>
-                <span className="text-white/10">{steps.filter(Boolean).length}/</span>
-                {steps.length}
+                <span className="text-white/10">{completedCount}/</span>
+                {totalSteps}
               </p>
             </div>
           }
         >
           <ul className="flex flex-col gap-4">
-            {BENEFITS.map((benefit) => (
+            {WHITELIST_BENEFITS.map((benefit) => (
               <li
                 className="font-bold text-[#8D8D8D] text-[10px] leading-[128%] [&_span]:text-[#E3D0FF]"
                 // biome-ignore lint/security/noDangerouslySetInnerHtml: explanation

@@ -1,7 +1,6 @@
 import { CheckIcon } from "lucide-react";
 import type { FC } from "react";
-import { Button } from "@/pages/landing/button";
-import { LockStep, StepWrapper } from "./ui";
+import { Button, LockStep, StepWrapper } from "@/pages/whitelist/components/ui";
 
 type Props = {
   disabled: boolean;

@@ -1,19 +1,14 @@
 import { ChevronIcon } from "@/components/icons/chevron";
-import { Button } from "../landing/button";
+import { Button } from "@/pages/whitelist/components/ui";
+import { WHITELIST_BENEFITS } from "../constants";
 
-const BENEFITS = [
-  "<span>/Early</span> contributor NFT badge",
-  "<span>/Boosted APY</span> in the season 1 LP Mining Campaign",
-  "<span>/Priority</span> access to launch updates and community events",
-];
-
-export const GetAccessComponent = ({ getAccess }: { getAccess: () => void }) => {
+export const WhitelistWelcome = ({ onGetAccess }: { onGetAccess: () => void }) => {
   return (
     <div className="flex flex-col gap-[122px]">
       <div className="flex flex-col gap-15">
         <p className="font-bold text-5xl uppercase leading-[normal]">Contributor Whitelist</p>
         <ul className="flex flex-col items-start gap-6 self-stretch">
-          {BENEFITS.map((benefit) => (
+          {WHITELIST_BENEFITS.map((benefit) => (
             <li
               className="font-bold text-[#8D8D8D] leading-[128%] [&_span]:text-[#E3D0FF]"
               // biome-ignore lint/security/noDangerouslySetInnerHtml: explanation
@@ -29,7 +24,7 @@ export const GetAccessComponent = ({ getAccess }: { getAccess: () => void }) => 
             *Claim your Early Contributor NFT to get boosted APY in LP Mining Campaign SEASON 1
           </span>
         </p>
-        <Button className="w-full" onClick={getAccess} variant="joinWhitelist">
+        <Button className="w-full" onClick={onGetAccess} variant="joinWhitelist">
           Get access <ChevronIcon direction="right" />
         </Button>
       </div>
