@@ -103,15 +103,15 @@ export const StrategyApiAxiosParamCreator = function (configuration?: Configurat
         },
         /**
          * 
-         * @param {string} userId 
+         * @param {string} walletAddress 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        strategyControllerGetPortfolioHistory: async (userId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'userId' is not null or undefined
-            assertParamExists('strategyControllerGetPortfolioHistory', 'userId', userId)
-            const localVarPath = `/strategies/portfolio/history/{userId}`
-                .replace(`{${"userId"}}`, encodeURIComponent(String(userId)));
+        strategyControllerGetPortfolioHistory: async (walletAddress: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'walletAddress' is not null or undefined
+            assertParamExists('strategyControllerGetPortfolioHistory', 'walletAddress', walletAddress)
+            const localVarPath = `/strategies/portfolio/history/{walletAddress}`
+                .replace(`{${"walletAddress"}}`, encodeURIComponent(String(walletAddress)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -136,15 +136,15 @@ export const StrategyApiAxiosParamCreator = function (configuration?: Configurat
         },
         /**
          * 
-         * @param {string} userId 
+         * @param {string} walletAddress 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        strategyControllerGetStrategies: async (userId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'userId' is not null or undefined
-            assertParamExists('strategyControllerGetStrategies', 'userId', userId)
-            const localVarPath = `/strategies/user/{userId}`
-                .replace(`{${"userId"}}`, encodeURIComponent(String(userId)));
+        strategyControllerGetStrategies: async (walletAddress: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'walletAddress' is not null or undefined
+            assertParamExists('strategyControllerGetStrategies', 'walletAddress', walletAddress)
+            const localVarPath = `/strategies/user/{walletAddress}`
+                .replace(`{${"walletAddress"}}`, encodeURIComponent(String(walletAddress)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -269,24 +269,24 @@ export const StrategyApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {string} userId 
+         * @param {string} walletAddress 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async strategyControllerGetPortfolioHistory(userId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<StrategyHistoryPoint>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerGetPortfolioHistory(userId, options);
+        async strategyControllerGetPortfolioHistory(walletAddress: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<StrategyHistoryPoint>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerGetPortfolioHistory(walletAddress, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['StrategyApi.strategyControllerGetPortfolioHistory']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {string} userId 
+         * @param {string} walletAddress 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async strategyControllerGetStrategies(userId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<StrategyInfoResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerGetStrategies(userId, options);
+        async strategyControllerGetStrategies(walletAddress: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<StrategyInfoResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerGetStrategies(walletAddress, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['StrategyApi.strategyControllerGetStrategies']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -350,7 +350,7 @@ export const StrategyApiFactory = function (configuration?: Configuration, baseP
          * @throws {RequiredError}
          */
         strategyControllerGetPortfolioHistory(requestParameters: StrategyApiStrategyControllerGetPortfolioHistoryRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<StrategyHistoryPoint>> {
-            return localVarFp.strategyControllerGetPortfolioHistory(requestParameters.userId, options).then((request) => request(axios, basePath));
+            return localVarFp.strategyControllerGetPortfolioHistory(requestParameters.walletAddress, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -359,7 +359,7 @@ export const StrategyApiFactory = function (configuration?: Configuration, baseP
          * @throws {RequiredError}
          */
         strategyControllerGetStrategies(requestParameters: StrategyApiStrategyControllerGetStrategiesRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<StrategyInfoResponse>> {
-            return localVarFp.strategyControllerGetStrategies(requestParameters.userId, options).then((request) => request(axios, basePath));
+            return localVarFp.strategyControllerGetStrategies(requestParameters.walletAddress, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -421,7 +421,7 @@ export interface StrategyApiStrategyControllerGetPortfolioHistoryRequest {
      * @type {string}
      * @memberof StrategyApiStrategyControllerGetPortfolioHistory
      */
-    readonly userId: string
+    readonly walletAddress: string
 }
 
 /**
@@ -435,7 +435,7 @@ export interface StrategyApiStrategyControllerGetStrategiesRequest {
      * @type {string}
      * @memberof StrategyApiStrategyControllerGetStrategies
      */
-    readonly userId: string
+    readonly walletAddress: string
 }
 
 /**
@@ -503,7 +503,7 @@ export class StrategyApi extends BaseAPI {
      * @memberof StrategyApi
      */
     public strategyControllerGetPortfolioHistory(requestParameters: StrategyApiStrategyControllerGetPortfolioHistoryRequest, options?: RawAxiosRequestConfig) {
-        return StrategyApiFp(this.configuration).strategyControllerGetPortfolioHistory(requestParameters.userId, options).then((request) => request(this.axios, this.basePath));
+        return StrategyApiFp(this.configuration).strategyControllerGetPortfolioHistory(requestParameters.walletAddress, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -514,7 +514,7 @@ export class StrategyApi extends BaseAPI {
      * @memberof StrategyApi
      */
     public strategyControllerGetStrategies(requestParameters: StrategyApiStrategyControllerGetStrategiesRequest, options?: RawAxiosRequestConfig) {
-        return StrategyApiFp(this.configuration).strategyControllerGetStrategies(requestParameters.userId, options).then((request) => request(this.axios, this.basePath));
+        return StrategyApiFp(this.configuration).strategyControllerGetStrategies(requestParameters.walletAddress, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

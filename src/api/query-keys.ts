@@ -10,8 +10,10 @@ export const queryKeys = {
     strategyById: (strategyId: string) => [...queryKeys.strategies.all, strategyId],
     strategyByUser: (userId: string) => [...queryKeys.strategies.all, "user", userId],
   },
+
   users: {
     all: ["users"],
+    validateTwitter: (userId: string) => [...queryKeys.users.all, "validate-twitter", userId],
   },
 
   userTokens: (userId: string) => ["user-tokens", userId],

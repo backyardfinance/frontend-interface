@@ -38,3 +38,9 @@ export interface VaultInfoResponse {
   description: string;
   publicKey?: string;
 }
+
+export interface ApiErrorResponse {
+  error: string;
+  message: string[];
+  statusCode: number;
+}

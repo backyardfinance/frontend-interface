@@ -5,12 +5,12 @@ import BackyardDollarImage from "@/assets/landing/backyard-dollar.webp";
 import Coins from "@/assets/landing/bg.webp";
 import YieldEfficientImage from "@/assets/landing/yield-efficient.webp";
 import YieldManagerImage from "@/assets/landing/yield-manager.webp";
-import BackyardLogo from "@/components/icons/backyard-logo.svg";
+import { LandingHeader } from "@/components/header";
 import { XIcon } from "@/components/icons/x";
 import { links } from "@/config/links";
 import { APP_ROUTES } from "@/config/routes";
+import { Button } from "@/pages/whitelist/components/ui";
 import { cn } from "@/utils";
-import { Button } from "./button";
 
 const WHAT_IS_DATA = [
   {
@@ -70,27 +70,6 @@ const HOW_IT_WORKS_DATA = [
     ],
   },
 ];
-
-export const Header: FC = () => {
-  const navigate = useNavigate();
-
-  return (
-    <header className="mx-auto flex w-full max-w-[1350px] items-center justify-between pt-8.5">
-      <Button onClick={() => navigate(APP_ROUTES.HOME)}>
-        <img alt="Backyard logo" className="size-[11px]" src={BackyardLogo} />
-        Backyard
-      </Button>
-      <div className="flex items-center gap-2.5">
-        <Button>Coming soon</Button>
-        <Button asChild hover="green">
-          <a href={links.x} rel="noopener" target="_blank">
-            <XIcon className="h-[14px] w-[15px]" />
-          </a>
-        </Button>
-      </div>
-    </header>
-  );
-};
 
 const HeroSection: FC = () => {
   const navigate = useNavigate();
@@ -230,14 +209,14 @@ const Footer: FC = () => {
 
 export default function IndexPage() {
   return (
-    <div className="relative z-0 flex flex-col gap-[190px] px-[16px] md:px-20">
+    <div className="relative z-0 flex flex-col gap-[190px] px-4 md:px-20">
       <div className="noise" />
       <img
         alt="coins"
         className="-z-10 -translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-[45%] left-1/2 h-full w-full object-cover"
         src={Coins}
       />
-      <Header />
+      <LandingHeader />
       <HeroSection />
       <WhatIsBackyardSection />
       <HowItWorksSection />

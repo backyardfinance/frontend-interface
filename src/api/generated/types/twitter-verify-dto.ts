@@ -17,26 +17,20 @@
 /**
  * 
  * @export
- * @interface UsertInfoResponse
+ * @interface TwitterVerifyDto
  */
-export interface UsertInfoResponse {
+export interface TwitterVerifyDto {
     /**
      * 
-     * @type {string}
-     * @memberof UsertInfoResponse
+     * @type {boolean}
+     * @memberof TwitterVerifyDto
      */
-    'name': string;
+    'subscribed': boolean;
     /**
      * 
-     * @type {string}
-     * @memberof UsertInfoResponse
+     * @type {boolean}
+     * @memberof TwitterVerifyDto
      */
-    'wallet': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UsertInfoResponse
-     */
-    'email': string;
+    'retweeted': boolean;
 }
 

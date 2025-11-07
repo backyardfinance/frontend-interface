@@ -17,26 +17,20 @@
 /**
  * 
  * @export
- * @interface UsertInfoResponse
+ * @interface UserXDto
  */
-export interface UsertInfoResponse {
+export interface UserXDto {
     /**
      * 
      * @type {string}
-     * @memberof UsertInfoResponse
+     * @memberof UserXDto
      */
-    'name': string;
+    'xId': string;
     /**
      * 
      * @type {string}
-     * @memberof UsertInfoResponse
+     * @memberof UserXDto
      */
-    'wallet': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UsertInfoResponse
-     */
-    'email': string;
+    'xUserName': string;
 }
 
