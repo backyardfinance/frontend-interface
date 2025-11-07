@@ -1,6 +1,15 @@
-import type { UseQueryOptions } from "@tanstack/react-query";
+import type { UseMutationResult, UseQueryOptions } from "@tanstack/react-query";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { type CreateUserDto, type SendEmailDto, type UsertInfoResponse, usersApi, type VerifyEmailDto } from "@/api";
+import type { AxiosError, AxiosResponse } from "axios";
+import {
+  type ApiErrorResponse,
+  type CreateUserDto,
+  type SendEmailDto,
+  type TwitterVerifyDto,
+  type UsertInfoResponse,
+  usersApi,
+  type VerifyEmailDto,
+} from "@/api";
 import { queryKeys } from "@/api/query-keys";
 
 type UseUserOptions = Omit<UseQueryOptions<UsertInfoResponse[], Error>, "queryKey" | "queryFn">;
@@ -26,7 +35,12 @@ export const useCreateUser = () => {
   });
 };
 
-export const useUsersSendEmail = () => {
+export const useUsersSendEmail = (): UseMutationResult<
+  AxiosResponse,
+  AxiosError<ApiErrorResponse>,
+  SendEmailDto,
+  unknown
+> => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: SendEmailDto) => usersApi.userControllerSendEmail({ sendEmailDto: data }),
@@ -36,7 +50,12 @@ export const useUsersSendEmail = () => {
   });
 };
 
-export const useUsersVerifyEmail = () => {
+export const useUsersVerifyEmail = (): UseMutationResult<
+  AxiosResponse,
+  AxiosError<ApiErrorResponse>,
+  VerifyEmailDto,
+  unknown
+> => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: VerifyEmailDto) => usersApi.userControllerVerify({ verifyEmailDto: data }),
@@ -46,12 +65,16 @@ export const useUsersVerifyEmail = () => {
   });
 };
 
-export const useUsersValidateTwitter = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (userId: string) => usersApi.userControllerValidateUser({ userId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.all });
+type UseUserValidateTwitterOptions = Omit<UseQueryOptions<TwitterVerifyDto, Error>, "queryKey" | "queryFn">;
+
+export const useUsersValidateTwitter = (userId: string, options?: UseUserValidateTwitterOptions) => {
+  return useQuery({
+    queryKey: queryKeys.users.validateTwitter(userId),
+    queryFn: async () => {
+      const { data } = await usersApi.userControllerValidateUser({ userId });
+      return data;
     },
+    ...options,
+    enabled: !!userId && options?.enabled,
   });
 };

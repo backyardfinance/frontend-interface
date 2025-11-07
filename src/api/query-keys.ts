@@ -13,6 +13,7 @@ export const queryKeys = {
 
   users: {
     all: ["users"],
+    validateTwitter: (userId: string) => [...queryKeys.users.all, "validate-twitter", userId],
   },
 
   userTokens: (userId: string) => ["user-tokens", userId],

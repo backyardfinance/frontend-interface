@@ -2,18 +2,42 @@ import type { FC, PropsWithChildren, ReactNode } from "react";
 import ArcIcon from "@/assets/landing/arc.webp";
 import ArcLogoIcon from "@/assets/landing/arc-logo.webp";
 import MenIcon from "@/assets/landing/men.webp";
+import NFT from "@/assets/landing/nft.webp";
+import { useSolanaWallet } from "@/hooks/useSolanaWallet";
+import { useUsers, useUsersValidateTwitter } from "@/hooks/useUsers";
 import { cn } from "@/utils";
+import { Button } from "../landing/button";
 
-const Card: FC<PropsWithChildren & { title: ReactNode }> = ({ children, title }) => {
+const Card: FC<PropsWithChildren<{ title?: ReactNode; className?: string }>> = ({ children, title, className }) => {
   return (
-    <div className="flex h-[217px] w-[269px] flex-col items-start justify-between gap-5 border border-[#656565] border-dashed bg-[rgba(45,45,45,0.86)] px-[17px] pt-[13px] pb-[21px]">
-      <div className="font-bold text-xs leading-[128%]">{title}</div>
+    <div
+      className={cn(
+        "flex h-[217px] w-[269px] flex-col items-start justify-between gap-5 border border-[#656565] border-dashed bg-[rgba(45,45,45,0.86)] px-[17px] pt-[13px] pb-[21px]",
+        className
+      )}
+    >
+      {title && <div className="w-full font-bold text-xs leading-[128%]">{title}</div>}
       {children}
     </div>
   );
 };
 
-export const RightSide = () => {
+const BENEFITS = [
+  "<span>/Early</span> contributor NFT badge",
+  "<span>/Boosted APY</span> in the season 1 LP Mining Campaign",
+  "<span>/Priority</span> access to launch updates and community events",
+];
+
+export const RightSide = ({ isGetAccess }: { isGetAccess: boolean }) => {
+  const { address } = useSolanaWallet();
+  const { data: users } = useUsers({ enabled: isGetAccess && !!address });
+  const user = users?.find((user) => user.wallet === address);
+  const { data: validateTwitter } = useUsersValidateTwitter((user as any)?.userId ?? "", { enabled: !!user }); // TODO: remove any
+
+  const steps = [!!user, !!user?.email, !!validateTwitter?.subscribed, !!validateTwitter?.retweeted];
+
+  const allTaskCompleted = steps.filter(Boolean).length === steps.length;
+
   const whitelistedUsers = 100; //TODO: get from api
 
   // min -100, max 100
@@ -25,6 +49,45 @@ export const RightSide = () => {
 
   return (
     <div className="flex flex-col items-start justify-center gap-4">
+      {allTaskCompleted ? (
+        <Card className="h-[263px] w-[269px] p-4">
+          <div className="relative size-full overflow-hidden">
+            <img alt="nft" className="absolute" src={NFT} />
+            <Button
+              border="none"
+              className="-translate-x-1/2 pointer-events-none absolute bottom-[6px] left-1/2 w-[calc(100%-12px)] bg-[#272727]"
+            >
+              Mint NFT
+            </Button>
+          </div>
+        </Card>
+      ) : (
+        <Card
+          title={
+            <div className="flex w-full items-center justify-between gap-2 font-bold text-xs leading-[128%]">
+              <p>Completed tasks</p>
+              <p>
+                <span className="text-white/10">{steps.filter(Boolean).length}/</span>
+                {steps.length}
+              </p>
+            </div>
+          }
+        >
+          <ul className="flex flex-col gap-4">
+            {BENEFITS.map((benefit) => (
+              <li
+                className="font-bold text-[#8D8D8D] text-[10px] leading-[128%] [&_span]:text-[#E3D0FF]"
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: explanation
+                dangerouslySetInnerHTML={{ __html: benefit }}
+                key={benefit}
+              />
+            ))}
+          </ul>
+          <Button border="none" className="w-full" disabled>
+            Mint NFT
+          </Button>
+        </Card>
+      )}
       <Card title="Whitelisted users">
         <div className="relative">
           <img alt="Men" className="" src={MenIcon} />

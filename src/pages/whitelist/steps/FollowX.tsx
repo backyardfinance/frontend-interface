@@ -1,9 +1,10 @@
 import { CheckIcon } from "lucide-react";
 import type { FC } from "react";
+import { links } from "@/config/links";
 import { Button } from "@/pages/landing/button";
 import { LockStep, StepWrapper } from "./ui";
 
-// const authXLoginLink = "/auth/x/login";
+const authXLoginLink = `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/auth/x/login`;
 
 type Props = {
   disabled: boolean;
@@ -19,6 +20,7 @@ export const FollowX: FC<Props> = ({ disabled, isCompleted }) => {
       </StepWrapper>
     );
   }
+
   if (disabled) {
     return (
       <StepWrapper>
@@ -27,11 +29,17 @@ export const FollowX: FC<Props> = ({ disabled, isCompleted }) => {
       </StepWrapper>
     );
   }
+
   return (
     <StepWrapper>
-      <p className="font-bold text-sm text-white leading-[normal]">/Follow @backyard_fi</p>
-      <Button border="none" size="sm">
-        Complete
+      <p className="font-bold text-sm text-white leading-[normal]">
+        /Follow{" "}
+        <a className="underline" href={links.x} rel="noopener" target="_blank">
+          @backyard_fi
+        </a>
+      </p>
+      <Button asChild border="none" size="sm">
+        <a href={authXLoginLink}>Complete</a>
       </Button>
     </StepWrapper>
   );

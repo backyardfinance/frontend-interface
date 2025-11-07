@@ -27,6 +27,7 @@ export const QuotePost: FC<Props> = ({ disabled, isCompleted }) => {
     );
   }
 
+  //TODO: add quote post button
   return (
     <StepWrapper>
       <p className="font-bold text-sm text-white leading-[normal]">/Quote post</p>
