@@ -17,15 +17,16 @@ import type { Configuration } from '../configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
-// @ts-expect-error
+// @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../common';
-// @ts-expect-error
+// @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 /**
  * AppApi - axios parameter creator
  * @export
  */
-export const AppApiAxiosParamCreator = (configuration?: Configuration) => ({
+export const AppApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
         /**
          * 
          * @param {*} [options] Override http request option.
@@ -47,7 +48,7 @@ export const AppApiAxiosParamCreator = (configuration?: Configuration) => ({
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -76,7 +77,7 @@ export const AppApiAxiosParamCreator = (configuration?: Configuration) => ({
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -84,13 +85,14 @@ export const AppApiAxiosParamCreator = (configuration?: Configuration) => ({
                 options: localVarRequestOptions,
             };
         },
-    });
+    }
+};
 
 /**
  * AppApi - functional programming interface
  * @export
  */
-export const AppApiFp = (configuration?: Configuration) => {
+export const AppApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = AppApiAxiosParamCreator(configuration)
     return {
         /**
@@ -122,7 +124,7 @@ export const AppApiFp = (configuration?: Configuration) => {
  * AppApi - factory interface
  * @export
  */
-export const AppApiFactory = (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) => {
+export const AppApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = AppApiFp(configuration)
     return {
         /**

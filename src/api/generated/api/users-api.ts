@@ -17,25 +17,26 @@ import type { Configuration } from '../configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
-// @ts-expect-error
+// @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../common';
-// @ts-expect-error
+// @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
-// @ts-expect-error
+// @ts-ignore
 import type { CreateUserDto } from '../types';
-// @ts-expect-error
+// @ts-ignore
 import type { SendEmailDto } from '../types';
-// @ts-expect-error
+// @ts-ignore
 import type { TwitterVerifyDto } from '../types';
-// @ts-expect-error
+// @ts-ignore
 import type { UsertInfoResponse } from '../types';
-// @ts-expect-error
+// @ts-ignore
 import type { VerifyEmailDto } from '../types';
 /**
  * UsersApi - axios parameter creator
  * @export
  */
-export const UsersApiAxiosParamCreator = (configuration?: Configuration) => ({
+export const UsersApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
         /**
          * 
          * @param {CreateUserDto} createUserDto 
@@ -62,7 +63,7 @@ export const UsersApiAxiosParamCreator = (configuration?: Configuration) => ({
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(createUserDto, localVarRequestOptions, configuration)
 
@@ -92,7 +93,7 @@ export const UsersApiAxiosParamCreator = (configuration?: Configuration) => ({
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -126,7 +127,7 @@ export const UsersApiAxiosParamCreator = (configuration?: Configuration) => ({
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(sendEmailDto, localVarRequestOptions, configuration)
 
@@ -165,7 +166,7 @@ export const UsersApiAxiosParamCreator = (configuration?: Configuration) => ({
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(body, localVarRequestOptions, configuration)
 
@@ -202,7 +203,7 @@ export const UsersApiAxiosParamCreator = (configuration?: Configuration) => ({
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -236,7 +237,7 @@ export const UsersApiAxiosParamCreator = (configuration?: Configuration) => ({
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(verifyEmailDto, localVarRequestOptions, configuration)
 
@@ -245,13 +246,14 @@ export const UsersApiAxiosParamCreator = (configuration?: Configuration) => ({
                 options: localVarRequestOptions,
             };
         },
-    });
+    }
+};
 
 /**
  * UsersApi - functional programming interface
  * @export
  */
-export const UsersApiFp = (configuration?: Configuration) => {
+export const UsersApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = UsersApiAxiosParamCreator(configuration)
     return {
         /**
@@ -333,7 +335,7 @@ export const UsersApiFp = (configuration?: Configuration) => {
  * UsersApi - factory interface
  * @export
  */
-export const UsersApiFactory = (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) => {
+export const UsersApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = UsersApiFp(configuration)
     return {
         /**

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "bash -c 'errors=$(tsc 2>&1); filtered=$(echo \"$errors\" | grep -v \"src/api/generated\" || true); if [ -n \"$filtered\" ]; then echo \"$filtered\"; exit 1; fi' && vite build",
+    "build": "tsc && vite build",
     "typecheck": "tsc --noEmit",
     "lint": "yarn typecheck && biome lint --fix",
     "format": "biome format --write",

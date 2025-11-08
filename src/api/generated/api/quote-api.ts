@@ -17,19 +17,20 @@ import type { Configuration } from '../configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
-// @ts-expect-error
+// @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../common';
-// @ts-expect-error
+// @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
-// @ts-expect-error
+// @ts-ignore
 import type { GetQuoteDto } from '../types';
-// @ts-expect-error
+// @ts-ignore
 import type { QuoteResponseDto } from '../types';
 /**
  * QuoteApi - axios parameter creator
  * @export
  */
-export const QuoteApiAxiosParamCreator = (configuration?: Configuration) => ({
+export const QuoteApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
         /**
          * 
          * @param {GetQuoteDto} getQuoteDto 
@@ -56,7 +57,7 @@ export const QuoteApiAxiosParamCreator = (configuration?: Configuration) => ({
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(getQuoteDto, localVarRequestOptions, configuration)
 
@@ -65,13 +66,14 @@ export const QuoteApiAxiosParamCreator = (configuration?: Configuration) => ({
                 options: localVarRequestOptions,
             };
         },
-    });
+    }
+};
 
 /**
  * QuoteApi - functional programming interface
  * @export
  */
-export const QuoteApiFp = (configuration?: Configuration) => {
+export const QuoteApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = QuoteApiAxiosParamCreator(configuration)
     return {
         /**
@@ -93,7 +95,7 @@ export const QuoteApiFp = (configuration?: Configuration) => {
  * QuoteApi - factory interface
  * @export
  */
-export const QuoteApiFactory = (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) => {
+export const QuoteApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = QuoteApiFp(configuration)
     return {
         /**

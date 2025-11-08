@@ -14,7 +14,7 @@
 
 
 // May contain unused imports in some cases
-// @ts-expect-error
+// @ts-ignore
 import type { UserStrategyInfoResponse } from './user-strategy-info-response';
 
 /**

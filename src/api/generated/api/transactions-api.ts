@@ -17,17 +17,18 @@ import type { Configuration } from '../configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
-// @ts-expect-error
+// @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../common';
-// @ts-expect-error
+// @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
-// @ts-expect-error
+// @ts-ignore
 import type { CreateDepositTransactionsDto } from '../types';
 /**
  * TransactionsApi - axios parameter creator
  * @export
  */
-export const TransactionsApiAxiosParamCreator = (configuration?: Configuration) => ({
+export const TransactionsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
         /**
          * 
          * @param {CreateDepositTransactionsDto} createDepositTransactionsDto 
@@ -54,7 +55,7 @@ export const TransactionsApiAxiosParamCreator = (configuration?: Configuration) 
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
             localVarRequestOptions.data = serializeDataIfNeeded(createDepositTransactionsDto, localVarRequestOptions, configuration)
 
@@ -63,13 +64,14 @@ export const TransactionsApiAxiosParamCreator = (configuration?: Configuration) 
                 options: localVarRequestOptions,
             };
         },
-    });
+    }
+};
 
 /**
  * TransactionsApi - functional programming interface
  * @export
  */
-export const TransactionsApiFp = (configuration?: Configuration) => {
+export const TransactionsApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = TransactionsApiAxiosParamCreator(configuration)
     return {
         /**
@@ -91,7 +93,7 @@ export const TransactionsApiFp = (configuration?: Configuration) => {
  * TransactionsApi - factory interface
  * @export
  */
-export const TransactionsApiFactory = (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) => {
+export const TransactionsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = TransactionsApiFp(configuration)
     return {
         /**

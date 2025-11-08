@@ -17,17 +17,18 @@ import type { Configuration } from '../configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
-// @ts-expect-error
+// @ts-ignore
 import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObject, setBearerAuthToObject, setOAuthToObject, setSearchParams, serializeDataIfNeeded, toPathString, createRequestFunction } from '../common';
-// @ts-expect-error
+// @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
-// @ts-expect-error
+// @ts-ignore
 import type { TokenInfoResponse } from '../types';
 /**
  * SolanaApi - axios parameter creator
  * @export
  */
-export const SolanaApiAxiosParamCreator = (configuration?: Configuration) => ({
+export const SolanaApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
         /**
          * 
          * @param {string} walletAddress 
@@ -53,7 +54,7 @@ export const SolanaApiAxiosParamCreator = (configuration?: Configuration) => ({
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -86,7 +87,7 @@ export const SolanaApiAxiosParamCreator = (configuration?: Configuration) => ({
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
-            const headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
@@ -94,13 +95,14 @@ export const SolanaApiAxiosParamCreator = (configuration?: Configuration) => ({
                 options: localVarRequestOptions,
             };
         },
-    });
+    }
+};
 
 /**
  * SolanaApi - functional programming interface
  * @export
  */
-export const SolanaApiFp = (configuration?: Configuration) => {
+export const SolanaApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = SolanaApiAxiosParamCreator(configuration)
     return {
         /**
@@ -134,7 +136,7 @@ export const SolanaApiFp = (configuration?: Configuration) => {
  * SolanaApi - factory interface
  * @export
  */
-export const SolanaApiFactory = (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) => {
+export const SolanaApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = SolanaApiFp(configuration)
     return {
         /**

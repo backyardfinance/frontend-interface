@@ -14,7 +14,7 @@
 
 
 // May contain unused imports in some cases
-// @ts-expect-error
+// @ts-ignore
 import type { VaultHistoryUserSlice } from './vault-history-user-slice';
 
 /**
