@@ -13,7 +13,7 @@ export const useUserTokens = (options?: UseUserTokensOptions) => {
     queryFn: async () => {
       const userId = localStorage.getItem("userId");
       if (!userId) throw Error("useUserTokens: userId is missing");
-      const { data } = await solanaApi.solanaControllerGetUserTokens({ userId });
+      const { data } = await solanaApi.solanaControllerGetUserTokens({ walletAddress: userId });
       return data as unknown as UserPortfolioView;
     },
     ...options,

@@ -57,7 +57,16 @@ export const LandingHeader = () => {
         Backyard
       </WhitelistButton>
       <div className="flex items-center gap-2.5">
-        <WhitelistButton>Coming soon</WhitelistButton>
+        <div className="group relative">
+          <WhitelistButton className="relative overflow-hidden" variant="launch">
+            <span className="flex items-center justify-center transition-transform duration-300 group-hover:translate-y-[200%]">
+              Launch App
+            </span>
+            <span className="absolute inset-0 flex translate-y-[-100%] items-center justify-center transition-transform duration-300 group-hover:translate-y-0">
+              Coming soon
+            </span>
+          </WhitelistButton>
+        </div>
         <WhitelistButton asChild hover="green">
           <a href={links.x} rel="noopener" target="_blank">
             <XIcon className="h-[14px] w-[15px]" />

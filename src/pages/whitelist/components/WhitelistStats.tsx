@@ -19,9 +19,9 @@ export const WhitelistStats = ({ showWhitelistSteps }: { showWhitelistSteps: boo
     enabled: showWhitelistSteps,
   });
 
-  const whitelistedUsers = 100; //TODO: get from api
+  const whitelistedUsers = 0; //TODO: get from api
 
-  const fomo = 37; //TODO: get from api, and add color for border
+  const fomo = 0; //TODO: get from api, and add color for border
 
   const rotation = calculateFomoRotation(fomo);
 
