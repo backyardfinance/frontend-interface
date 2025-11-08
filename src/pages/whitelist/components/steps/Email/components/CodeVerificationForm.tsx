@@ -23,8 +23,8 @@ export const CodeVerificationForm: FC<CodeVerificationFormProps> = ({
 }) => {
   return (
     <>
-      <InputOTP containerClassName="flex-1" maxLength={4} onChange={onCodeChange} value={code}>
-        <InputOTPGroup>
+      <InputOTP containerClassName="flex-1 min-w-0" maxLength={4} onChange={onCodeChange} value={code}>
+        <InputOTPGroup className="gap-2">
           <InputOTPSlot aria-invalid={!!verifyEmailErrorMessage} index={0} />
           <InputOTPSlot aria-invalid={!!verifyEmailErrorMessage} index={1} />
           <InputOTPSlot aria-invalid={!!verifyEmailErrorMessage} index={2} />
@@ -32,7 +32,7 @@ export const CodeVerificationForm: FC<CodeVerificationFormProps> = ({
         </InputOTPGroup>
       </InputOTP>
       <ResendTimer onResendCode={handleResendCode} resendTimer={resendTimer} />
-      <Button border="none" loading={isVerifyingEmail} onClick={onVerifyCode} size="sm">
+      <Button border="none" className="flex-shrink-0" loading={isVerifyingEmail} onClick={onVerifyCode} size="sm">
         {verifyEmailErrorMessage ? "Try again" : "Verify"}
       </Button>
     </>

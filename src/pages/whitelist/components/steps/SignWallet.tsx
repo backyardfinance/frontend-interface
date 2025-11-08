@@ -22,7 +22,7 @@ export const SignWallet: FC<Props> = ({ isCompleted }) => {
   if (isCompleted) {
     return (
       <StepWrapper isCompleted>
-        <p className="font-bold text-sm leading-[normal]">
+        <p className="font-bold text-xs leading-[normal] sm:text-sm">
           /Sign wallet {address && <span className="text-[#8D8D8D] text-xs">({truncateAddress(address)})</span>}
         </p>
         <CheckIcon className="size-4" />
@@ -32,21 +32,21 @@ export const SignWallet: FC<Props> = ({ isCompleted }) => {
 
   return (
     <StepWrapper className="flex-col">
-      <div className="flex w-full items-center justify-between gap-4">
-        <p className="font-bold text-sm text-white leading-[normal]">
+      <div className="flex w-full flex-col items-start justify-between gap-2 sm:flex-row sm:items-center sm:gap-4">
+        <p className="font-bold text-white text-xs leading-[normal] sm:text-sm">
           /Sign wallet {address && <span className="text-[#8D8D8D] text-xs">({truncateAddress(address)})</span>}
         </p>
         {address ? (
-          <div className="flex items-center gap-2">
-            <Button border="none" loading={isPending} onClick={handleSign} size="sm">
+          <div className="flex w-full items-center gap-2 sm:w-auto">
+            <Button border="none" className="flex-1 sm:flex-initial" loading={isPending} onClick={handleSign} size="sm">
               Sign
             </Button>
-            <Button border="none" className="min-w-none" disabled={isPending} onClick={signOut} size="sm">
+            <Button border="none" className="min-w-none flex-shrink-0" disabled={isPending} onClick={signOut} size="sm">
               <DisconnectIcon color="white" fillOpacity="1" />
             </Button>
           </div>
         ) : (
-          <Button border="none" onClick={signIn} size="sm">
+          <Button border="none" className="w-full sm:w-auto" onClick={signIn} size="sm">
             Connect wallet
           </Button>
         )}
