@@ -6,7 +6,7 @@ import { WhitelistSteps } from "./components/WhitelistSteps";
 import { WhitelistWelcome } from "./components/WhitelistWelcome";
 
 export default function WhitelistPage() {
-  const [showWhitelistSteps, setShowWhitelistSteps] = useState(false);
+  const [showWhitelistSteps] = useState(false);
 
   return (
     <div className="relative z-0 flex min-h-screen flex-col gap-12 px-4 pb-20 md:gap-24">
@@ -23,7 +23,12 @@ export default function WhitelistPage() {
           {showWhitelistSteps ? (
             <WhitelistSteps />
           ) : (
-            <WhitelistWelcome onGetAccess={() => setShowWhitelistSteps(true)} />
+            <WhitelistWelcome
+              onGetAccess={() => {
+                return;
+                // setShowWhitelistSteps(true);
+              }}
+            />
           )}
         </div>
         <WhitelistStats showWhitelistSteps={showWhitelistSteps} />

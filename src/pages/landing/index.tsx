@@ -150,7 +150,7 @@ const HowItWorksSection: FC = () => {
           ))}
         </div>
       </div>
-      <div className="flex h-[304px] w-full flex-col items-center justify-between md:flex-row">
+      <div className="flex w-full flex-col items-center justify-between lg:flex-row">
         <ul className="flex h-full w-full flex-col justify-between gap-[22px] border-[0.803px] border-white/15 border-dashed bg-[rgba(171,171,171,0.07)] px-5 py-[29px] md:max-w-[462px] md:p-[31px]">
           {HOW_IT_WORKS_DATA[activeTab].list.map((item) => (
             <li
@@ -165,7 +165,7 @@ const HowItWorksSection: FC = () => {
           ))}
         </ul>
 
-        <img alt="how it works" className="mt-[23px] h-full md:mt-0" src={HOW_IT_WORKS_DATA[activeTab].image} />
+        <img alt="how it works" className="mt-[23px] max-h-[304px] md:mt-0" src={HOW_IT_WORKS_DATA[activeTab].image} />
       </div>
     </section>
   );
