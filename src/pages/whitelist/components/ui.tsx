@@ -132,7 +132,7 @@ const buttonVariants = cva(
         readDocs: "text-[#C4A8EE]",
       },
       border: {
-        default: "border border-white/30 border-dashed",
+        default: "border border-white/15 border-dashed",
         none: "",
       },
       hover: {

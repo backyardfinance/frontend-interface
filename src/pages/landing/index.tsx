@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import BackyardDollarImage from "@/assets/landing/backyard-dollar.webp";
 import Coins from "@/assets/landing/bg.webp";
+import MobileCoins from "@/assets/landing/mobile-bg.webp";
 import YieldEfficientImage from "@/assets/landing/yield-efficient.webp";
 import YieldManagerImage from "@/assets/landing/yield-manager.webp";
 import { LandingHeader } from "@/components/header";
@@ -83,11 +84,15 @@ const HeroSection: FC = () => {
         </p>
       </div>
       <div className="flex w-full flex-col items-start gap-4.5 md:w-[564px] md:flex-row">
-        <Button className="w-full" onClick={() => navigate(APP_ROUTES.WHITELIST)} variant="joinWhitelist">
+        <Button
+          className="h-[56px] w-full text-base"
+          onClick={() => navigate(APP_ROUTES.WHITELIST)}
+          variant="joinWhitelist"
+        >
           Join whitelist
         </Button>
         <Button
-          className="w-full"
+          className="h-[56px] w-full text-base"
           hover="green"
           onClick={() => window.open("https://backyard-fi.gitbook.io/backyard-finance")}
           variant="readDocs"
@@ -101,17 +106,17 @@ const HeroSection: FC = () => {
 
 const WhatIsBackyardSection: FC = () => {
   return (
-    <section className="mx-auto flex w-full max-w-[1350px] flex-col items-start gap-21">
+    <section className="mx-auto flex w-full max-w-[1350px] flex-col items-start gap-8 md:gap-21">
       <p className="font-bold text-[28px] uppercase leading-[116%] md:text-[56px]">What is Backyard?</p>
-      <div className="grid gap-[37px] max-md:grid-rows-3 md:grid-cols-3">
+      <div className="grid gap-[11px] max-md:grid-rows-3 md:grid-cols-3 md:gap-[37px]">
         {WHAT_IS_DATA.map(({ title, description, color }) => (
           <div
-            className="flex select-none flex-col items-start gap-7 border border-white/30 border-dashed px-[23px] py-[31px] backdrop-blur-[2px] [background:rgba(171,171,171,0.07)]"
+            className="flex select-none flex-col items-start gap-[19px] border border-white/15 border-dashed px-5 py-[23px] [background:rgba(171,171,171,0.07)] md:gap-7 md:p-[31px]"
             key={title}
           >
-            <p className={cn("font-bold text-[20px] leading-[128%]", color)}>{title}</p>
+            <p className={cn("font-bold text-base leading-[128%] md:text-[20px]", color)}>{title}</p>
             <p
-              className="font-bold text-[#898989] text-base leading-[128%]"
+              className="font-bold text-[#898989] text-sm leading-[128%] md:text-base"
               // biome-ignore lint/security/noDangerouslySetInnerHtml: explanation
               dangerouslySetInnerHTML={{ __html: description }}
             />
@@ -126,10 +131,10 @@ const HowItWorksSection: FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
 
   return (
-    <section className="mx-auto flex w-full max-w-[1350px] flex-col items-start gap-[49px]">
-      <div className="flex flex-col items-start gap-[38px] self-stretch">
+    <section className="mx-auto flex w-full max-w-[1350px] flex-col items-start gap-[23px] md:gap-[49px]">
+      <div className="flex flex-col items-start gap-[23px] self-stretch md:gap-[38px]">
         <p className="font-bold text-[28px] uppercase leading-[116%] md:text-[56px]">How it works</p>
-        <div className="flex flex-wrap items-center gap-[10px] md:gap-[30px]">
+        <div className="flex flex-wrap items-center gap-[18px] md:gap-[30px]">
           {HOW_IT_WORKS_DATA.map(({ tab }, index) => (
             <button
               className={cn(
@@ -146,11 +151,11 @@ const HowItWorksSection: FC = () => {
         </div>
       </div>
       <div className="flex h-[304px] w-full flex-col items-center justify-between md:flex-row">
-        <ul className="flex h-full w-full flex-col justify-between border-[0.803px] border-white/30 border-dashed p-[31px] backdrop-blur-[2px] [background:rgba(171,171,171,0.07)] md:max-w-[462px]">
+        <ul className="flex h-full w-full flex-col justify-between gap-[22px] border-[0.803px] border-white/15 border-dashed bg-[rgba(171,171,171,0.07)] px-5 py-[29px] md:max-w-[462px] md:p-[31px]">
           {HOW_IT_WORKS_DATA[activeTab].list.map((item) => (
             <li
               className={cn(
-                "font-bold text-[#898989] text-[17px] leading-[128%]",
+                "font-bold text-[#898989] text-sm leading-[128%] md:text-[17px]",
                 HOW_IT_WORKS_DATA[activeTab].listClass
               )}
               // biome-ignore lint/security/noDangerouslySetInnerHtml: explanation
@@ -209,15 +214,22 @@ const Footer: FC = () => {
 
 export default function IndexPage() {
   return (
-    <div className="relative z-0 flex flex-col gap-[190px] px-4 md:px-20">
+    <div className="relative z-0 flex flex-col gap-[166px] overflow-hidden px-4 md:gap-[380px] md:px-20">
       <div className="noise" />
       <img
         alt="coins"
-        className="-z-10 -translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-[45%] left-1/2 h-full w-full object-cover"
+        className="-z-10 -translate-x-1/2 -top-[300px] pointer-events-none absolute left-1/2 hidden h-full max-w-none object-cover md:block"
         src={Coins}
       />
-      <LandingHeader />
-      <HeroSection />
+      <img
+        alt="mobile-coins"
+        className="-z-10 -left-18 -top-14 pointer-events-none absolute h-full max-w-none object-cover md:hidden"
+        src={MobileCoins}
+      />
+      <div className="flex flex-col gap-[104px] md:gap-[175px]">
+        <LandingHeader />
+        <HeroSection />
+      </div>
       <WhatIsBackyardSection />
       <HowItWorksSection />
       <CTASection />

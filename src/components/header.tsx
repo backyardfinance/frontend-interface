@@ -58,7 +58,7 @@ export const LandingHeader = () => {
       </WhitelistButton>
       <div className="flex items-center gap-2.5">
         <div className="group relative">
-          <WhitelistButton className="relative overflow-hidden" variant="launch">
+          <WhitelistButton border="none" className="relative overflow-hidden" variant="launch">
             <span className="flex items-center justify-center transition-transform duration-300 group-hover:translate-y-[200%]">
               Launch App
             </span>
