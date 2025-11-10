@@ -6,10 +6,10 @@ import { WhitelistSteps } from "./components/WhitelistSteps";
 import { WhitelistWelcome } from "./components/WhitelistWelcome";
 
 export default function WhitelistPage() {
-  const [showWhitelistSteps, setShowWhitelistSteps] = useState(true);
+  const [showWhitelistSteps, setShowWhitelistSteps] = useState(false);
 
   return (
-    <div className="relative z-0 flex min-h-screen flex-col gap-24 px-4 pb-20">
+    <div className="relative z-0 flex min-h-screen flex-col gap-12 px-4 pb-20 md:gap-24">
       <div className="noise" />
       <img
         alt="whitelist-bg"
@@ -18,8 +18,8 @@ export default function WhitelistPage() {
       />
       <LandingHeader />
 
-      <div className="mx-auto flex w-full max-w-[1350px] justify-between">
-        <div className="w-full max-w-[840px]">
+      <div className="mx-auto flex w-full max-w-[1350px] flex-col gap-8 lg:flex-row lg:justify-between">
+        <div className="w-full lg:max-w-[840px]">
           {showWhitelistSteps ? (
             <WhitelistSteps />
           ) : (

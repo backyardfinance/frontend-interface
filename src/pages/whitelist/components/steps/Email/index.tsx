@@ -33,7 +33,7 @@ export const Email: FC<Props> = ({ disabled, isCompleted, user }) => {
   if (isCompleted) {
     return (
       <StepWrapper isCompleted>
-        <p className="font-bold text-sm leading-[normal]">/Email</p>
+        <p className="font-bold text-xs leading-[normal] sm:text-sm">/Email</p>
         <CheckIcon className="size-4" />
       </StepWrapper>
     );
@@ -42,7 +42,7 @@ export const Email: FC<Props> = ({ disabled, isCompleted, user }) => {
   if (disabled) {
     return (
       <StepWrapper>
-        <p className="font-bold text-[#606060] text-sm leading-[normal]">/Email</p>
+        <p className="font-bold text-[#606060] text-xs leading-[normal] sm:text-sm">/Email</p>
         <LockStep />
       </StepWrapper>
     );
@@ -50,27 +50,31 @@ export const Email: FC<Props> = ({ disabled, isCompleted, user }) => {
 
   return (
     <StepWrapper className="flex-col">
-      <div className="flex w-full items-center gap-4">
-        <p className="font-bold text-sm leading-[normal]">/Email</p>
+      <div className="flex w-full flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-4">
+        <p className="whitespace-nowrap font-bold text-xs leading-[normal] sm:text-sm">/Email</p>
         {!emailSent ? (
-          <EmailInputForm
-            email={email}
-            isEmailValid={isEmailValid}
-            isSendEmailError={isSendEmailError}
-            isSendingEmail={isSendingEmail}
-            onEmailChange={handleEmailChange}
-            onSendEmail={handleSendEmail}
-          />
+          <div className="flex w-full gap-2">
+            <EmailInputForm
+              email={email}
+              isEmailValid={isEmailValid}
+              isSendEmailError={isSendEmailError}
+              isSendingEmail={isSendingEmail}
+              onEmailChange={handleEmailChange}
+              onSendEmail={handleSendEmail}
+            />
+          </div>
         ) : (
-          <CodeVerificationForm
-            code={code}
-            handleResendCode={handleResendCode}
-            isVerifyingEmail={isVerifyingEmail}
-            onCodeChange={setCode}
-            onVerifyCode={handleVerifyCode}
-            resendTimer={resendTimer}
-            verifyEmailErrorMessage={verifyEmailErrorMessage}
-          />
+          <div className="flex w-full gap-2">
+            <CodeVerificationForm
+              code={code}
+              handleResendCode={handleResendCode}
+              isVerifyingEmail={isVerifyingEmail}
+              onCodeChange={setCode}
+              onVerifyCode={handleVerifyCode}
+              resendTimer={resendTimer}
+              verifyEmailErrorMessage={verifyEmailErrorMessage}
+            />
+          </div>
         )}
       </div>
 
