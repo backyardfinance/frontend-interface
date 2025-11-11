@@ -1,14 +1,15 @@
 import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { Big } from "big.js";
 import { useMemo, useState } from "react";
-import type { TokenInfoResponse } from "@/api";
+import { GetQuoteDtoTypeEnum, type TokenInfoResponse } from "@/api";
 import { SettingsIcon } from "@/components/icons/settings";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { VaultCard } from "@/components/vault/VaultCard";
+import { useGetQuote } from "@/hooks/useQuote";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useTimer } from "@/hooks/useTimer";
 import { useUserTokens } from "@/hooks/useUserTokens";
-import { cn, displayAmount, sleep } from "@/utils";
+import { cn, displayAmount, parseTokenAmount, sleep } from "@/utils";
 import type { Strategy } from "@/utils/types";
 import { ChevronIcon } from "../icons/chevron";
 import { InfoCircleIcon } from "../icons/info-circle";
@@ -127,9 +128,20 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
   const fees = getFees(0.0, 0.05);
   const [, setIsLoading] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<TokenInfoResponse | null>(null);
+  console.log(currentStrategy);
 
   const { address: walletAddress } = useSolanaWallet();
   const { data: userTokens } = useUserTokens();
+  const { data: quote } = useGetQuote(
+    GetQuoteDtoTypeEnum.DEPOSIT,
+    currentStrategy.vaults.map((vault) => {
+      return {
+        vaultId: vault.id,
+        amount: parseTokenAmount("2", selectedAsset?.tokenAmount.decimals).toString(),
+      };
+    })
+  );
+  console.log(quote);
   const userAssets = userTokens?.tokens;
 
   const averageApy = useMemo(() => {
@@ -146,6 +158,12 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
     setCurrentStrategy({
       ...currentStrategy,
       depositAmount: amount,
+      vaults: currentStrategy.vaults.map((vault, index) => {
+        return {
+          ...vault,
+          amount: (amount / 100) * (currentStrategy.allocation?.[index] || 0),
+        };
+      }),
     });
   };
 
@@ -157,6 +175,12 @@ export const StrategySetup = ({ currentStrategy, slippage, setSlippage, setCurre
     setCurrentStrategy({
       ...currentStrategy,
       allocation: newAllocation,
+      vaults: currentStrategy.vaults.map((vault, index) => {
+        return {
+          ...vault,
+          amount: (depositAmount / 100) * (newAllocation[index] || 0),
+        };
+      }),
     });
   };
 

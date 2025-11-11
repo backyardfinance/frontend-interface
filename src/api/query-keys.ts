@@ -1,4 +1,8 @@
 export const queryKeys = {
+  quote: {
+    all: ["quote"],
+    quoteDeposit: (data: object) => ["quote-deposit", ...Object.values(data)],
+  },
   vaults: {
     all: ["vaults"],
     vaultByIdWithUser: (vaultId: string, userId: string) => [...queryKeys.vaults.all, vaultId, userId],

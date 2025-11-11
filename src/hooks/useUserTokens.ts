@@ -7,16 +7,16 @@ import { useSolanaWallet } from "./useSolanaWallet";
 type UseUserTokensOptions = Omit<UseQueryOptions<UserPortfolioView, Error>, "queryKey" | "queryFn">;
 
 export const useUserTokens = (options?: UseUserTokensOptions) => {
-  const { address } = useSolanaWallet();
+  const { address: walletAddress } = useSolanaWallet();
+
   return useQuery({
-    queryKey: queryKeys.userTokens(address ?? ""),
+    queryKey: queryKeys.userTokens(walletAddress ?? ""),
     queryFn: async () => {
-      const userId = localStorage.getItem("userId");
-      if (!userId) throw Error("useUserTokens: userId is missing");
-      const { data } = await solanaApi.solanaControllerGetUserTokens({ walletAddress: userId });
+      if (!walletAddress) throw Error("useUserTokens: userId is missing");
+      const { data } = await solanaApi.solanaControllerGetUserTokens({ walletAddress });
       return data as unknown as UserPortfolioView;
     },
     ...options,
-    enabled: !!address && options?.enabled,
+    enabled: !!walletAddress && options?.enabled,
   });
 };

@@ -36,6 +36,10 @@ export const formatWithPrecision = (number: number, precision = 2): string => {
   return Big(number).toFixed(precision);
 };
 
+export const parseTokenAmount = (amount: string, decimals = 18): Big => {
+  return Big(amount).mul(Big(BASE).pow(decimals));
+};
+
 export const formatUsdAmount = (value: number): string => {
   try {
     let maximumFractionDigits = 2;
