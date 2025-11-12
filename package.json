@@ -7,7 +7,7 @@
     "dev": "vite --host",
     "build": "tsc && vite build",
     "typecheck": "tsc --noEmit",
-    "lint": "yarn typecheck && biome lint --fix",
+    "lint": "bun run typecheck && biome lint --fix",
     "format": "biome format --write",
     "check": "biome check --fix",
     "preview": "vite preview",

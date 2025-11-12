@@ -5,7 +5,7 @@
     "version": "7.11.0",
     "generators": {
       "local": {
-        "inputSpec": "http://mvp-server-alb-967539750.eu-north-1.elb.amazonaws.com/openapi",
+        "inputSpec": "https://backyard-server-production-f54b.up.railway.app/openapi",
         "generatorName": "typescript-axios",
         "output": "./src/api/generated",
         "additionalProperties": {

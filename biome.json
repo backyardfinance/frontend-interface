@@ -7,8 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**"],
-    "experimentalScannerIgnores": ["src/api/generated/**"]
+    "includes": ["**", "!src/api/generated"]
   },
   "formatter": {
     "enabled": true,
