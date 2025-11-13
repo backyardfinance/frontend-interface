@@ -1,5 +1,5 @@
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
-import { useUsers, useUsersValidateTwitter } from "@/hooks/useUsers";
+import { useWhitelistStatus } from "@/hooks/useWhitelist";
 
 interface UseWhitelistUserOptions {
   enabled?: boolean;
@@ -7,35 +7,30 @@ interface UseWhitelistUserOptions {
 
 export const useWhitelistUser = (options?: UseWhitelistUserOptions) => {
   const { address } = useSolanaWallet();
-  const { data: users, isLoading: isLoadingUsers } = useUsers({
+
+  const { data: user, isLoading: isLoadingUsers } = useWhitelistStatus({
     enabled: options?.enabled !== false && !!address,
   });
 
-  const user = users?.find((u) => u.wallet === address);
-
-  //TODO: remove any
-  const { data: validateTwitter, isLoading: isLoadingTwitter } = useUsersValidateTwitter((user as any)?.userId ?? "", {
-    enabled: !!(user as any)?.userId,
-  });
-
-  const completionStatus = {
-    signWallet: !!user,
-    email: !!user?.email,
-    followX: !!validateTwitter?.subscribed,
-    quotePost: !!validateTwitter?.retweeted,
+  const tasks = {
+    walletConnected: Boolean(user?.tasks.wallet_connected),
+    emailVerified: Boolean(user?.tasks.email_verified),
+    xFollowed: Boolean(user?.tasks.twitter_followed),
+    postRetweeted: Boolean(user?.tasks.post_retweeted),
   };
 
-  const steps = Object.values(completionStatus);
-  const allTasksCompleted = steps.every(Boolean);
-  const completedCount = steps.filter(Boolean).length;
+  const totalTasks = Object.values(tasks);
+  const completedTasks = totalTasks.filter(Boolean).length;
 
   return {
     user,
-    validateTwitter,
-    completionStatus,
-    allTasksCompleted,
-    completedCount,
-    totalSteps: steps.length,
-    isLoading: isLoadingUsers || isLoadingTwitter,
+    xConnected: Boolean(user?.tasks.twitter_linked),
+    tasks,
+    progress: {
+      total: totalTasks.length,
+      completed: completedTasks,
+      isComplete: completedTasks === totalTasks.length,
+    },
+    isLoading: isLoadingUsers,
   };
 };

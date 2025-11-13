@@ -17,14 +17,20 @@
 /**
  * 
  * @export
- * @interface VerifyEmailDto
+ * @interface VerifySignatureDto
  */
-export interface VerifyEmailDto {
+export interface VerifySignatureDto {
     /**
      * 
      * @type {string}
-     * @memberof VerifyEmailDto
+     * @memberof VerifySignatureDto
      */
-    'code': string;
+    'wallet': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VerifySignatureDto
+     */
+    'signature': string;
 }
 

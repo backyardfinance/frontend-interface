@@ -17,20 +17,14 @@
 /**
  * 
  * @export
- * @interface TwitterVerifyDto
+ * @interface ClaimNonceDto
  */
-export interface TwitterVerifyDto {
+export interface ClaimNonceDto {
     /**
      * 
-     * @type {boolean}
-     * @memberof TwitterVerifyDto
+     * @type {string}
+     * @memberof ClaimNonceDto
      */
-    'subscribed': boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof TwitterVerifyDto
-     */
-    'retweeted': boolean;
+    'wallet': string;
 }
 

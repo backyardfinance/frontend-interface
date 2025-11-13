@@ -17,14 +17,26 @@
 /**
  * 
  * @export
- * @interface VerifyEmailDto
+ * @interface RetweetStatusResponse
  */
-export interface VerifyEmailDto {
+export interface RetweetStatusResponse {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof RetweetStatusResponse
+     */
+    'has_retweeted': boolean;
     /**
      * 
      * @type {string}
-     * @memberof VerifyEmailDto
+     * @memberof RetweetStatusResponse
      */
-    'code': string;
+    'checked_by': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof RetweetStatusResponse
+     */
+    'checked_at': string;
 }
 

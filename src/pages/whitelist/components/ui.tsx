@@ -53,6 +53,8 @@ export const LockStep = () => {
 export const EmailInput: FC<ComponentProps<"input">> = (props) => {
   return (
     <input
+      type="email"
+      {...props}
       className={cn(
         "h-[34px] w-full border border-white/9 border-dashed bg-[rgba(39,39,39,0.22)] px-3 shadow-[4px_4px_0_0_rgba(0,0,0,0.10)_inset]",
         "font-bold text-xs leading-[normal]",
@@ -60,8 +62,6 @@ export const EmailInput: FC<ComponentProps<"input">> = (props) => {
         "outline-none",
         props.className
       )}
-      type="email"
-      {...props}
     />
   );
 };

@@ -44,3 +44,19 @@ export interface ApiErrorResponse {
   message: string[];
   statusCode: number;
 }
+
+//TODO: remove types
+export interface VaultDepositDto {
+  /**
+   *
+   * @type {string}
+   * @memberof VaultDepositDto
+   */
+  vaultId: string;
+  /**
+   *
+   * @type {string}
+   * @memberof VaultDepositDto
+   */
+  amount: string;
+}
