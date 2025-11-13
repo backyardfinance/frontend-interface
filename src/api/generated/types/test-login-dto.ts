@@ -17,14 +17,14 @@
 /**
  * 
  * @export
- * @interface VerifyEmailDto
+ * @interface TestLoginDto
  */
-export interface VerifyEmailDto {
+export interface TestLoginDto {
     /**
-     * 
+     * Solana wallet address for testing
      * @type {string}
-     * @memberof VerifyEmailDto
+     * @memberof TestLoginDto
      */
-    'code': string;
+    'wallet': string;
 }
 

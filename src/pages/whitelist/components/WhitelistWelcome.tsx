@@ -24,12 +24,9 @@ export const WhitelistWelcome = ({ onGetAccess }: { onGetAccess: () => void }) =
             *Claim your Early Contributor NFT to get boosted APY in LP Mining Campaign SEASON 1
           </span>
         </p>
-        <Button className="group relative w-full overflow-hidden" onClick={onGetAccess} variant="joinWhitelist">
+        <Button className="w-full" onClick={onGetAccess} variant="joinWhitelist">
           <span className="flex items-center justify-center transition-transform duration-300 group-hover:translate-y-[200%]">
             Get access <ChevronIcon className="ml-2" direction="right" />
-          </span>
-          <span className="absolute inset-0 flex translate-y-[-100%] items-center justify-center transition-transform duration-300 group-hover:translate-y-0">
-            Coming soon
           </span>
         </Button>
       </div>

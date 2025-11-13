@@ -36,6 +36,7 @@
     "@types/big.js": "^6.2.2",
     "axios": "^1.12.2",
     "big.js": "^7.0.1",
+    "bs58": "^6.0.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "input-otp": "^1.4.2",
@@ -69,7 +70,7 @@
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,json,md}": [
-      "bash -c 'files=\"$@\"; files=$(echo \"$files\" | tr \" \" \"\\n\" | grep -v \"src/api/generated\" | tr \"\\n\" \" \"); [ -n \"$files\" ] && biome check --fix --files-ignore-unknown=true $files || true' --"
+      "bun run lint "
     ]
   },
   "husky": {

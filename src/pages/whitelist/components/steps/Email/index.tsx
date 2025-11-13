@@ -1,6 +1,5 @@
 import { CheckIcon } from "lucide-react";
 import type { FC } from "react";
-import type { UsertInfoResponse } from "@/api";
 import { ErrorMessage, InfoMessage, LockStep, StepWrapper } from "@/pages/whitelist/components/ui";
 import { CodeVerificationForm } from "./components/CodeVerificationForm";
 import { EmailInputForm } from "./components/EmailInputForm";
@@ -9,10 +8,10 @@ import { useEmailVerification } from "./hooks/useEmailVerification";
 type Props = {
   disabled: boolean;
   isCompleted: boolean;
-  user: UsertInfoResponse | undefined;
+  connectedEmail: string | null | undefined;
 };
 
-export const Email: FC<Props> = ({ disabled, isCompleted, user }) => {
+export const Email: FC<Props> = ({ connectedEmail, disabled, isCompleted }) => {
   const {
     email,
     code,
@@ -28,12 +27,15 @@ export const Email: FC<Props> = ({ disabled, isCompleted, user }) => {
     isVerifyingEmail,
     isSendEmailError,
     verifyEmailErrorMessage,
-  } = useEmailVerification(user?.email);
+  } = useEmailVerification();
 
   if (isCompleted) {
     return (
       <StepWrapper isCompleted>
-        <p className="font-bold text-xs leading-[normal] sm:text-sm">/Email</p>
+        <p className="flex items-center gap-2 font-bold text-xs leading-[normal] sm:text-sm">
+          /Email
+          {connectedEmail && <span className="text-[#8D8D8D] text-xs">({connectedEmail})</span>}
+        </p>
         <CheckIcon className="size-4" />
       </StepWrapper>
     );
@@ -80,6 +82,8 @@ export const Email: FC<Props> = ({ disabled, isCompleted, user }) => {
 
       {verifyEmailErrorMessage ? (
         <ErrorMessage message={verifyEmailErrorMessage} />
+      ) : !isEmailValid ? (
+        <ErrorMessage message="Please enter a valid email" />
       ) : (
         <InfoMessage message="*We'll notify you with early updates, beta access, and major product announcements" />
       )}

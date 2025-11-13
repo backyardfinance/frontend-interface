@@ -17,20 +17,14 @@
 /**
  * 
  * @export
- * @interface UserXDto
+ * @interface ClaimNonceDto
  */
-export interface UserXDto {
+export interface ClaimNonceDto {
     /**
      * 
      * @type {string}
-     * @memberof UserXDto
+     * @memberof ClaimNonceDto
      */
-    'xId': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UserXDto
-     */
-    'xUserName': string;
+    'wallet': string;
 }
 

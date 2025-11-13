@@ -17,14 +17,20 @@
 /**
  * 
  * @export
- * @interface VerifyEmailDto
+ * @interface ClaimNonceResponseDto
  */
-export interface VerifyEmailDto {
+export interface ClaimNonceResponseDto {
     /**
      * 
      * @type {string}
-     * @memberof VerifyEmailDto
+     * @memberof ClaimNonceResponseDto
      */
-    'code': string;
+    'wallet': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ClaimNonceResponseDto
+     */
+    'nonce': string;
 }
 

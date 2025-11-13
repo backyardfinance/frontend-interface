@@ -15,9 +15,11 @@ export const queryKeys = {
     strategyByUser: (userId: string) => [...queryKeys.strategies.all, "user", userId],
   },
 
-  users: {
-    all: ["users"],
-    validateTwitter: (userId: string) => [...queryKeys.users.all, "validate-twitter", userId],
+  whitelist: {
+    status: ["whitelist-status"],
+    participants: ["whitelist-participants"],
+    prepareMintTransaction: ["prepare-mint-transaction"],
+    isMintedNFT: (walletAddress: string) => ["is-minted-nft", walletAddress],
   },
 
   userTokens: (userId: string) => ["user-tokens", userId],

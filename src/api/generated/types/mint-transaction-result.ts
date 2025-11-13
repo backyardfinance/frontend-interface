@@ -17,20 +17,14 @@
 /**
  * 
  * @export
- * @interface TwitterVerifyDto
+ * @interface MintTransactionResult
  */
-export interface TwitterVerifyDto {
+export interface MintTransactionResult {
     /**
      * 
-     * @type {boolean}
-     * @memberof TwitterVerifyDto
+     * @type {string}
+     * @memberof MintTransactionResult
      */
-    'subscribed': boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof TwitterVerifyDto
-     */
-    'retweeted': boolean;
+    'transaction': string;
 }
 
