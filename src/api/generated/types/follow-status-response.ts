@@ -17,14 +17,26 @@
 /**
  * 
  * @export
- * @interface VerifyEmailDto
+ * @interface FollowStatusResponse
  */
-export interface VerifyEmailDto {
+export interface FollowStatusResponse {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof FollowStatusResponse
+     */
+    'is_following': boolean;
     /**
      * 
      * @type {string}
-     * @memberof VerifyEmailDto
+     * @memberof FollowStatusResponse
      */
-    'code': string;
+    'checked_by': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof FollowStatusResponse
+     */
+    'checked_at': string;
 }
 

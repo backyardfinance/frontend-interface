@@ -19,9 +19,16 @@ export const useSolanaWallet = () => {
 
   const handleSendTransaction = useCallback(
     async (tx: Transaction) => {
-      return await wallet.sendTransaction(tx, connection);
+      return wallet.sendTransaction(tx, connection);
     },
     [wallet, connection]
+  );
+
+  const handleSignMessage = useCallback(
+    async (message: string) => {
+      return wallet.signMessage?.(new TextEncoder().encode(message));
+    },
+    [wallet.signMessage]
   );
 
   return useMemo(
@@ -31,6 +38,7 @@ export const useSolanaWallet = () => {
       sendTransaction: handleSendTransaction,
       wallet: wallet,
       address: wallet.publicKey?.toBase58(),
+      signMessage: handleSignMessage,
     }),
     [handleSignIn, handleSignOut, handleSendTransaction, wallet.publicKey]
   );

@@ -17,20 +17,26 @@
 /**
  * 
  * @export
- * @interface UserXDto
+ * @interface WhitelistProgressDto
  */
-export interface UserXDto {
+export interface WhitelistProgressDto {
     /**
      * 
-     * @type {string}
-     * @memberof UserXDto
+     * @type {number}
+     * @memberof WhitelistProgressDto
      */
-    'xId': string;
+    'completed': number;
     /**
      * 
-     * @type {string}
-     * @memberof UserXDto
+     * @type {number}
+     * @memberof WhitelistProgressDto
      */
-    'xUserName': string;
+    'total': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof WhitelistProgressDto
+     */
+    'percentage': number;
 }
 

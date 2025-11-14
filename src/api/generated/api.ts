@@ -22,4 +22,5 @@ export * from './api/strategy-api';
 export * from './api/transactions-api';
 export * from './api/users-api';
 export * from './api/vault-api';
+export * from './api/whitelist-api';
 

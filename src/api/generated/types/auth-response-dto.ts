@@ -17,14 +17,32 @@
 /**
  * 
  * @export
- * @interface CreateUserDto
+ * @interface AuthResponseDto
  */
-export interface CreateUserDto {
+export interface AuthResponseDto {
     /**
      * 
      * @type {string}
-     * @memberof CreateUserDto
+     * @memberof AuthResponseDto
+     */
+    'userId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthResponseDto
      */
     'wallet': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthResponseDto
+     */
+    'accessToken': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AuthResponseDto
+     */
+    'refreshToken': string;
 }
 

@@ -24,9 +24,11 @@ import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError
 // @ts-ignore
 import type { CreateUserDto } from '../types';
 // @ts-ignore
-import type { SendEmailDto } from '../types';
+import type { FollowStatusResponse } from '../types';
 // @ts-ignore
-import type { TwitterVerifyDto } from '../types';
+import type { RetweetStatusResponse } from '../types';
+// @ts-ignore
+import type { SendEmailDto } from '../types';
 // @ts-ignore
 import type { UsertInfoResponse } from '../types';
 // @ts-ignore
@@ -37,6 +39,64 @@ import type { VerifyEmailDto } from '../types';
  */
 export const UsersApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerCheckFollow: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/users/check-follow`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerCheckRetweet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/users/check-retweet`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @param {CreateUserDto} createUserDto 
@@ -87,6 +147,35 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             }
 
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerPrepareMintTransaction: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/users/prepare-mint`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -177,42 +266,6 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 
-         * @param {string} userId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        userControllerValidateUser: async (userId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'userId' is not null or undefined
-            assertParamExists('userControllerValidateUser', 'userId', userId)
-            const localVarPath = `/users/validate-twitter`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            if (userId !== undefined) {
-                localVarQueryParameter['userId'] = userId;
-            }
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
          * @param {VerifyEmailDto} verifyEmailDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -258,6 +311,28 @@ export const UsersApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async userControllerCheckFollow(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<FollowStatusResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerCheckFollow(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerCheckFollow']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async userControllerCheckRetweet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RetweetStatusResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerCheckRetweet(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerCheckRetweet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {CreateUserDto} createUserDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -277,6 +352,17 @@ export const UsersApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerGetUsers(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerGetUsers']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async userControllerPrepareMintTransaction(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerPrepareMintTransaction(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerPrepareMintTransaction']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -306,18 +392,6 @@ export const UsersApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {string} userId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async userControllerValidateUser(userId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TwitterVerifyDto>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerValidateUser(userId, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerValidateUser']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
          * @param {VerifyEmailDto} verifyEmailDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -340,6 +414,22 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
     return {
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerCheckFollow(options?: RawAxiosRequestConfig): AxiosPromise<FollowStatusResponse> {
+            return localVarFp.userControllerCheckFollow(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerCheckRetweet(options?: RawAxiosRequestConfig): AxiosPromise<RetweetStatusResponse> {
+            return localVarFp.userControllerCheckRetweet(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {UsersApiUserControllerCreateUserRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -354,6 +444,14 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
          */
         userControllerGetUsers(options?: RawAxiosRequestConfig): AxiosPromise<Array<UsertInfoResponse>> {
             return localVarFp.userControllerGetUsers(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerPrepareMintTransaction(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.userControllerPrepareMintTransaction(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -372,15 +470,6 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
          */
         userControllerUpdateUser(requestParameters: UsersApiUserControllerUpdateUserRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.userControllerUpdateUser(requestParameters.walletAddress, requestParameters.body, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {UsersApiUserControllerValidateUserRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        userControllerValidateUser(requestParameters: UsersApiUserControllerValidateUserRequest, options?: RawAxiosRequestConfig): AxiosPromise<TwitterVerifyDto> {
-            return localVarFp.userControllerValidateUser(requestParameters.userId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -444,20 +533,6 @@ export interface UsersApiUserControllerUpdateUserRequest {
 }
 
 /**
- * Request parameters for userControllerValidateUser operation in UsersApi.
- * @export
- * @interface UsersApiUserControllerValidateUserRequest
- */
-export interface UsersApiUserControllerValidateUserRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof UsersApiUserControllerValidateUser
-     */
-    readonly userId: string
-}
-
-/**
  * Request parameters for userControllerVerify operation in UsersApi.
  * @export
  * @interface UsersApiUserControllerVerifyRequest
@@ -478,6 +553,26 @@ export interface UsersApiUserControllerVerifyRequest {
  * @extends {BaseAPI}
  */
 export class UsersApi extends BaseAPI {
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public userControllerCheckFollow(options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).userControllerCheckFollow(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public userControllerCheckRetweet(options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).userControllerCheckRetweet(options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {UsersApiUserControllerCreateUserRequest} requestParameters Request parameters.
@@ -501,6 +596,16 @@ export class UsersApi extends BaseAPI {
 
     /**
      * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public userControllerPrepareMintTransaction(options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).userControllerPrepareMintTransaction(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {UsersApiUserControllerSendEmailRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -519,17 +624,6 @@ export class UsersApi extends BaseAPI {
      */
     public userControllerUpdateUser(requestParameters: UsersApiUserControllerUpdateUserRequest, options?: RawAxiosRequestConfig) {
         return UsersApiFp(this.configuration).userControllerUpdateUser(requestParameters.walletAddress, requestParameters.body, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {UsersApiUserControllerValidateUserRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UsersApi
-     */
-    public userControllerValidateUser(requestParameters: UsersApiUserControllerValidateUserRequest, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).userControllerValidateUser(requestParameters.userId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

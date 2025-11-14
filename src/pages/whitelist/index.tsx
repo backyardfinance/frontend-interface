@@ -1,12 +1,10 @@
-import { useState } from "react";
 import WhitelistBg from "@/assets/landing/whitelist-bg.webp";
 import { LandingHeader } from "@/components/header";
 import { WhitelistStats } from "./components/WhitelistStats";
 import { WhitelistSteps } from "./components/WhitelistSteps";
-import { WhitelistWelcome } from "./components/WhitelistWelcome";
 
 export default function WhitelistPage() {
-  const [showWhitelistSteps] = useState(false);
+  // const [showWhitelistSteps, setShowWhitelistSteps] = useState(false);
 
   return (
     <div className="relative z-0 flex min-h-screen flex-col gap-12 px-4 pb-20 md:gap-24">
@@ -18,20 +16,11 @@ export default function WhitelistPage() {
       />
       <LandingHeader />
 
-      <div className="mx-auto flex w-full max-w-[1350px] flex-col gap-8 lg:flex-row lg:justify-between">
+      <div className="mx-auto flex w-full max-w-[1350px] flex-col-reverse gap-8 lg:flex-row lg:justify-between">
         <div className="w-full lg:max-w-[840px]">
-          {showWhitelistSteps ? (
-            <WhitelistSteps />
-          ) : (
-            <WhitelistWelcome
-              onGetAccess={() => {
-                return;
-                // setShowWhitelistSteps(true);
-              }}
-            />
-          )}
+          <WhitelistSteps />
         </div>
-        <WhitelistStats showWhitelistSteps={showWhitelistSteps} />
+        <WhitelistStats />
       </div>
     </div>
   );

@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { useUsersSendEmail, useUsersVerifyEmail } from "@/hooks/useUsers";
+import { useWhitelistSendEmail, useWhitelistVerifyEmail } from "@/hooks/useWhitelist";
 
 const emailSchema = z.object({
   email: z.email(),
 });
 
-const RESEND_TIMER_SECONDS = 120; // 2 minutes
+const RESEND_TIMER_SECONDS = 60; // 1 minute
 
-export const useEmailVerification = (userEmail?: string) => {
-  const { mutateAsync: sendEmail, isPending: isSendingEmail, isError: isSendEmailError } = useUsersSendEmail();
-  const { mutateAsync: verifyEmail, isPending: isVerifyingEmail, error: verifyEmailError } = useUsersVerifyEmail();
+export const useEmailVerification = () => {
+  const { mutateAsync: sendEmail, isPending: isSendingEmail, isError: isSendEmailError } = useWhitelistSendEmail();
+  const { mutateAsync: verifyEmail, isPending: isVerifyingEmail, error: verifyEmailError } = useWhitelistVerifyEmail();
 
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -58,10 +58,10 @@ export const useEmailVerification = (userEmail?: string) => {
   };
 
   const handleResendCode = async () => {
-    if (resendTimer > 0 || !userEmail) return;
+    if (resendTimer > 0) return;
 
     try {
-      await sendEmail({ email: userEmail });
+      await sendEmail({ email });
       setResendTimer(RESEND_TIMER_SECONDS);
       setCode("");
     } catch (error) {
@@ -71,8 +71,8 @@ export const useEmailVerification = (userEmail?: string) => {
 
   const handleVerifyCode = async () => {
     try {
-      if (code.length < 4 || !userEmail) return;
-      await verifyEmail({ email: userEmail, code });
+      if (code.length < 4) return;
+      await verifyEmail({ code });
     } catch (error) {
       console.error("Failed to verify code:", error);
     }
