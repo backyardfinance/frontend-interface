@@ -109,7 +109,6 @@ export const sleep = async (time = 1000): Promise<void> => {
 };
 
 export const isDev = () => {
-  console.log('import.meta.env.VITE_PUBLIC_IS_DEV', import.meta.env.VITE_PUBLIC_IS_DEV);
-  if(!import.meta.env.VITE_PUBLIC_IS_DEV) return false;
-  return  import.meta.env.VITE_PUBLIC_IS_DEV === "true";
+  if(window.location.hostname === 'backyard.finance') return false;
+  return  true;
 };
