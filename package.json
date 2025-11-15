@@ -70,7 +70,7 @@
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,json,md}": [
-      "bash -c 'files=\"$@\"; files=$(echo \"$files\" | tr \" \" \"\\n\" | grep -v \"src/api/generated\" | tr \"\\n\" \" \"); [ -n \"$files\" ] && biome check --fix --files-ignore-unknown=true $files || true' --"
+      "bun run lint "
     ]
   },
   "husky": {

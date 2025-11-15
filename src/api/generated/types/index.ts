@@ -6,6 +6,7 @@ export * from './create-strategy-dto';
 export * from './create-user-dto';
 export * from './follow-status-response';
 export * from './get-quote-dto';
+export * from './mint-transaction-result';
 export * from './quote-response-dto';
 export * from './quote-vault-dto';
 export * from './retweet-status-response';

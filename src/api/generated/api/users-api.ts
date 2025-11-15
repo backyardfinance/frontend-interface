@@ -26,6 +26,8 @@ import type { CreateUserDto } from '../types';
 // @ts-ignore
 import type { FollowStatusResponse } from '../types';
 // @ts-ignore
+import type { MintTransactionResult } from '../types';
+// @ts-ignore
 import type { RetweetStatusResponse } from '../types';
 // @ts-ignore
 import type { SendEmailDto } from '../types';
@@ -57,6 +59,10 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -83,6 +89,43 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             }
 
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} walletAddress 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerCheckUserHasNFT: async (walletAddress: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'walletAddress' is not null or undefined
+            assertParamExists('userControllerCheckUserHasNFT', 'walletAddress', walletAddress)
+            const localVarPath = `/users/check/{walletAddress}`
+                .replace(`{${"walletAddress"}}`, encodeURIComponent(String(walletAddress)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -163,11 +206,15 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 
+         * @param {string} walletAddress 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        userControllerPrepareMintTransaction: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/users/prepare-mint`;
+        userControllerPrepareMintTransaction: async (walletAddress: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'walletAddress' is not null or undefined
+            assertParamExists('userControllerPrepareMintTransaction', 'walletAddress', walletAddress)
+            const localVarPath = `/users/prepare-mint/{walletAddress}`
+                .replace(`{${"walletAddress"}}`, encodeURIComponent(String(walletAddress)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -178,6 +225,10 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -210,6 +261,10 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
 
 
     
@@ -285,6 +340,10 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication JWT required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
 
     
             localVarHeaderParameter['Content-Type'] = 'application/json';
@@ -333,6 +392,18 @@ export const UsersApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} walletAddress 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async userControllerCheckUserHasNFT(walletAddress: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<boolean>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerCheckUserHasNFT(walletAddress, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerCheckUserHasNFT']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {CreateUserDto} createUserDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -356,11 +427,12 @@ export const UsersApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} walletAddress 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async userControllerPrepareMintTransaction(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerPrepareMintTransaction(options);
+        async userControllerPrepareMintTransaction(walletAddress: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MintTransactionResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerPrepareMintTransaction(walletAddress, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerPrepareMintTransaction']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -430,6 +502,15 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 
+         * @param {UsersApiUserControllerCheckUserHasNFTRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        userControllerCheckUserHasNFT(requestParameters: UsersApiUserControllerCheckUserHasNFTRequest, options?: RawAxiosRequestConfig): AxiosPromise<boolean> {
+            return localVarFp.userControllerCheckUserHasNFT(requestParameters.walletAddress, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {UsersApiUserControllerCreateUserRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -447,11 +528,12 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 
+         * @param {UsersApiUserControllerPrepareMintTransactionRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        userControllerPrepareMintTransaction(options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.userControllerPrepareMintTransaction(options).then((request) => request(axios, basePath));
+        userControllerPrepareMintTransaction(requestParameters: UsersApiUserControllerPrepareMintTransactionRequest, options?: RawAxiosRequestConfig): AxiosPromise<MintTransactionResult> {
+            return localVarFp.userControllerPrepareMintTransaction(requestParameters.walletAddress, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -484,6 +566,20 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
 };
 
 /**
+ * Request parameters for userControllerCheckUserHasNFT operation in UsersApi.
+ * @export
+ * @interface UsersApiUserControllerCheckUserHasNFTRequest
+ */
+export interface UsersApiUserControllerCheckUserHasNFTRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UsersApiUserControllerCheckUserHasNFT
+     */
+    readonly walletAddress: string
+}
+
+/**
  * Request parameters for userControllerCreateUser operation in UsersApi.
  * @export
  * @interface UsersApiUserControllerCreateUserRequest
@@ -495,6 +591,20 @@ export interface UsersApiUserControllerCreateUserRequest {
      * @memberof UsersApiUserControllerCreateUser
      */
     readonly createUserDto: CreateUserDto
+}
+
+/**
+ * Request parameters for userControllerPrepareMintTransaction operation in UsersApi.
+ * @export
+ * @interface UsersApiUserControllerPrepareMintTransactionRequest
+ */
+export interface UsersApiUserControllerPrepareMintTransactionRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof UsersApiUserControllerPrepareMintTransaction
+     */
+    readonly walletAddress: string
 }
 
 /**
@@ -575,6 +685,17 @@ export class UsersApi extends BaseAPI {
 
     /**
      * 
+     * @param {UsersApiUserControllerCheckUserHasNFTRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public userControllerCheckUserHasNFT(requestParameters: UsersApiUserControllerCheckUserHasNFTRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).userControllerCheckUserHasNFT(requestParameters.walletAddress, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {UsersApiUserControllerCreateUserRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -596,12 +717,13 @@ export class UsersApi extends BaseAPI {
 
     /**
      * 
+     * @param {UsersApiUserControllerPrepareMintTransactionRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    public userControllerPrepareMintTransaction(options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).userControllerPrepareMintTransaction(options).then((request) => request(this.axios, this.basePath));
+    public userControllerPrepareMintTransaction(requestParameters: UsersApiUserControllerPrepareMintTransactionRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).userControllerPrepareMintTransaction(requestParameters.walletAddress, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

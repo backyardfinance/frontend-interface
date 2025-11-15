@@ -1,13 +1,13 @@
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
-import type { Transaction } from "@solana/web3.js";
+import { SendTransactionError, type Transaction, VersionedTransaction } from "@solana/web3.js";
 import { useCallback, useMemo } from "react";
 
 export const useSolanaWallet = () => {
   const { setVisible } = useWalletModal();
   const wallet = useWallet();
   const { connection } = useConnection();
-  const { disconnect } = useWallet();
+  const { disconnect, signTransaction } = useWallet();
 
   const handleSignIn = useCallback(async () => {
     setVisible(true);
@@ -20,6 +20,26 @@ export const useSolanaWallet = () => {
   const handleSendTransaction = useCallback(
     async (tx: Transaction) => {
       return wallet.sendTransaction(tx, connection);
+    },
+    [wallet, connection]
+  );
+
+  const handleSendV0Transaction = useCallback(
+    async (txBase64: string) => {
+      try {
+        const rawTx = Buffer.from(txBase64, "base64");
+        const tx = VersionedTransaction.deserialize(rawTx);
+        const signedTx = await signTransaction?.(tx);
+        if (!signedTx) throw new Error("Failed to sign transaction");
+
+        return connection.sendRawTransaction(signedTx.serialize(), { skipPreflight: false });
+      } catch (error) {
+        if (error instanceof SendTransactionError) {
+          const logs = await error.getLogs(connection);
+          console.log("Simulation logs:", logs);
+        }
+        throw error;
+      }
     },
     [wallet, connection]
   );
@@ -39,6 +59,7 @@ export const useSolanaWallet = () => {
       wallet: wallet,
       address: wallet.publicKey?.toBase58(),
       signMessage: handleSignMessage,
+      sendV0Transaction: handleSendV0Transaction,
     }),
     [handleSignIn, handleSignOut, handleSendTransaction, wallet.publicKey]
   );

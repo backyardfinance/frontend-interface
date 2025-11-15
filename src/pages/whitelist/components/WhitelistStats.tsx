@@ -1,13 +1,13 @@
 import ArcIcon from "@/assets/landing/arc.webp";
 import ArcLogoIcon from "@/assets/landing/arc-logo.webp";
 import MenIcon from "@/assets/landing/men.webp";
-import NFT from "@/assets/landing/nft.webp";
 import { useWhitelistParticipants } from "@/hooks/useWhitelist";
 import { Button } from "@/pages/whitelist/components/ui";
 import { cn } from "@/utils";
 import { WHITELIST_BENEFITS } from "../constants";
 import { useWhitelistUser } from "../hooks/useWhitelistUser";
 import { Card } from "./Card";
+import { NftCard } from "./NftCard";
 
 const calculateFomoRotation = (fomo: number): number => {
   const MIN_ANGLE = -100;
@@ -28,17 +28,7 @@ export const WhitelistStats = () => {
   return (
     <div className="flex w-full flex-row items-stretch justify-start gap-4 overflow-x-auto pb-4 lg:w-auto lg:flex-col lg:items-start lg:justify-center lg:overflow-x-visible lg:pb-0">
       {progress.isComplete ? (
-        <Card className="h-[263px] w-[269px] flex-shrink-0 p-4">
-          <div className="relative size-full overflow-hidden">
-            <img alt="nft" className="absolute" src={NFT} />
-            <Button
-              border="none"
-              className="-translate-x-1/2 pointer-events-none absolute bottom-[6px] left-1/2 w-[calc(100%-12px)] bg-[#272727]"
-            >
-              Mint NFT
-            </Button>
-          </div>
-        </Card>
+        <NftCard />
       ) : (
         <Card
           className="h-[263px] flex-shrink-0 lg:h-[217px]"

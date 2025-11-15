@@ -25,6 +25,7 @@ types/create-user-dto.ts
 types/follow-status-response.ts
 types/get-quote-dto.ts
 types/index.ts
+types/mint-transaction-result.ts
 types/quote-response-dto.ts
 types/quote-vault-dto.ts
 types/retweet-status-response.ts
