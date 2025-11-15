@@ -9,7 +9,7 @@ import { APP_ROUTES } from "@/config/routes";
 export default function WhitelistPage() {
   // const [showWhitelistSteps, setShowWhitelistSteps] = useState(false);
 
-  if (isDev()) {
+  if (!isDev()) {
     return <Navigate to={APP_ROUTES.HOME} />;
   }
   

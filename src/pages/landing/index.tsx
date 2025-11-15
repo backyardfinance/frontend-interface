@@ -74,7 +74,6 @@ const HOW_IT_WORKS_DATA = [
 
 const HeroSection: FC = () => {
   const navigate = useNavigate();
-console.log('isDev', isDev());
   return (
     <section className="mx-auto flex w-full max-w-[1350px] select-none flex-col items-start gap-9.5">
       <div className="flex flex-col items-start gap-4.5">
