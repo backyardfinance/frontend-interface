@@ -24,13 +24,6 @@ export const useSolanaWallet = () => {
     [wallet, connection]
   );
 
-  const handleSignMessage = useCallback(
-    async (message: string) => {
-      return wallet.signMessage?.(new TextEncoder().encode(message));
-    },
-    [wallet.signMessage]
-  );
-
   const handleSendV0Transaction = useCallback(
     async (txBase64: string) => {
       try {
@@ -43,12 +36,19 @@ export const useSolanaWallet = () => {
       } catch (error) {
         if (error instanceof SendTransactionError) {
           const logs = await error.getLogs(connection);
-          console.log("❗ SIMULATION LOGS:", logs);
+          console.log("Simulation logs:", logs);
         }
         throw error;
       }
     },
     [wallet, connection]
+  );
+
+  const handleSignMessage = useCallback(
+    async (message: string) => {
+      return wallet.signMessage?.(new TextEncoder().encode(message));
+    },
+    [wallet.signMessage]
   );
 
   return useMemo(
