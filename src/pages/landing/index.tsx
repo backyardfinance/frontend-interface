@@ -84,7 +84,7 @@ console.log('isDev', isDev());
         </p>
       </div>
       <div className="flex w-full flex-col items-start gap-4.5 md:w-[564px] md:flex-row">
-        {!isDev() ? <Button
+        {isDev() ? <Button
           className="h-[56px] w-full text-base"
           onClick={() => navigate(APP_ROUTES.WHITELIST)}
           variant="joinWhitelist"
