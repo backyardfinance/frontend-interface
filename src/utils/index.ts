@@ -109,5 +109,7 @@ export const sleep = async (time = 1000): Promise<void> => {
 };
 
 export const isDev = () => {
-  return import.meta.env.VITE_PUBLIC_IS_DEV === "true";
+  console.log('import.meta.env.VITE_PUBLIC_IS_DEV', import.meta.env.VITE_PUBLIC_IS_DEV);
+  if(!import.meta.env.VITE_PUBLIC_IS_DEV) return false;
+  return  import.meta.env.VITE_PUBLIC_IS_DEV === "true";
 };
