@@ -107,3 +107,7 @@ export function formatMonetaryAmount(value: number | string): string {
 export const sleep = async (time = 1000): Promise<void> => {
   return new Promise((res) => setTimeout(res, time));
 };
+
+export const isDev = () => {
+  return import.meta.env.VITE_PUBLIC_IS_DEV === "true";
+};
