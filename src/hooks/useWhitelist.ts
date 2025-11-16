@@ -29,7 +29,7 @@ export const useWhitelistStatus = (options?: UseWhitelistStatus) => {
   });
 };
 
-type UseWhitelistParticipants = Omit<UseQueryOptions<WhitelistParticipantDto[], Error>, "queryKey" | "queryFn">;
+type UseWhitelistParticipants = Omit<UseQueryOptions<WhitelistParticipantDto, Error>, "queryKey" | "queryFn">;
 
 export const useWhitelistParticipants = (options?: UseWhitelistParticipants) => {
   return useQuery({

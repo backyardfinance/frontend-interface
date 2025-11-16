@@ -65,35 +65,6 @@ export const WhitelistApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        whitelistControllerGetCompletedParticipants: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/whitelist/completed`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
         whitelistControllerGetWhitelistStatus: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/whitelist/status`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -137,21 +108,10 @@ export const WhitelistApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async whitelistControllerGetAllParticipants(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<WhitelistParticipantDto>>> {
+        async whitelistControllerGetAllParticipants(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WhitelistParticipantDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.whitelistControllerGetAllParticipants(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['WhitelistApi.whitelistControllerGetAllParticipants']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async whitelistControllerGetCompletedParticipants(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<WhitelistParticipantDto>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.whitelistControllerGetCompletedParticipants(options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['WhitelistApi.whitelistControllerGetCompletedParticipants']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -180,16 +140,8 @@ export const WhitelistApiFactory = function (configuration?: Configuration, base
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        whitelistControllerGetAllParticipants(options?: RawAxiosRequestConfig): AxiosPromise<Array<WhitelistParticipantDto>> {
+        whitelistControllerGetAllParticipants(options?: RawAxiosRequestConfig): AxiosPromise<WhitelistParticipantDto> {
             return localVarFp.whitelistControllerGetAllParticipants(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        whitelistControllerGetCompletedParticipants(options?: RawAxiosRequestConfig): AxiosPromise<Array<WhitelistParticipantDto>> {
-            return localVarFp.whitelistControllerGetCompletedParticipants(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -217,16 +169,6 @@ export class WhitelistApi extends BaseAPI {
      */
     public whitelistControllerGetAllParticipants(options?: RawAxiosRequestConfig) {
         return WhitelistApiFp(this.configuration).whitelistControllerGetAllParticipants(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof WhitelistApi
-     */
-    public whitelistControllerGetCompletedParticipants(options?: RawAxiosRequestConfig) {
-        return WhitelistApiFp(this.configuration).whitelistControllerGetCompletedParticipants(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -25,57 +25,9 @@ import type { WhitelistTasksDto } from './whitelist-tasks-dto';
 export interface WhitelistParticipantDto {
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof WhitelistParticipantDto
      */
-    'id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WhitelistParticipantDto
-     */
-    'userId': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WhitelistParticipantDto
-     */
-    'wallet': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WhitelistParticipantDto
-     */
-    'email': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WhitelistParticipantDto
-     */
-    'twitterUsername': string;
-    /**
-     * 
-     * @type {WhitelistTasksDto}
-     * @memberof WhitelistParticipantDto
-     */
-    'tasks': WhitelistTasksDto;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof WhitelistParticipantDto
-     */
-    'isComplete': boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof WhitelistParticipantDto
-     */
-    'createdAt': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WhitelistParticipantDto
-     */
-    'updatedAt': string;
+    count?: number;
 }
 
