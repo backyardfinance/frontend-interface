@@ -109,6 +109,6 @@ export const sleep = async (time = 1000): Promise<void> => {
 };
 
 export const isDev = () => {
-  if(window.location.hostname.includes('backyard.finance')) return false;
-  return  true;
+  if(window.location.hostname.includes('staging.backyard.finance')) return true;
+  return  false;
 };
