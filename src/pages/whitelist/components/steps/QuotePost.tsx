@@ -44,7 +44,7 @@ export const QuotePost: FC<Props> = ({ disabled, isCompleted }) => {
           </a>
         </p>
         <Button border="none" className="w-full sm:w-auto" loading={isPending} onClick={handleCheckRetweet} size="sm">
-          Complete
+          Verify
         </Button>
       </div>
       {data && !data.data.has_retweeted && <ErrorMessage message="You are not retweeted or your account is private." />}

@@ -55,7 +55,7 @@ export const FollowX: FC<Props> = ({ connectedX, disabled, isCompleted, xConnect
         </p>
         {xConnected ? (
           <Button border="none" className="w-full sm:w-auto" loading={isPending} onClick={handleCheckFollow} size="sm">
-            Complete
+            Verify
           </Button>
         ) : (
           <Button border="none" className="w-full sm:w-auto" size="sm">
