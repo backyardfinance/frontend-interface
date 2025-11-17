@@ -18,7 +18,7 @@ export const NftCard = () => {
 
       const {
         data: { transaction: rawTxBase64 },
-      } = await usersApi.userControllerPrepareMintTransaction({ walletAddress: address });
+      } = await usersApi.userControllerPrepareMintTransaction();
 
       const signature = await sendV0Transaction(rawTxBase64);
 

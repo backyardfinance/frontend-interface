@@ -206,15 +206,11 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 
-         * @param {string} walletAddress 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        userControllerPrepareMintTransaction: async (walletAddress: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'walletAddress' is not null or undefined
-            assertParamExists('userControllerPrepareMintTransaction', 'walletAddress', walletAddress)
-            const localVarPath = `/users/prepare-mint/{walletAddress}`
-                .replace(`{${"walletAddress"}}`, encodeURIComponent(String(walletAddress)));
+        userControllerPrepareMintTransaction: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/users/prepare-mint`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -427,12 +423,11 @@ export const UsersApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {string} walletAddress 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async userControllerPrepareMintTransaction(walletAddress: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MintTransactionResult>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerPrepareMintTransaction(walletAddress, options);
+        async userControllerPrepareMintTransaction(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<MintTransactionResult>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.userControllerPrepareMintTransaction(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UsersApi.userControllerPrepareMintTransaction']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -528,12 +523,11 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 
-         * @param {UsersApiUserControllerPrepareMintTransactionRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        userControllerPrepareMintTransaction(requestParameters: UsersApiUserControllerPrepareMintTransactionRequest, options?: RawAxiosRequestConfig): AxiosPromise<MintTransactionResult> {
-            return localVarFp.userControllerPrepareMintTransaction(requestParameters.walletAddress, options).then((request) => request(axios, basePath));
+        userControllerPrepareMintTransaction(options?: RawAxiosRequestConfig): AxiosPromise<MintTransactionResult> {
+            return localVarFp.userControllerPrepareMintTransaction(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -591,20 +585,6 @@ export interface UsersApiUserControllerCreateUserRequest {
      * @memberof UsersApiUserControllerCreateUser
      */
     readonly createUserDto: CreateUserDto
-}
-
-/**
- * Request parameters for userControllerPrepareMintTransaction operation in UsersApi.
- * @export
- * @interface UsersApiUserControllerPrepareMintTransactionRequest
- */
-export interface UsersApiUserControllerPrepareMintTransactionRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof UsersApiUserControllerPrepareMintTransaction
-     */
-    readonly walletAddress: string
 }
 
 /**
@@ -717,13 +697,12 @@ export class UsersApi extends BaseAPI {
 
     /**
      * 
-     * @param {UsersApiUserControllerPrepareMintTransactionRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    public userControllerPrepareMintTransaction(requestParameters: UsersApiUserControllerPrepareMintTransactionRequest, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).userControllerPrepareMintTransaction(requestParameters.walletAddress, options).then((request) => request(this.axios, this.basePath));
+    public userControllerPrepareMintTransaction(options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).userControllerPrepareMintTransaction(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

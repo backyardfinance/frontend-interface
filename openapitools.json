@@ -5,7 +5,7 @@
     "version": "7.11.0",
     "generators": {
       "local": {
-        "inputSpec": "https://backyard-server-production-f54b.up.railway.app/openapi",
+        "inputSpec": "https://apistaging.backyard.finance/openapi",
         "generatorName": "typescript-axios",
         "output": "./src/api/generated",
         "additionalProperties": {

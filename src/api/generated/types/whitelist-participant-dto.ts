@@ -13,9 +13,6 @@
  */
 
 
-// May contain unused imports in some cases
-// @ts-ignore
-import type { WhitelistTasksDto } from './whitelist-tasks-dto';
 
 /**
  * 
@@ -28,6 +25,6 @@ export interface WhitelistParticipantDto {
      * @type {number}
      * @memberof WhitelistParticipantDto
      */
-    count?: number;
+    'count': number;
 }
 
