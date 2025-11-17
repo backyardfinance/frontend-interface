@@ -32,7 +32,8 @@ export const useSolanaWallet = () => {
         const signedTx = await signTransaction?.(tx);
         if (!signedTx) throw new Error("Failed to sign transaction");
 
-        return connection.sendRawTransaction(signedTx.serialize(), { skipPreflight: false });
+        const thHash = await connection.sendRawTransaction(signedTx.serialize(), { skipPreflight: false });
+        return await connection.confirmTransaction(  thHash, "confirmed" );
       } catch (error) {
         if (error instanceof SendTransactionError) {
           const logs = await error.getLogs(connection);
