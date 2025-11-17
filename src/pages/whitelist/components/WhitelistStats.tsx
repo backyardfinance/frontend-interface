@@ -3,7 +3,7 @@ import ArcLogoIcon from "@/assets/landing/arc-logo.webp";
 import MenIcon from "@/assets/landing/men.webp";
 import { useWhitelistParticipants } from "@/hooks/useWhitelist";
 import { Button } from "@/pages/whitelist/components/ui";
-import { cn } from "@/utils";
+import { cn, formatWithPrecision } from "@/utils";
 import { WHITELIST_BENEFITS } from "../constants";
 import { useWhitelistUser } from "../hooks/useWhitelistUser";
 import { Card } from "./Card";
@@ -69,7 +69,7 @@ export const WhitelistStats = () => {
       <Card className="h-[263px] flex-shrink-0 lg:h-[217px]" title="Backyard FOMO">
         <div className="relative flex w-full flex-1 items-center justify-center">
           <div className="absolute top-0 left-0 flex h-[34px] w-[45px] items-center justify-center border border-[rgba(166,248,239,0.21)] border-dashed bg-[rgba(255,255,255,0.03)]">
-            <p className="font-bold text-xl leading-[normal]">{fomo}</p>
+            <p className="font-bold text-xl leading-[normal]">{formatWithPrecision(fomo, 1)}</p>
           </div>
 
           <img
