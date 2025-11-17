@@ -1,12 +1,9 @@
 import { CircleCheckIcon, InfoIcon, Loader2Icon, OctagonXIcon, TriangleAlertIcon, X } from "lucide-react";
-import { useTheme } from "next-themes";
 import { Toaster as Sonner, toast as sonnerToast, type ToasterProps } from "sonner";
 import CheckIcon from "@/assets/images/check.png";
 import { Button } from "./button";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme();
-
   return (
     <Sonner
       className="toaster group"
@@ -19,7 +16,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
         loading: <Loader2Icon className="size-4 animate-spin" />,
       }}
       position="top-right"
-      theme={theme as ToasterProps["theme"]}
+      richColors
+      theme="dark"
       {...props}
     />
   );

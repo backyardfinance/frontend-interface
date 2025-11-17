@@ -2,6 +2,7 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { SendTransactionError, type Transaction, VersionedTransaction } from "@solana/web3.js";
 import { useCallback, useMemo } from "react";
+import { toast } from "sonner";
 
 export const useSolanaWallet = () => {
   const { setVisible } = useWalletModal();
@@ -41,6 +42,7 @@ export const useSolanaWallet = () => {
           const logs = await error.getLogs(connection);
           console.log("Simulation logs:", logs);
         }
+        toast.error("Failed to send transaction");
         throw error;
       }
     },
