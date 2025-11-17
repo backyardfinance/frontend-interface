@@ -2,16 +2,16 @@ import WhitelistBg from "@/assets/landing/whitelist-bg.webp";
 import { LandingHeader } from "@/components/header";
 import { WhitelistStats } from "./components/WhitelistStats";
 import { WhitelistSteps } from "./components/WhitelistSteps";
-import { isDev } from "@/utils";
-import { Navigate } from "react-router";
-import { APP_ROUTES } from "@/config/routes";
+// import { isDev } from "@/utils";
+// import { Navigate } from "react-router";
+// import { APP_ROUTES } from "@/config/routes";
 
 export default function WhitelistPage() {
   // const [showWhitelistSteps, setShowWhitelistSteps] = useState(false);
 
-  if (!isDev()) {
-    return <Navigate to={APP_ROUTES.HOME} />;
-  }
+  // if (!isDev()) {
+  //   return <Navigate to={APP_ROUTES.HOME} />;
+  // }
   
   return (
     <div className="relative z-0 flex min-h-screen flex-col gap-12 px-4 pb-20 md:gap-24">
