@@ -1,3 +1,4 @@
+import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useIsMintedNFT } from "@/hooks/useWhitelistNFT";
 import { useWhitelistUser } from "../hooks/useWhitelistUser";
 import { Email } from "./steps/Email";
@@ -5,13 +6,12 @@ import { FollowX } from "./steps/FollowX";
 import { QuotePost } from "./steps/QuotePost";
 import { SignWallet } from "./steps/SignWallet";
 import { InfoMessage } from "./ui";
-import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 
 export const WhitelistSteps = () => {
   const { address } = useSolanaWallet();
 
   const { tasks, progress, xConnected, user } = useWhitelistUser();
-  const { data: isMintedNFT} = useIsMintedNFT(address ?? "");
+  const { data: isMintedNFT } = useIsMintedNFT(address ?? "");
 
   return (
     <div className="flex flex-col gap-15">
@@ -20,7 +20,11 @@ export const WhitelistSteps = () => {
           {progress.isComplete ? "Thank you for early support!" : "Contributor Whitelist"}
         </p>
         {progress.isComplete ? (
-          <InfoMessage message={isMintedNFT ? "NFT minted" : "Mint your Early Contributor NFT badge to be eligible for boosted APY"} />
+          <InfoMessage
+            message={
+              isMintedNFT ? "NFT minted" : "Mint your Early Contributor NFT badge to be eligible for boosted APY"
+            }
+          />
         ) : (
           <p className="font-bold text-[#8D8D8D] text-base leading-[128%]">
             Be the first who farms boosted yield while others chase points
@@ -37,6 +41,12 @@ export const WhitelistSteps = () => {
           xConnected={xConnected}
         />
         <QuotePost disabled={!tasks.walletConnected || !tasks.xFollowed} isCompleted={tasks.postRetweeted} />
+        <p className="select-none font-bold text-[#E3D0FF] text-s leading-[128%]">
+          *If you're facing any issues, DM us on X:{" "}
+          <a href={"https://x.com/backyard_fi"} rel="noopener" target="_blank">
+            @backyard_fi
+          </a>
+        </p>
       </div>
     </div>
   );
