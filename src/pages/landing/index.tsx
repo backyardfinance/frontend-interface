@@ -11,7 +11,7 @@ import { XIcon } from "@/components/icons/x";
 import { links } from "@/config/links";
 import { APP_ROUTES } from "@/config/routes";
 import { Button } from "@/pages/whitelist/components/ui";
-import { cn, isDev } from "@/utils";
+import { cn } from "@/utils";
 
 const WHAT_IS_DATA = [
   {
@@ -83,23 +83,13 @@ const HeroSection: FC = () => {
         </p>
       </div>
       <div className="flex w-full flex-col items-start gap-4.5 md:w-[564px] md:flex-row">
-        {isDev() ? <Button
+         <Button
           className="h-[56px] w-full text-base"
           onClick={() => navigate(APP_ROUTES.WHITELIST)}
           variant="joinWhitelist"
         >
           Join whitelist
-        </Button>:<Button
-          className="group relative h-[56px] w-full overflow-hidden text-base"
-          variant="joinWhitelist"
-        >
-          <span className="flex items-center justify-center transition-transform duration-300 group-hover:translate-y-[200%]">
-              Join whitelist
-            </span>
-            <span className="absolute inset-0 flex translate-y-[-100%] items-center justify-center transition-transform duration-300 group-hover:translate-y-0">
-              Coming soon
-            </span>
-          </Button>}
+        </Button>
         <Button
           className="h-[56px] w-full text-base"
           hover="green"
