@@ -78,7 +78,7 @@ export const useEmailVerification = () => {
     }
   };
 
-  const sendEmailErrorMessage = sendEmailError?.response?.data.message[0];
+  const sendEmailErrorMessage = sendEmailError?.response?.data.message;
   const verifyEmailErrorMessage = verifyEmailError?.response?.data.message[0];
 
   return {

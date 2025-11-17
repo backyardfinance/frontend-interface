@@ -68,7 +68,7 @@ export const SignWallet: FC<Props> = ({ connectedAddress, isCompleted }) => {
           </Button>
         )}
       </div>
-      {error && <ErrorMessage message={error.response?.data.message.join(", ") ?? "There was an error"} />}
+      {error && <ErrorMessage message={error.response?.data.message ?? "There was an error"} />}
     </StepWrapper>
   );
 };

@@ -41,7 +41,7 @@ export interface VaultInfoResponse {
 
 export interface ApiErrorResponse {
   error: string;
-  message: string[];
+  message: string;
   statusCode: number;
 }
 
