@@ -35,7 +35,7 @@ export const NftCard = () => {
       <div className="relative size-full overflow-hidden">
         <img alt="nft" className="absolute" src={NFT} />
         {isMintedNFT ? (
-          <p className="flex flex-col items-center justify-center gap-2.5 bg-[rgba(39,39,39,0.37)] px-4 py-3 font-bold text-xs leading-[normal]">
+          <p className="-translate-x-1/2 absolute bottom-[6px] left-1/2 flex w-[calc(100%-12px)] flex-col items-center justify-center gap-2.5 bg-[rgba(39,39,39,0.37)] px-4 py-3 font-bold text-xs leading-[normal]">
             NFT minted
           </p>
         ) : (
