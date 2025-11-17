@@ -9,7 +9,7 @@ const emailSchema = z.object({
 const RESEND_TIMER_SECONDS = 60; // 1 minute
 
 export const useEmailVerification = () => {
-  const { mutateAsync: sendEmail, isPending: isSendingEmail, isError: isSendEmailError } = useWhitelistSendEmail();
+  const { mutateAsync: sendEmail, isPending: isSendingEmail, error: sendEmailError } = useWhitelistSendEmail();
   const { mutateAsync: verifyEmail, isPending: isVerifyingEmail, error: verifyEmailError } = useWhitelistVerifyEmail();
 
   const [email, setEmail] = useState("");
@@ -78,6 +78,7 @@ export const useEmailVerification = () => {
     }
   };
 
+  const sendEmailErrorMessage = sendEmailError?.response?.data.message[0];
   const verifyEmailErrorMessage = verifyEmailError?.response?.data.message[0];
 
   return {
@@ -96,7 +97,7 @@ export const useEmailVerification = () => {
     isSendingEmail,
     isVerifyingEmail,
 
-    isSendEmailError,
+    sendEmailErrorMessage,
     verifyEmailErrorMessage,
   };
 };

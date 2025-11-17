@@ -25,7 +25,7 @@ export const Email: FC<Props> = ({ connectedEmail, disabled, isCompleted }) => {
     setCode,
     isSendingEmail,
     isVerifyingEmail,
-    isSendEmailError,
+    sendEmailErrorMessage,
     verifyEmailErrorMessage,
   } = useEmailVerification();
 
@@ -59,7 +59,7 @@ export const Email: FC<Props> = ({ connectedEmail, disabled, isCompleted }) => {
             <EmailInputForm
               email={email}
               isEmailValid={isEmailValid}
-              isSendEmailError={isSendEmailError}
+              isSendEmailError={!!sendEmailErrorMessage}
               isSendingEmail={isSendingEmail}
               onEmailChange={handleEmailChange}
               onSendEmail={handleSendEmail}
@@ -80,7 +80,9 @@ export const Email: FC<Props> = ({ connectedEmail, disabled, isCompleted }) => {
         )}
       </div>
 
-      {verifyEmailErrorMessage ? (
+      {sendEmailErrorMessage ? (
+        <ErrorMessage message={sendEmailErrorMessage} />
+      ) : verifyEmailErrorMessage ? (
         <ErrorMessage message={verifyEmailErrorMessage} />
       ) : !isEmailValid ? (
         <ErrorMessage message="Please enter a valid email" />
