@@ -1,16 +1,10 @@
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useWhitelistStatus } from "@/hooks/useWhitelist";
 
-interface UseWhitelistUserOptions {
-  enabled?: boolean;
-}
-
-export const useWhitelistUser = (options?: UseWhitelistUserOptions) => {
+export const useWhitelistUser = () => {
   const { address } = useSolanaWallet();
 
-  const { data: user, isLoading: isLoadingUsers } = useWhitelistStatus({
-    enabled: options?.enabled !== false && !!address,
-  });
+  const { data: user, isLoading: isLoadingUsers } = useWhitelistStatus(address);
 
   const tasks = {
     walletConnected: Boolean(user?.tasks.wallet_connected),

@@ -21,7 +21,7 @@ export const WhitelistStats = () => {
   const { progress } = useWhitelistUser();
 
   const { data: whitelistedUsers } = useWhitelistParticipants();
-  console.log("whitelistedUsers", whitelistedUsers);
+
   const whitelistedUsersCount = whitelistedUsers?.count ?? 0;
 
   const fomo = (whitelistedUsersCount / FOMO_COUNT) * 100;

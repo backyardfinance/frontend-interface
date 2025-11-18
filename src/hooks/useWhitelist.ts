@@ -14,16 +14,18 @@ import {
 } from "@/api";
 import { queryKeys } from "@/api/query-keys";
 import { localStorageService } from "@/services/localStorageService";
+import { useSolanaWallet } from "./useSolanaWallet";
 
 type UseWhitelistStatus = Omit<UseQueryOptions<WhitelistStatusDto, Error>, "queryKey" | "queryFn">;
 
-export const useWhitelistStatus = (options?: UseWhitelistStatus) => {
+export const useWhitelistStatus = (address?: string, options?: UseWhitelistStatus) => {
   return useQuery({
-    queryKey: queryKeys.whitelist.status,
+    queryKey: queryKeys.whitelist.status(address ?? ""),
     queryFn: async () => {
       const { data } = await whitelistApi.whitelistControllerGetWhitelistStatus({ withCredentials: true });
       return data;
     },
+    enabled: !!address,
     refetchOnWindowFocus: false,
     ...options,
   });
@@ -38,6 +40,7 @@ export const useWhitelistParticipants = (options?: UseWhitelistParticipants) => 
       const { data } = await whitelistApi.whitelistControllerGetAllParticipants();
       return data;
     },
+    refetchOnWindowFocus: false,
     ...options,
   });
 };
@@ -49,6 +52,7 @@ export const useWhitelistVerifySignature = (): UseMutationResult<
   unknown
 > => {
   const queryClient = useQueryClient();
+  const { address } = useSolanaWallet();
 
   return useMutation({
     mutationFn: async (data: VerifySignatureDto) => {
@@ -58,7 +62,8 @@ export const useWhitelistVerifySignature = (): UseMutationResult<
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.whitelist.status });
+      if (!address) return;
+      queryClient.invalidateQueries({ queryKey: queryKeys.whitelist.status(address) });
     },
   });
 };
@@ -81,31 +86,37 @@ export const useWhitelistVerifyEmail = (): UseMutationResult<
   unknown
 > => {
   const queryClient = useQueryClient();
+  const { address } = useSolanaWallet();
   return useMutation({
     mutationFn: (data: VerifyEmailDto) => usersApi.userControllerVerify({ verifyEmailDto: data }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.whitelist.status });
+      if (!address) return;
+      queryClient.invalidateQueries({ queryKey: queryKeys.whitelist.status(address) });
     },
   });
 };
 
 export const useWhitelistCheckFollow = () => {
   const queryClient = useQueryClient();
+  const { address } = useSolanaWallet();
   return useMutation({
     mutationFn: () => usersApi.userControllerCheckFollow(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.whitelist.status });
+      if (!address) return;
+      queryClient.invalidateQueries({ queryKey: queryKeys.whitelist.status(address) });
     },
   });
 };
 
 export const useWhitelistCheckRetweet = () => {
   const queryClient = useQueryClient();
+  const { address } = useSolanaWallet();
   return useMutation({
     mutationFn: () => usersApi.userControllerCheckRetweet(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.whitelist.status });
       queryClient.invalidateQueries({ queryKey: queryKeys.whitelist.participants });
+      if (!address) return;
+      queryClient.invalidateQueries({ queryKey: queryKeys.whitelist.status(address) });
     },
   });
 };

@@ -16,7 +16,7 @@ export const queryKeys = {
   },
 
   whitelist: {
-    status: ["whitelist-status"],
+    status: (walletAddress: string) => ["whitelist-status", walletAddress],
     participants: ["whitelist-participants"],
     prepareMintTransaction: ["prepare-mint-transaction"],
     isMintedNFT: (walletAddress: string) => ["is-minted-nft", walletAddress],
