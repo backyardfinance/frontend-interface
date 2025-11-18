@@ -33,7 +33,7 @@ export const shortFormIntegerFormatter = Intl.NumberFormat("en-US", {
 });
 
 export const formatWithPrecision = (number: number, precision = 2): string => {
-  return Big(number).toFixed(precision);
+  return removeTrailingZeros(Big(number).toFixed(precision));
 };
 
 export const parseTokenAmount = (amount: string, decimals = 18): Big => {
@@ -109,6 +109,7 @@ export const sleep = async (time = 1000): Promise<void> => {
 };
 
 export const isDev = () => {
-  if(window.location.hostname.includes('staging.backyard.finance') || window.location.hostname.includes('localhost')) return true;
-  return  false;
+  if (window.location.hostname.includes("staging.backyard.finance") || window.location.hostname.includes("localhost"))
+    return true;
+  return false;
 };
