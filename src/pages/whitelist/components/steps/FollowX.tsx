@@ -1,5 +1,6 @@
 import { CheckIcon } from "lucide-react";
-import type { FC } from "react";
+import { type FC, useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 import { links } from "@/config/links";
 import { useWhitelistCheckFollow } from "@/hooks/useWhitelist";
 import { Button, ErrorMessage, LockStep, StepWrapper } from "@/pages/whitelist/components/ui";
@@ -13,11 +14,23 @@ type Props = {
 };
 
 export const FollowX: FC<Props> = ({ connectedX, disabled, isCompleted, xConnected }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchError, setSearchError] = useState<string | null>(null);
+
   const { mutate: checkFollow, isPending, data } = useWhitelistCheckFollow();
 
   const handleCheckFollow = () => {
     checkFollow();
   };
+
+  useEffect(() => {
+    const err = searchParams.get("error");
+    if (err) {
+      setSearchError(decodeURIComponent(err));
+      searchParams.delete("error");
+      setSearchParams(searchParams);
+    }
+  }, []);
 
   if (isCompleted) {
     return (
@@ -67,7 +80,11 @@ export const FollowX: FC<Props> = ({ connectedX, disabled, isCompleted, xConnect
           </Button>
         )}
       </div>
-      {data && !data.data.is_following && <ErrorMessage message="You are not subscribed or your account is private." />}
+      {searchError ? (
+        <ErrorMessage message={decodeURIComponent(searchError)} />
+      ) : (
+        data && !data.data.is_following && <ErrorMessage message="You are not subscribed or your account is private." />
+      )}
     </StepWrapper>
   );
 };
