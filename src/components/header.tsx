@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import Logo from "@/components/icons/backyard-logo.svg";
 import BackyardLogo from "@/components/icons/backyard-logo.svg";
 import { DisconnectIcon } from "@/components/icons/disconnect";
@@ -48,7 +48,9 @@ export const Header = () => {
 };
 
 export const LandingHeader = () => {
+  const { address, signIn, signOut } = useSolanaWallet();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   return (
     <header className="mx-auto flex w-full max-w-[1350px] items-center justify-between pt-8.5">
@@ -72,6 +74,17 @@ export const LandingHeader = () => {
             <XIcon className="h-[14px] w-[15px]" />
           </a>
         </WhitelistButton>
+        {pathname === APP_ROUTES.WHITELIST &&
+          (address ? (
+            <WhitelistButton border="none" onClick={signOut}>
+              {truncateAddress(address)}
+              <DisconnectIcon />
+            </WhitelistButton>
+          ) : (
+            <WhitelistButton border="none" onClick={signIn}>
+              Connect Wallet
+            </WhitelistButton>
+          ))}
       </div>
     </header>
   );

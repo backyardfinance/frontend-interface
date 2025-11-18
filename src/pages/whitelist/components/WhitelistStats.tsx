@@ -9,6 +9,8 @@ import { useWhitelistUser } from "../hooks/useWhitelistUser";
 import { Card } from "./Card";
 import { NftCard } from "./NftCard";
 
+const FOMO_COUNT = 1000;
+
 const calculateFomoRotation = (fomo: number): number => {
   const MIN_ANGLE = -100;
   const MAX_ANGLE = 100;
@@ -19,10 +21,10 @@ export const WhitelistStats = () => {
   const { progress } = useWhitelistUser();
 
   const { data: whitelistedUsers } = useWhitelistParticipants();
-  console.log('whitelistedUsers', whitelistedUsers);
+  console.log("whitelistedUsers", whitelistedUsers);
   const whitelistedUsersCount = whitelistedUsers?.count ?? 0;
 
-  const fomo = (whitelistedUsersCount / 500) * 100;
+  const fomo = (whitelistedUsersCount / FOMO_COUNT) * 100;
 
   const rotation = calculateFomoRotation(fomo);
 
@@ -68,7 +70,7 @@ export const WhitelistStats = () => {
       </Card>
       <Card className="h-[263px] flex-shrink-0 lg:h-[217px]" title="Backyard FOMO">
         <div className="relative flex w-full flex-1 items-center justify-center">
-          <div className="absolute top-0 left-0 flex h-[34px] w-[45px] items-center justify-center border border-[rgba(166,248,239,0.21)] border-dashed bg-[rgba(255,255,255,0.03)]">
+          <div className="absolute top-0 left-0 flex h-[34px] items-center justify-center border border-[rgba(166,248,239,0.21)] border-dashed bg-[rgba(255,255,255,0.03)] px-2">
             <p className="font-bold text-xl leading-[normal]">{formatWithPrecision(fomo, 1)}</p>
           </div>
 
