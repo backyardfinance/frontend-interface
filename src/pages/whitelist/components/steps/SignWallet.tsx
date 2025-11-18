@@ -2,7 +2,6 @@ import bs58 from "bs58";
 import { CheckIcon } from "lucide-react";
 import { type FC, useState } from "react";
 import { authApi } from "@/api";
-import { DisconnectIcon } from "@/components/icons/disconnect";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useWhitelistVerifySignature } from "@/hooks/useWhitelist";
 import { Button, ErrorMessage, StepWrapper } from "@/pages/whitelist/components/ui";
@@ -14,7 +13,7 @@ type Props = {
 };
 
 export const SignWallet: FC<Props> = ({ connectedAddress, isCompleted }) => {
-  const { signIn, address, signOut, signMessage } = useSolanaWallet();
+  const { signIn, address, signMessage } = useSolanaWallet();
   const { mutateAsync: verifySignature, error } = useWhitelistVerifySignature();
 
   const [loading, setLoading] = useState(false);
@@ -51,15 +50,13 @@ export const SignWallet: FC<Props> = ({ connectedAddress, isCompleted }) => {
     <StepWrapper className="flex-col">
       <div className="flex w-full flex-col items-start justify-between gap-2 sm:flex-row sm:items-center sm:gap-4">
         <p className="font-bold text-white text-xs leading-[normal] sm:text-sm">
-          /Sign wallet {address && <span className="text-[#8D8D8D] text-xs">({truncateAddress(address)})</span>}
+          /Sign wallet{" "}
+          {connectedAddress && <span className="text-[#8D8D8D] text-xs">({truncateAddress(connectedAddress)})</span>}
         </p>
         {address ? (
           <div className="flex w-full items-center gap-2 sm:w-auto">
             <Button border="none" className="flex-1 sm:flex-initial" loading={loading} onClick={handleSign} size="sm">
               Sign
-            </Button>
-            <Button border="none" className="min-w-none flex-shrink-0" disabled={loading} onClick={signOut} size="sm">
-              <DisconnectIcon color="white" fillOpacity="1" />
             </Button>
           </div>
         ) : (

@@ -1,11 +1,13 @@
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useIsMintedNFT } from "@/hooks/useWhitelistNFT";
+import { truncateAddress } from "@/utils";
 import { useWhitelistUser } from "../hooks/useWhitelistUser";
 import { Email } from "./steps/Email";
 import { FollowX } from "./steps/FollowX";
+import { MintNFT } from "./steps/MintNFT";
 import { QuotePost } from "./steps/QuotePost";
 import { SignWallet } from "./steps/SignWallet";
-import { InfoMessage } from "./ui";
+import { ErrorMessage, InfoMessage } from "./ui";
 
 export const WhitelistSteps = () => {
   const { address } = useSolanaWallet();
@@ -41,6 +43,13 @@ export const WhitelistSteps = () => {
           xConnected={xConnected}
         />
         <QuotePost disabled={!tasks.walletConnected || !tasks.xFollowed} isCompleted={tasks.postRetweeted} />
+        <MintNFT connectedAddress={user?.wallet} disabled={!progress.isComplete} />
+        {address !== user?.wallet && user?.wallet && (
+          <ErrorMessage
+            message={`Wallet verification failed. Please connect the correct wallet: ${truncateAddress(user.wallet)}`}
+          />
+        )}
+
         <p className="select-none font-bold text-[#E3D0FF] text-s leading-[128%]">
           *If you're facing any issues, DM us on X:{" "}
           <a href={"https://x.com/backyard_fi"} rel="noopener" target="_blank">
