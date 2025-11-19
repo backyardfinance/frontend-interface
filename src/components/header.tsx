@@ -51,7 +51,7 @@ export const LandingHeader = () => {
   const { address, signIn, signOut } = useSolanaWallet();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-
+  const isWhitelist = pathname === APP_ROUTES.WHITELIST;
   return (
     <header className="mx-auto flex w-full max-w-[1350px] items-center justify-between pt-8.5">
       <WhitelistButton onClick={() => navigate(APP_ROUTES.HOME)}>
@@ -60,21 +60,23 @@ export const LandingHeader = () => {
       </WhitelistButton>
       <div className="flex items-center gap-2.5">
         <div className="group relative">
-          <WhitelistButton border="none" className="relative overflow-hidden" variant="launch">
-            <span className="flex items-center justify-center transition-transform duration-300 group-hover:translate-y-[200%]">
-              Launch App
-            </span>
-            <span className="absolute inset-0 flex translate-y-[-100%] items-center justify-center transition-transform duration-300 group-hover:translate-y-0">
-              Coming soon
-            </span>
-          </WhitelistButton>
+          {!isWhitelist && (
+            <WhitelistButton border="none" className="relative overflow-hidden" variant="launch">
+              <span className="flex items-center justify-center transition-transform duration-300 group-hover:translate-y-[200%]">
+                Launch App
+              </span>
+              <span className="absolute inset-0 flex translate-y-[-100%] items-center justify-center transition-transform duration-300 group-hover:translate-y-0">
+                Coming soon
+              </span>
+            </WhitelistButton>
+          )}
         </div>
         <WhitelistButton asChild hover="green">
           <a href={links.x} rel="noopener" target="_blank">
             <XIcon className="h-[14px] w-[15px]" />
           </a>
         </WhitelistButton>
-        {pathname === APP_ROUTES.WHITELIST &&
+        {isWhitelist &&
           (address ? (
             <WhitelistButton border="none" onClick={signOut}>
               {truncateAddress(address)}
