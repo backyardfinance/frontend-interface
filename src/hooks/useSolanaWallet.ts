@@ -4,7 +4,6 @@ import { SendTransactionError, type Transaction, VersionedTransaction } from "@s
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { toast } from "sonner";
-import { queryKeys } from "@/api/query-keys";
 import { localStorageService } from "@/services/localStorageService";
 
 export const useSolanaWallet = () => {
@@ -14,8 +13,6 @@ export const useSolanaWallet = () => {
   const { disconnect, signTransaction } = useWallet();
   const queryClient = useQueryClient();
 
-  const address = wallet.publicKey?.toBase58();
-
   const handleSignIn = useCallback(async () => {
     setVisible(true);
   }, [setVisible]);
@@ -24,8 +21,7 @@ export const useSolanaWallet = () => {
     await disconnect();
     localStorageService.clearTokens();
 
-    queryClient.removeQueries({ queryKey: queryKeys.whitelist.status(address ?? "") });
-    queryClient.removeQueries({ queryKey: ["is-minted-nft"] });
+    queryClient.clear();
   }, [disconnect, queryClient]);
 
   const handleSendTransaction = useCallback(
