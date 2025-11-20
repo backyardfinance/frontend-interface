@@ -2,6 +2,7 @@ import WhitelistBg from "@/assets/landing/whitelist-bg.webp";
 import { LandingHeader } from "@/components/header";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
 import { useIsMintedNFT } from "@/hooks/useWhitelistNFT";
+import { localStorageService } from "@/services/localStorageService";
 import { WhitelistStats } from "./components/WhitelistStats";
 import { WhitelistSteps } from "./components/WhitelistSteps";
 import { WhitelistSuccess } from "./components/WhitelistSuccess";
@@ -9,6 +10,8 @@ import { WhitelistSuccess } from "./components/WhitelistSuccess";
 export default function WhitelistPage() {
   const { address } = useSolanaWallet();
   const { data: isMintedNFT } = useIsMintedNFT(address ?? "");
+  const accessToken = localStorageService.getAccessToken();
+  const showWhitelistSuccess = accessToken && isMintedNFT;
 
   return (
     <div className="relative z-0 flex min-h-screen flex-col gap-12 px-4 pb-20 md:gap-24">
@@ -21,7 +24,9 @@ export default function WhitelistPage() {
       <LandingHeader />
 
       <div className="mx-auto flex w-full max-w-[1350px] flex-col-reverse gap-14 md:gap-8 lg:flex-row lg:justify-between">
-        <div className="w-full lg:max-w-[840px]">{isMintedNFT ? <WhitelistSuccess /> : <WhitelistSteps />}</div>
+        <div className="w-full lg:max-w-[840px]">
+          {showWhitelistSuccess ? <WhitelistSuccess /> : <WhitelistSteps />}
+        </div>
         <WhitelistStats />
       </div>
     </div>
