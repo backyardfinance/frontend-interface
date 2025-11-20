@@ -1,18 +1,15 @@
 import WhitelistBg from "@/assets/landing/whitelist-bg.webp";
 import { LandingHeader } from "@/components/header";
+import { useSolanaWallet } from "@/hooks/useSolanaWallet";
+import { useIsMintedNFT } from "@/hooks/useWhitelistNFT";
 import { WhitelistStats } from "./components/WhitelistStats";
 import { WhitelistSteps } from "./components/WhitelistSteps";
-// import { isDev } from "@/utils";
-// import { Navigate } from "react-router";
-// import { APP_ROUTES } from "@/config/routes";
+import { WhitelistSuccess } from "./components/WhitelistSuccess";
 
 export default function WhitelistPage() {
-  // const [showWhitelistSteps, setShowWhitelistSteps] = useState(false);
+  const { address } = useSolanaWallet();
+  const { data: isMintedNFT } = useIsMintedNFT(address ?? "");
 
-  // if (!isDev()) {
-  //   return <Navigate to={APP_ROUTES.HOME} />;
-  // }
-  
   return (
     <div className="relative z-0 flex min-h-screen flex-col gap-12 px-4 pb-20 md:gap-24">
       <div className="noise" />
@@ -23,10 +20,8 @@ export default function WhitelistPage() {
       />
       <LandingHeader />
 
-      <div className="mx-auto flex w-full max-w-[1350px] flex-col-reverse gap-8 lg:flex-row lg:justify-between">
-        <div className="w-full lg:max-w-[840px]">
-          <WhitelistSteps />
-        </div>
+      <div className="mx-auto flex w-full max-w-[1350px] flex-col-reverse gap-14 md:gap-8 lg:flex-row lg:justify-between">
+        <div className="w-full lg:max-w-[840px]">{isMintedNFT ? <WhitelistSuccess /> : <WhitelistSteps />}</div>
         <WhitelistStats />
       </div>
     </div>

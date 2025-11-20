@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
-import { useIsMintedNFT } from "@/hooks/useWhitelistNFT";
 import { truncateAddress } from "@/utils";
 import { useWhitelistUser } from "../hooks/useWhitelistUser";
 import { Email } from "./steps/Email";
@@ -13,7 +12,6 @@ import { ErrorMessage, InfoMessage } from "./ui";
 export const WhitelistSteps = () => {
   const { address } = useSolanaWallet();
   const { tasks, progress, xConnected, user } = useWhitelistUser();
-  const { data: isMintedNFT } = useIsMintedNFT(address ?? "");
 
   const { isSignWalletCompleted, isEmailCompleted, isFollowXCompleted, isQuotePostCompleted } = useMemo(() => {
     const sign = tasks.walletConnected;
@@ -34,15 +32,9 @@ export const WhitelistSteps = () => {
   return (
     <div className="flex flex-col gap-15">
       <div className="flex flex-col gap-5">
-        <p className="font-bold text-5xl uppercase leading-[normal]">
-          {progress.isComplete ? "Thank you for early support!" : "Contributor Whitelist"}
-        </p>
+        <p className="font-bold text-5xl uppercase leading-[normal]">Contributor Whitelist</p>
         {progress.isComplete ? (
-          <InfoMessage
-            message={
-              isMintedNFT ? "NFT minted" : "Mint your Early Contributor NFT badge to be eligible for boosted APY"
-            }
-          />
+          <InfoMessage message={"Mint your Early Contributor NFT badge to be eligible for boosted APY"} />
         ) : (
           <p className="font-bold text-[#8D8D8D] text-base leading-[128%]">
             Be the first who farms boosted yield while others chase points

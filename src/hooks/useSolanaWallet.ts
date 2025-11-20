@@ -24,7 +24,7 @@ export const useSolanaWallet = () => {
     await disconnect();
     localStorageService.clearTokens();
 
-    queryClient.invalidateQueries({ queryKey: queryKeys.whitelist.status(address ?? "") });
+    queryClient.removeQueries({ queryKey: queryKeys.whitelist.status(address ?? "") });
     queryClient.removeQueries({ queryKey: ["is-minted-nft"] });
   }, [disconnect, queryClient]);
 
