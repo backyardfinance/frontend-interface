@@ -1,5 +1,5 @@
+import { useWhitelistStatus } from "@/hooks/api/useWhitelist";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
-import { useWhitelistStatus } from "@/hooks/useWhitelist";
 
 export const useWhitelistUser = () => {
   const { address } = useSolanaWallet();

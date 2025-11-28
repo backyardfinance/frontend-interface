@@ -14,7 +14,7 @@ import {
 } from "@/api";
 import { queryKeys } from "@/api/query-keys";
 import { localStorageService } from "@/services/localStorageService";
-import { useSolanaWallet } from "./useSolanaWallet";
+import { useSolanaWallet } from "../useSolanaWallet";
 
 type UseWhitelistStatus = Omit<UseQueryOptions<WhitelistStatusDto, Error>, "queryKey" | "queryFn">;
 

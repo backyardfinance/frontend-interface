@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { useWhitelistSendEmail, useWhitelistVerifyEmail } from "@/hooks/useWhitelist";
+import { useWhitelistSendEmail, useWhitelistVerifyEmail } from "@/hooks/api/useWhitelist";
 
 const emailSchema = z.object({
   email: z.email(),

@@ -3,9 +3,9 @@ import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from
 import type { StrategyInfoResponse, TokenInfoResponse, VaultInfoResponse } from "@/api";
 import { getTokenImage } from "@/assets/tokens";
 import { SettingsIcon } from "@/components/icons/settings";
-import { useUserStrategies } from "@/hooks/useStrategy";
+import { useUserStrategies } from "@/hooks/api/useStrategy";
+import { useUserTokens } from "@/hooks/api/useUserTokens";
 import { useTimer } from "@/hooks/useTimer";
-import { useUserTokens } from "@/hooks/useUserTokens";
 import { cn, formatWithPrecision } from "@/utils";
 import { ChevronIcon } from "../icons/chevron";
 import { ReloadIcon } from "../icons/reload";

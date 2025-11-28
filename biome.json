@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!src/api/generated"]
+    "includes": ["**", "!src/api/generated", "!src/api/jupiter-generated"]
   },
   "formatter": {
     "enabled": true,

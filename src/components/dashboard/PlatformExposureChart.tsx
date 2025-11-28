@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useUserStrategies } from "@/hooks/useStrategy";
+import { useUserStrategies } from "@/hooks/api/useStrategy";
 import { buildChartDataByKey } from "@/utils/calculations";
 import { ChartPieDonut } from "../charts/ChartPieDonut";
 

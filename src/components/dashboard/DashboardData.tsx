@@ -1,6 +1,6 @@
 import Big from "big.js";
 import React from "react";
-import { useUserStrategies } from "@/hooks/useStrategy";
+import { useUserStrategies } from "@/hooks/api/useStrategy";
 import { formatMonetaryAmount } from "@/utils";
 import { StarsIcon } from "../icons/stars";
 import { Button } from "../ui/button";

@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { StrategySetup } from "@/components/vault/StrategySetup";
 import { TopVaults } from "@/components/vaults/TopVaults";
 import { toVaultRoute } from "@/config/routes";
-import { useVaults } from "@/hooks/useVaults";
+import { useVaults } from "@/hooks/api/useVaults";
 import { formatNumber } from "@/utils";
 import type { Strategy } from "@/utils/types";
 

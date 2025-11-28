@@ -7,7 +7,7 @@ import { Chart } from "@/components/strategy/Chart";
 import { RecentActivity } from "@/components/strategy/RecentActivity";
 import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
 import { StrategyControl } from "@/components/vault/StrategyControl";
-import { useStrategyById } from "@/hooks/useStrategy";
+import { useStrategyById } from "@/hooks/api/useStrategy";
 import { formatMonetaryAmount, formatWithPrecision } from "@/utils";
 
 type Props = {

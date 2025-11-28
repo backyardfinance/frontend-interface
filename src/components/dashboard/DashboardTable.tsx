@@ -4,7 +4,7 @@ import { getTokenImage } from "@/assets/tokens";
 import { StarsIcon } from "@/components/icons/stars";
 import { Table } from "@/components/table";
 import { toStrategyRoute } from "@/config/routes";
-import { useUserStrategies } from "@/hooks/useStrategy";
+import { useUserStrategies } from "@/hooks/api/useStrategy";
 import { formatNumber } from "@/utils";
 
 export const DashboardTable = () => {

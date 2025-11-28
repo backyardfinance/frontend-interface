@@ -1,7 +1,7 @@
 import WhitelistBg from "@/assets/landing/whitelist-bg.webp";
 import { LandingHeader } from "@/components/header";
+import { useIsMintedNFT } from "@/hooks/api/useWhitelistNFT";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
-import { useIsMintedNFT } from "@/hooks/useWhitelistNFT";
 import { WhitelistStats } from "./components/WhitelistStats";
 import { WhitelistSteps } from "./components/WhitelistSteps";
 import { WhitelistSuccess } from "./components/WhitelistSuccess";

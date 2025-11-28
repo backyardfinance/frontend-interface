@@ -1,7 +1,7 @@
 import ArcIcon from "@/assets/landing/arc.webp";
 import ArcLogoIcon from "@/assets/landing/arc-logo.webp";
 import MenIcon from "@/assets/landing/men.webp";
-import { useWhitelistParticipants } from "@/hooks/useWhitelist";
+import { useWhitelistParticipants } from "@/hooks/api/useWhitelist";
 import { Button } from "@/pages/whitelist/components/ui";
 import { cn, formatWithPrecision } from "@/utils";
 import { WHITELIST_BENEFITS } from "../constants";

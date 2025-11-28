@@ -9,7 +9,7 @@ import { CompactHybridTooltip } from "@/components/ui/hybrid-tooltip";
 import { Chart } from "@/components/vault/Chart";
 import { RecentActivity } from "@/components/vault/RecentActivity";
 import { VaultControl } from "@/components/vault/VaultControl";
-import { useVaultByIdWithUser, useVaults } from "@/hooks/useVaults";
+import { useVaultByIdWithUser, useVaults } from "@/hooks/api/useVaults";
 import { formatMonetaryAmount, formatUsdAmount } from "@/utils";
 
 type Props = {

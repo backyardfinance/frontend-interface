@@ -2,8 +2,8 @@ import bs58 from "bs58";
 import { CheckIcon } from "lucide-react";
 import { type FC, useState } from "react";
 import { authApi } from "@/api";
+import { useWhitelistVerifySignature } from "@/hooks/api/useWhitelist";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
-import { useWhitelistVerifySignature } from "@/hooks/useWhitelist";
 import { Button, ErrorMessage, StepWrapper } from "@/pages/whitelist/components/ui";
 import { truncateAddress } from "@/utils";
 

@@ -1,8 +1,8 @@
 import { CheckIcon } from "lucide-react";
 import { type FC, useState } from "react";
 import { usersApi } from "@/api";
+import { useIsMintedNFT } from "@/hooks/api/useWhitelistNFT";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
-import { useIsMintedNFT } from "@/hooks/useWhitelistNFT";
 import { Button, LockStep, StepWrapper } from "@/pages/whitelist/components/ui";
 import { truncateAddress } from "@/utils";
 

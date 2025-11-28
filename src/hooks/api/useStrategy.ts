@@ -2,7 +2,7 @@ import type { UseQueryOptions } from "@tanstack/react-query";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { type CreateStrategyDto, type StrategyInfoResponse, strategyApi } from "@/api";
 import { queryKeys } from "@/api/query-keys";
-import { useSolanaWallet } from "./useSolanaWallet";
+import { useSolanaWallet } from "../useSolanaWallet";
 
 type StrategyByIdRequest = {
   strategyId: string;

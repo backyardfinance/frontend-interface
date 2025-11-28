@@ -6,7 +6,7 @@ import { ChartArea } from "@/components/charts/ChartArea";
 import { Table } from "@/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toStrategyRoute } from "@/config/routes";
-import { useVaultByIdWithUser, useVaultHistory } from "@/hooks/useVaults";
+import { useVaultByIdWithUser, useVaultHistory } from "@/hooks/api/useVaults";
 import { formatWithPrecision } from "@/utils";
 import { ArrowIcon } from "../icons/arrow";
 import { Button } from "../ui/button";

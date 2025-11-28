@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { usersApi } from "@/api";
 import NFT from "@/assets/landing/nft.webp";
+import { useIsMintedNFT } from "@/hooks/api/useWhitelistNFT";
 import { useSolanaWallet } from "@/hooks/useSolanaWallet";
-import { useIsMintedNFT } from "@/hooks/useWhitelistNFT";
 import { Button } from "@/pages/whitelist/components/ui";
 import { Card } from "./Card";
 

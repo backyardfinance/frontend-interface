@@ -10,8 +10,9 @@ export const useSolanaWallet = () => {
   const { setVisible } = useWalletModal();
   const wallet = useWallet();
   const { connection } = useConnection();
-  const { disconnect, signTransaction } = useWallet();
   const queryClient = useQueryClient();
+
+  const { disconnect, signTransaction, signMessage, sendTransaction } = wallet;
 
   const handleSignIn = useCallback(async () => {
     setVisible(true);
@@ -26,9 +27,15 @@ export const useSolanaWallet = () => {
 
   const handleSendTransaction = useCallback(
     async (tx: Transaction) => {
-      return wallet.sendTransaction(tx, connection);
+      return sendTransaction?.(tx, connection);
     },
-    [wallet, connection]
+    [sendTransaction, connection]
+  );
+  const handleSignTransaction = useCallback(
+    async (tx: Transaction | VersionedTransaction) => {
+      return signTransaction?.(tx);
+    },
+    [signTransaction]
   );
 
   const handleSendV0Transaction = useCallback(
@@ -52,14 +59,14 @@ export const useSolanaWallet = () => {
         throw error;
       }
     },
-    [wallet, connection]
+    [connection]
   );
 
   const handleSignMessage = useCallback(
     async (message: string) => {
-      return wallet.signMessage?.(new TextEncoder().encode(message));
+      return signMessage?.(new TextEncoder().encode(message));
     },
-    [wallet.signMessage]
+    [signMessage]
   );
 
   return useMemo(
@@ -71,7 +78,16 @@ export const useSolanaWallet = () => {
       address: wallet.publicKey?.toBase58(),
       signMessage: handleSignMessage,
       sendV0Transaction: handleSendV0Transaction,
+      signTransaction: handleSignTransaction,
     }),
-    [handleSignIn, handleSignOut, handleSendTransaction, handleSignMessage, handleSendV0Transaction, wallet]
+    [
+      handleSignIn,
+      handleSignOut,
+      handleSendTransaction,
+      handleSignMessage,
+      handleSendV0Transaction,
+      handleSignTransaction,
+      wallet,
+    ]
   );
 };

@@ -2,7 +2,7 @@ import { CheckIcon } from "lucide-react";
 import { type FC, useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { links } from "@/config/links";
-import { useWhitelistCheckFollow } from "@/hooks/useWhitelist";
+import { useWhitelistCheckFollow } from "@/hooks/api/useWhitelist";
 import { Button, ErrorMessage, LockStep, StepWrapper } from "@/pages/whitelist/components/ui";
 import { localStorageService } from "@/services/localStorageService";
 

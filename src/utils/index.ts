@@ -27,6 +27,7 @@ export function formatNumber(number: number): string {
   return number.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+//not used
 export const shortFormIntegerFormatter = Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
   notation: "compact",

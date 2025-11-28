@@ -1,7 +1,7 @@
 import { CheckIcon } from "lucide-react";
 import type { FC } from "react";
 import { links } from "@/config/links";
-import { useWhitelistCheckRetweet } from "@/hooks/useWhitelist";
+import { useWhitelistCheckRetweet } from "@/hooks/api/useWhitelist";
 import { Button, ErrorMessage, LockStep, StepWrapper } from "@/pages/whitelist/components/ui";
 
 type Props = {

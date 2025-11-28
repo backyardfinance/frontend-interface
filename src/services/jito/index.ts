@@ -180,4 +180,4 @@ class JitoJsonRpcClient {
 
 const baseUrl = import.meta.env.VITE_PUBLIC_JITO_RPC_URL ?? "https://mainnet.block-engine.jito.wtf";
 
-export const jitoClient = new JitoJsonRpcClient(baseUrl);
+export const jitoClient = new JitoJsonRpcClient(`${baseUrl}/api/v1`);

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { type GetQuoteDtoTypeEnum, quoteApi, type VaultDepositDto } from "@/api";
 import { queryKeys } from "@/api/query-keys";
-import { useSolanaWallet } from "./useSolanaWallet";
+import { useSolanaWallet } from "../useSolanaWallet";
 
 export const useGetQuote = (type: GetQuoteDtoTypeEnum, deposits: VaultDepositDto[]) => {
   const { address: walletAddress } = useSolanaWallet();
