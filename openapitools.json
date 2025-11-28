@@ -16,10 +16,22 @@
           "modelPackage": "types"
         }
       },
-      "jupiter": {
+      "jupiter-swap": {
         "inputSpec": "https://raw.githubusercontent.com/jup-ag/docs/refs/heads/main/openapi-spec/ultra/ultra.yaml",
         "generatorName": "typescript-axios",
-        "output": "./src/api/jupiter-generated",
+        "output": "./src/jupiter/api/generated-swap",
+        "additionalProperties": {
+          "useSingleRequestParameter": true,
+          "enumPropertyNaming": "UPPERCASE",
+          "withSeparateModelsAndApi": true,
+          "apiPackage": "api",
+          "modelPackage": "types"
+        }
+      },
+      "jupiter-tokens": {
+        "inputSpec": "https://raw.githubusercontent.com/jup-ag/docs/refs/heads/main/openapi-spec/tokens/v2/tokens.yaml",
+        "generatorName": "typescript-axios",
+        "output": "./src/jupiter/api/generated-tokens",
         "additionalProperties": {
           "useSingleRequestParameter": true,
           "enumPropertyNaming": "UPPERCASE",

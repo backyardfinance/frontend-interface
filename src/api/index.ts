@@ -12,13 +12,14 @@ export enum VaultPlatform {
 export interface UserTokenView {
   mint: string;
   isNative: boolean;
+  name: string;
   decimals: number;
-  amountUi: number;
-  name?: string;
-  symbol?: string;
-  logoURI?: string;
-  priceUsd?: number;
-  valueUsd?: number;
+  symbol: string;
+  icon: string;
+  usdPrice: number;
+  amount: bigint;
+  amountUsd: number;
+  uiAmount: number;
 }
 
 export interface UserPortfolioView {

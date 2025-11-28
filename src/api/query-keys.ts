@@ -25,14 +25,18 @@ export const queryKeys = {
   userTokens: (userId: string) => ["user-tokens", userId],
   quoteDeposit: (data: object) => ["quote-deposit", ...Object.values(data)],
 
-  jupiter: {
-    all: ["jupiter"],
+  jupiterSwap: {
+    all: ["jupiter-swap"],
     quote: (params: { inputMint: string; outputMint: string; amount: string; slippageBps?: number }) =>
-      [...queryKeys.jupiter.all, "quote", params] as const,
-    holdings: (walletAddress: string) => [...queryKeys.jupiter.all, "holdings", walletAddress] as const,
-    search: (query: string) => [...queryKeys.jupiter.all, "search", query] as const,
-    shield: (mints: string[]) => [...queryKeys.jupiter.all, "shield", mints.sort().join(",")] as const,
-    routers: () => [...queryKeys.jupiter.all, "routers"] as const,
+      [...queryKeys.jupiterSwap.all, "quote", params] as const,
+    holdings: (walletAddress: string) => [...queryKeys.jupiterSwap.all, "holdings", walletAddress] as const,
+    search: (query: string) => [...queryKeys.jupiterSwap.all, "search", query] as const,
+    shield: (mints: string[]) => [...queryKeys.jupiterSwap.all, "shield", mints.sort().join(",")] as const,
+    routers: () => [...queryKeys.jupiterSwap.all, "routers"] as const,
+  },
+  jupiterTokens: {
+    all: ["jupiter-tokens"],
+    search: (mints: string[]) => [...queryKeys.jupiterTokens.all, "search", mints.join(",")] as const,
   },
 } as const;
 

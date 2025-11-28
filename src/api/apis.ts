@@ -1,3 +1,4 @@
+import { BACKEND_URL } from "@/config";
 import { api } from "./axios";
 import {
   AuthApi,
@@ -11,18 +12,17 @@ import {
   WhitelistApi,
 } from "./generated";
 
-const basePath = import.meta.env.VITE_PUBLIC_BACKEND_URL || "/api";
-console.log('basePath', basePath);
+const backendUrl = BACKEND_URL;
 const config = new Configuration({ baseOptions: { headers: {} } });
 
-export const solanaApi = new SolanaApi(config, basePath, api);
+export const solanaApi = new SolanaApi(config, backendUrl, api);
 
-export const vaultApi = new VaultApi(config, basePath, api);
-export const strategyApi = new StrategyApi(config, basePath, api);
-export const transactionApi = new TransactionsApi(config, basePath, api);
-export const quoteApi = new QuoteApi(config, basePath, api);
+export const vaultApi = new VaultApi(config, backendUrl, api);
+export const strategyApi = new StrategyApi(config, backendUrl, api);
+export const transactionApi = new TransactionsApi(config, backendUrl, api);
+export const quoteApi = new QuoteApi(config, backendUrl, api);
 
 //whitelist
-export const authApi = new AuthApi(config, basePath, api);
-export const usersApi = new UsersApi(config, basePath, api);
-export const whitelistApi = new WhitelistApi(config, basePath, api);
+export const authApi = new AuthApi(config, backendUrl, api);
+export const usersApi = new UsersApi(config, backendUrl, api);
+export const whitelistApi = new WhitelistApi(config, backendUrl, api);
