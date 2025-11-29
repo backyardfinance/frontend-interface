@@ -1,12 +1,12 @@
 import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
-import { type ReactNode, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { UserTokenView } from "@/api";
 import { TokenInputComponent } from "@/common/components/token-input";
 import { Button } from "@/common/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/common/components/ui/tabs";
-import { cn, displayAmount } from "@/common/utils";
+import { cn, displayAmount, parseTokenAmount } from "@/common/utils";
 import type { Strategy } from "@/common/utils/types";
 import { InfoCircleIcon } from "@/icons/info-circle";
+import { useJupiterMultipleQuotes } from "@/jupiter/queries/useJupiterSwap";
 import { FeesDisplay } from "@/position-panel/components/FeesDisplay";
 import { RouteDisplay } from "@/position-panel/components/RouteDisplay";
 import { SlippageSettings } from "@/position-panel/components/SlippageSettings";
@@ -16,37 +16,68 @@ import { getTotalAllocation } from "@/position-panel/utils/strategy-helpers";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
 import { useUserTokens } from "@/solana/hooks/useUserTokens";
 
-type Action = "Deposit" | "Withdraw";
-
-interface StrategyControlProps {
+interface StrategySetupProps {
   currentStrategy: Strategy;
   onDepositAmountChange: (amount: number) => void;
   onAllocationChange: (index: number, amount: number) => void;
   onRemoveVault: (vaultId: string) => void;
   slippage: number;
   onSlippageChange: (slippage: number) => void;
-  routeSteps?: ReactNode[];
-  showTabs?: boolean;
-  title?: string;
 }
 
-export const StrategyControl = ({
+export const StrategySetup = ({
   currentStrategy,
   onDepositAmountChange,
   onAllocationChange,
   onRemoveVault,
   slippage,
   onSlippageChange,
-  routeSteps,
-  showTabs = false,
-  title = "Strategy setup",
-}: StrategyControlProps) => {
+}: StrategySetupProps) => {
   const { allocation, depositAmount, vaults } = currentStrategy;
-  const [currentAction, setCurrentAction] = useState<Action>("Deposit");
   const [selectedAsset, setSelectedAsset] = useState<UserTokenView | null>(null);
 
   const { address: walletAddress, sendTransaction } = useSolanaWallet();
   const { userTokens } = useUserTokens();
+
+  const tokenAllocations = useMemo(() => {
+    if (!vaults?.length || !allocation?.length) return [];
+
+    const grouped = new Map<string, { token: string; totalAllocation: number; vaultIndices: number[] }>();
+
+    vaults.forEach((vault, index) => {
+      const tokenMint = vault.token;
+      const allocationPercent = allocation[index] || 0;
+
+      if (grouped.has(tokenMint)) {
+        const existing = grouped.get(tokenMint)!;
+        existing.totalAllocation += allocationPercent;
+        existing.vaultIndices.push(index);
+      } else {
+        grouped.set(tokenMint, {
+          token: tokenMint,
+          totalAllocation: allocationPercent,
+          vaultIndices: [index],
+        });
+      }
+    });
+
+    return Array.from(grouped.values());
+  }, [vaults, allocation]);
+
+  const quotesParams = useMemo(() => {
+    return tokenAllocations.map((tokenAllocation) => {
+      const amountForToken = (depositAmount * tokenAllocation.totalAllocation) / 100;
+      const amount = parseTokenAmount(amountForToken.toFixed(), selectedAsset?.decimals ?? 0).toFixed();
+
+      return {
+        inputMint: selectedAsset?.mint ?? "",
+        outputMint: tokenAllocation.token,
+        amount: amount,
+      };
+    });
+  }, [tokenAllocations, depositAmount, selectedAsset]);
+
+  const quotes = useJupiterMultipleQuotes(quotesParams);
 
   const totalAllocation = getTotalAllocation(allocation);
   const isAllocationError = totalAllocation > 100;
@@ -85,16 +116,7 @@ export const StrategyControl = ({
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
       <div className="flex flex-row items-start justify-between font-bold text-neutral-800 text-sm">
-        {showTabs ? (
-          <Tabs onValueChange={(val) => setCurrentAction(val as Action)} value={currentAction} variant="gray">
-            <TabsList>
-              <TabsTrigger value="Deposit">Deposit</TabsTrigger>
-              <TabsTrigger value="Withdraw">Withdraw</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        ) : (
-          <span>{title}</span>
-        )}
+        <span>Strategy setup</span>
         <SlippageSettings onSlippageChange={onSlippageChange} slippage={slippage} />
       </div>
 
@@ -144,7 +166,27 @@ export const StrategyControl = ({
         </>
       )}
 
-      {depositAmount > 0 && selectedAsset && <RouteDisplay routeSteps={routeSteps} />}
+      {depositAmount > 0 && selectedAsset && quotes.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {quotes.map((quote, index) => {
+            if (!quote.data?.routePlan) return null;
+
+            return (
+              <RouteDisplay
+                key={tokenAllocations[index].token}
+                routeSteps={quote.data.routePlan.map((step) => (
+                  <>
+                    {step.swapInfo.label}
+                    <span className="font-bold text-neutral-700 text-xs">
+                      {step.swapInfo.inAmount} {step.swapInfo.inputMint}
+                    </span>
+                  </>
+                ))}
+              />
+            );
+          })}
+        </div>
+      )}
 
       <div className="h-px w-80 rounded-2xl bg-zinc-100" />
 

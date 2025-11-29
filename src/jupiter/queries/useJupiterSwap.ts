@@ -1,5 +1,5 @@
 import type { UseMutationResult, UseQueryOptions } from "@tanstack/react-query";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueries, useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import Big from "big.js";
 import { queryKeys } from "@/api/query-keys";
@@ -39,6 +39,33 @@ export const useJupiterQuote = (params: JupiterSwap.DefaultApiOrderGetRequest, o
     // staleTime: 5000,
     refetchOnWindowFocus: false,
     ...options,
+  });
+};
+
+export const useJupiterMultipleQuotes = (quotesParams: JupiterSwap.DefaultApiOrderGetRequest[]) => {
+  const { address } = useSolanaWallet();
+
+  return useQueries({
+    queries: quotesParams.map((params) => ({
+      queryKey:
+        params.inputMint && params.outputMint && params.amount
+          ? queryKeys.jupiterSwap.quote({
+              inputMint: params.inputMint,
+              outputMint: params.outputMint,
+              amount: params.amount,
+            })
+          : ["jupiter-quote-disabled", params.outputMint ?? "unknown"],
+      queryFn: async () => {
+        const { data } = await jupiterSwapApi.orderGet({
+          ...params,
+          taker: address,
+        });
+        return data;
+      },
+      enabled:
+        !!address && !!params.inputMint && !!params.outputMint && !!params.amount && Big(params.amount ?? "0").gt(0),
+      refetchOnWindowFocus: false,
+    })),
   });
 };
 

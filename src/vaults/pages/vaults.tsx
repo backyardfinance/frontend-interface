@@ -12,7 +12,7 @@ import { PlusIcon } from "@/icons/plus";
 import PlusThickIcon from "@/icons/plus-thick.svg?react";
 import { SearchIcon } from "@/icons/search";
 import { StarsIcon } from "@/icons/stars";
-import { StrategyControl } from "@/position-panel/StrategyControl";
+import { StrategySetup } from "@/position-panel/StrategySetup";
 import {
   removeVaultFromStrategy,
   toggleVaultInStrategy,
@@ -155,7 +155,7 @@ export default function VaultsPage() {
             </div>
           </div>
         ) : (
-          <StrategyControl
+          <StrategySetup
             currentStrategy={currentStrategy}
             onAllocationChange={handleAllocationChange}
             onDepositAmountChange={handleDepositAmountChange}
