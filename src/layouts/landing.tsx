@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router";
-import CursorTrail from "@/components/cursor";
+import CursorTrail from "@/common/components/cursor";
 
 export default function LandingLayout() {
   useEffect(() => {

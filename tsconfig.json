@@ -25,7 +25,7 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],
-  "exclude": ["src/api/generated"],
+  "exclude": ["src/api/generated", "src/jupiter/api/generated-swap", "src/jupiter/api/generated-tokens"],
 
   "references": [{ "path": "./tsconfig.node.json" }]
 }

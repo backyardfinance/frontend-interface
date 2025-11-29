@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Outlet } from "react-router";
-import { Header } from "@/components/header";
+import { DashboardHeader } from "@/layouts/headers/dashboard";
 
 export default function DashboardLayout() {
   useEffect(() => {
@@ -11,7 +11,7 @@ export default function DashboardLayout() {
 
   return (
     <div className="relative flex h-screen flex-col">
-      <Header />
+      <DashboardHeader />
       <main className="container mx-auto max-w-7xl flex-grow px-6">
         <Outlet />
       </main>
