@@ -41,14 +41,14 @@ export const StrategyControl = ({
   showTabs = false,
   title = "Strategy setup",
 }: StrategyControlProps) => {
-  const { allocation, depositAmount, vaults } = currentStrategy;
+  const { totalAllocation: allocation, depositAmount, vaults } = currentStrategy;
   const [currentAction, setCurrentAction] = useState<Action>("Deposit");
   const [selectedAsset, setSelectedAsset] = useState<UserTokenView | null>(null);
 
   const { address: walletAddress, sendTransaction } = useSolanaWallet();
   const { userTokens } = useUserTokens();
 
-  const totalAllocation = getTotalAllocation(allocation);
+  const totalAllocation = getTotalAllocation(Object.values(allocation));
   const isAllocationError = totalAllocation > 100;
 
   // Calculate average APY based on allocation
@@ -57,7 +57,10 @@ export const StrategyControl = ({
     if (!allocation?.length) {
       return vaults.reduce((acc, curr) => acc + curr.apy, 0) / vaults.length;
     }
-    return allocation.reduce((acc, curr, idx) => acc + (vaults[idx]?.apy || 0) * (curr / 100), 0);
+    return Object.entries(totalAllocation).reduce(
+      (acc, [vaultId, amount]) => acc + (vaults.find((v) => v.id === vaultId)?.apy || 0) * (amount / 100),
+      0
+    );
   }, [allocation, vaults]);
 
   const estAnnualReturn = useMemo(() => {

@@ -3,59 +3,60 @@ import type { Strategy } from "@/common/utils/types";
 
 export const calculateVaultAmounts = (
   vaults: VaultInfoResponse[],
-  allocation: number[],
+  totalAllocation: Record<string, number>,
   depositAmount: number
 ): VaultInfoResponse[] => {
-  return vaults.map((vault, index) => ({
+  return vaults.map((vault) => ({
     ...vault,
-    amount: (depositAmount / 100) * (allocation[index] || 0),
+    amount: (depositAmount / 100) * (totalAllocation[vault.id] || 0),
   }));
 };
 
-export const createEvenAllocation = (vaultCount: number): number[] => {
-  return vaultCount > 0 ? Array(vaultCount).fill(100 / vaultCount) : [];
+export const createEvenAllocation = (vaultCount: number): Record<string, number> => {
+  const allocation = Array(vaultCount).fill(100 / vaultCount);
+  return vaultCount > 0 ? Object.fromEntries(allocation.map((value, index) => [index.toString(), value])) : {};
 };
 
 export const updateDepositAmount = (strategy: Strategy, newDepositAmount: number): Strategy => {
   return {
     ...strategy,
     depositAmount: newDepositAmount,
-    vaults: calculateVaultAmounts(strategy.vaults, strategy.allocation || [], newDepositAmount),
+    vaults: calculateVaultAmounts(strategy.vaults, strategy.totalAllocation, newDepositAmount),
   };
 };
 
-export const updateAllocation = (strategy: Strategy, index: number, newAllocationValue: number): Strategy => {
-  const newAllocation = [...(strategy.allocation || [])];
-  newAllocation[index] = newAllocationValue;
+export const updateAllocation = (strategy: Strategy, vaultId: string, newAllocationValue: number): Strategy => {
+  const newTotalAllocation = strategy.totalAllocation;
+  newTotalAllocation[vaultId] = newAllocationValue;
 
   return {
     ...strategy,
-    allocation: newAllocation,
-    vaults: calculateVaultAmounts(strategy.vaults, newAllocation, strategy.depositAmount),
+    totalAllocation: newTotalAllocation,
+    vaults: calculateVaultAmounts(strategy.vaults, newTotalAllocation, strategy.depositAmount),
   };
 };
 
 export const addVaultToStrategy = (strategy: Strategy | null, vault: VaultInfoResponse): Strategy => {
   const existingVaults = strategy?.vaults || [];
   const updatedVaults = [...existingVaults, vault];
-  const newAllocation = createEvenAllocation(updatedVaults.length);
+  const newTotalAllocation = createEvenAllocation(updatedVaults.length);
 
   return {
     id: strategy?.id || "",
     depositAmount: strategy?.depositAmount || 0,
-    vaults: calculateVaultAmounts(updatedVaults, newAllocation, strategy?.depositAmount || 0),
-    allocation: newAllocation,
+    vaults: calculateVaultAmounts(updatedVaults, newTotalAllocation, strategy?.depositAmount || 0),
+    totalAllocation: newTotalAllocation,
   };
 };
 
 export const removeVaultFromStrategy = (strategy: Strategy, vaultId: string): Strategy => {
   const updatedVaults = strategy.vaults.filter((v) => v.id !== vaultId);
-  const newAllocation = createEvenAllocation(updatedVaults.length);
+  const newTotalAllocation = createEvenAllocation(updatedVaults.length);
 
   return {
     ...strategy,
-    vaults: calculateVaultAmounts(updatedVaults, newAllocation, strategy.depositAmount),
-    allocation: newAllocation,
+    vaults: calculateVaultAmounts(updatedVaults, newTotalAllocation, strategy.depositAmount),
+    totalAllocation: newTotalAllocation,
   };
 };
 
@@ -77,8 +78,14 @@ export const getTotalAllocation = (allocation: number[] | undefined): number => 
 export const isStrategyValid = (strategy: Strategy | null): boolean => {
   if (!strategy) return false;
 
-  const { depositAmount, allocation, vaults } = strategy;
-  const totalAllocation = getTotalAllocation(allocation);
-
-  return depositAmount > 0 && vaults.length > 0 && allocation && allocation.length > 0 && totalAllocation === 100;
+  const { depositAmount, vaults } = strategy;
+  const totalAllocation = Object.values(strategy.totalAllocation);
+  const totalAllocationSum = totalAllocation.reduce((acc, curr) => acc + curr, 0);
+  return (
+    depositAmount > 0 &&
+    vaults.length > 0 &&
+    totalAllocation &&
+    totalAllocation.length > 0 &&
+    totalAllocationSum === 100
+  );
 };

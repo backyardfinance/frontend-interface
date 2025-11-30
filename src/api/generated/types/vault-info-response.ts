@@ -68,5 +68,13 @@ export interface VaultInfoResponse {
      * @memberof VaultInfoResponse
      */
     'platform': string;
+
+
+    /**
+     * 
+     * @type {string}
+     * @memberof VaultInfoResponse
+     */
+    'inputTokenMint': string;
 }
 

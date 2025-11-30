@@ -28,6 +28,7 @@ export interface UserPortfolioView {
 }
 
 export interface VaultInfoResponse {
+  inputTokenMint: string;
   apy: number;
   assetPrice: number;
   tvl: number;

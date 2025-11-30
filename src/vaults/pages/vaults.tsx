@@ -8,6 +8,7 @@ import { Table } from "@/common/components/table";
 import { Input } from "@/common/components/ui/input";
 import { formatNumber } from "@/common/utils";
 import type { Strategy } from "@/common/utils/types";
+import Logo from "@/icons/backyard-logo.svg";
 import { PlusIcon } from "@/icons/plus";
 import PlusThickIcon from "@/icons/plus-thick.svg?react";
 import { SearchIcon } from "@/icons/search";
@@ -25,6 +26,7 @@ import { useVaults } from "@/vaults/queries";
 
 export default function VaultsPage() {
   const { data: vaults } = useVaults();
+  console.log(vaults);
   const [currentStrategy, setCurrentStrategy] = useState<Strategy | null>(null);
   const [slippage, setSlippage] = useState(0.1);
   const navigate = useNavigate();
@@ -59,10 +61,10 @@ export default function VaultsPage() {
     });
   }, []);
 
-  const handleAllocationChange = useCallback((index: number, amount: number) => {
+  const handleAllocationChange = useCallback((vaultId: string, amount: number) => {
     setCurrentStrategy((prev) => {
       if (!prev) return null;
-      return updateAllocation(prev, index, amount);
+      return updateAllocation(prev, vaultId, amount);
     });
   }, []);
 
@@ -108,7 +110,14 @@ export default function VaultsPage() {
     [vaults, search]
   );
 
-  if (!vaults) return <div>No vaults matching the filters</div>;
+  if (!vaults) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4">
+        <img alt="backyard" src={Logo} />
+        <span className="shimmer text-[rgba(51,51,51,0.95)] text-base leading-normal">Loading</span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex select-none flex-row gap-4">

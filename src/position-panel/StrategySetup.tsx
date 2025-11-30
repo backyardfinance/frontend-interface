@@ -1,11 +1,14 @@
-import { PublicKey, Transaction, TransactionInstruction } from "@solana/web3.js";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { VersionedTransaction } from "@solana/web3.js";
 import { useCallback, useMemo, useState } from "react";
+
 import type { UserTokenView } from "@/api";
 import { TokenInputComponent } from "@/common/components/token-input";
 import { Button } from "@/common/components/ui/button";
 import { cn, displayAmount, parseTokenAmount } from "@/common/utils";
 import type { Strategy } from "@/common/utils/types";
 import { InfoCircleIcon } from "@/icons/info-circle";
+import { jupiterSwapApi } from "@/jupiter/api";
 import { useJupiterMultipleQuotes } from "@/jupiter/queries/useJupiterSwap";
 import { FeesDisplay } from "@/position-panel/components/FeesDisplay";
 import { RouteDisplay } from "@/position-panel/components/RouteDisplay";
@@ -19,7 +22,7 @@ import { useUserTokens } from "@/solana/hooks/useUserTokens";
 interface StrategySetupProps {
   currentStrategy: Strategy;
   onDepositAmountChange: (amount: number) => void;
-  onAllocationChange: (index: number, amount: number) => void;
+  onAllocationChange: (vaultId: string, amount: number) => void;
   onRemoveVault: (vaultId: string) => void;
   slippage: number;
   onSlippageChange: (slippage: number) => void;
@@ -33,63 +36,41 @@ export const StrategySetup = ({
   slippage,
   onSlippageChange,
 }: StrategySetupProps) => {
-  const { allocation, depositAmount, vaults } = currentStrategy;
+  const { totalAllocation, depositAmount, vaults } = currentStrategy;
+  const totalAllocationArray = Object.values(totalAllocation);
+  const { address: walletAddress, signTransaction, signAllTransactions } = useSolanaWallet();
   const [selectedAsset, setSelectedAsset] = useState<UserTokenView | null>(null);
-
-  const { address: walletAddress, sendTransaction } = useSolanaWallet();
-  const { userTokens } = useUserTokens();
-
-  const tokenAllocations = useMemo(() => {
-    if (!vaults?.length || !allocation?.length) return [];
-
-    const grouped = new Map<string, { token: string; totalAllocation: number; vaultIndices: number[] }>();
-
-    vaults.forEach((vault, index) => {
-      const tokenMint = vault.token;
-      const allocationPercent = allocation[index] || 0;
-
-      if (grouped.has(tokenMint)) {
-        const existing = grouped.get(tokenMint)!;
-        existing.totalAllocation += allocationPercent;
-        existing.vaultIndices.push(index);
-      } else {
-        grouped.set(tokenMint, {
-          token: tokenMint,
-          totalAllocation: allocationPercent,
-          vaultIndices: [index],
-        });
-      }
-    });
-
-    return Array.from(grouped.values());
-  }, [vaults, allocation]);
-
+  const { userTokens } = useUserTokens(setSelectedAsset);
+  const [isLoading, setIsLoading] = useState(false);
+  const { connection } = useConnection();
   const quotesParams = useMemo(() => {
-    return tokenAllocations.map((tokenAllocation) => {
-      const amountForToken = (depositAmount * tokenAllocation.totalAllocation) / 100;
-      const amount = parseTokenAmount(amountForToken.toFixed(), selectedAsset?.decimals ?? 0).toFixed();
+    return Object.entries(totalAllocation)
+      .map(([_, tokenAllocation], index) => {
+        const amountForToken = (depositAmount * tokenAllocation) / 100;
+        const amount = parseTokenAmount(amountForToken.toFixed(), selectedAsset?.decimals ?? 0).toFixed();
 
-      return {
-        inputMint: selectedAsset?.mint ?? "",
-        outputMint: tokenAllocation.token,
-        amount: amount,
-      };
-    });
-  }, [tokenAllocations, depositAmount, selectedAsset]);
+        return {
+          inputMint: selectedAsset?.mint ?? "",
+          outputMint: vaults[index].inputTokenMint,
+          amount: amount,
+        };
+      })
+      .filter((quote) => quote.inputMint !== quote.outputMint);
+  }, [totalAllocation, depositAmount, selectedAsset]);
 
   const quotes = useJupiterMultipleQuotes(quotesParams);
-
-  const totalAllocation = getTotalAllocation(allocation);
-  const isAllocationError = totalAllocation > 100;
+  console.log(quotes.map((quote) => quote.data));
+  const totalAllocationSum = getTotalAllocation(totalAllocationArray);
+  const isAllocationError = totalAllocationSum > 100;
 
   // Calculate average APY based on allocation
   const averageApy = useMemo(() => {
     if (!vaults?.length) return 0;
-    if (!allocation?.length) {
+    if (!totalAllocationArray?.length) {
       return vaults.reduce((acc, curr) => acc + curr.apy, 0) / vaults.length;
     }
-    return allocation.reduce((acc, curr, idx) => acc + (vaults[idx]?.apy || 0) * (curr / 100), 0);
-  }, [allocation, vaults]);
+    return totalAllocationArray.reduce((acc, curr, idx) => acc + (vaults[idx]?.apy || 0) * (curr / 100), 0);
+  }, [totalAllocationArray, vaults]);
 
   const estAnnualReturn = useMemo(() => {
     if (!averageApy) return 0;
@@ -97,21 +78,73 @@ export const StrategySetup = ({
   }, [depositAmount, averageApy]);
 
   const handleDeposit = useCallback(async () => {
-    if (!walletAddress) return;
+    if (!walletAddress || !signTransaction) return;
 
-    const tx = new Transaction();
-    tx.add(
-      new TransactionInstruction({
-        keys: [],
-        programId: new PublicKey("9J4gV4TL8EifN1PJGtysh1wp4wgzYoprZ4mYo8kS2PSv"),
-        data: Buffer.from([]),
-      })
-    );
-    await sendTransaction(tx);
-  }, [walletAddress, sendTransaction]);
+    setIsLoading(true);
+    try {
+      // const tx = quotes[0];
+
+      // const signedTransaction = await signTransaction(
+      //   VersionedTransaction.deserialize(Buffer.from(tx.data?.transaction ?? "", "base64"))
+      // );
+      // if (!signedTransaction) throw new Error("Failed to sign transaction");
+      // const bundle = await jupiterSwapApi.executePost({
+      //   executePostRequest: {
+      //     signedTransaction: Buffer.from(signedTransaction.serialize()).toString("base64"),
+      //     requestId: tx.data?.requestId ?? "",
+      //   },
+      // });
+      // console.log(bundle);
+
+      const transactions = quotes
+        .filter((quote) => quote.data && quote.data.transaction)
+        .reduce(
+          (acc, quote) => ({
+            ...acc,
+            [quote.data?.requestId ?? ""]: VersionedTransaction.deserialize(
+              Buffer.from(quote.data?.transaction ?? "", "base64")
+            ),
+          }),
+          {} as Record<string, VersionedTransaction>
+        );
+
+      const signedTransactions = await signAllTransactions(
+        Object.values(transactions).map((transaction) => transaction)
+      );
+
+      const requestIds = Object.keys(transactions);
+
+      if (!signedTransactions) throw new Error("Failed to sign transactions");
+
+      const bundle = await Promise.all(
+        signedTransactions.map((tx, index) =>
+          jupiterSwapApi.executePost({
+            executePostRequest: {
+              signedTransaction: Buffer.from(tx.serialize()).toString("base64"),
+              requestId: requestIds[index],
+            },
+          })
+        )
+      );
+      console.log(bundle);
+      if (!bundle) throw new Error("Failed to send transactions");
+
+      console.log("Bundle sent:", bundle);
+    } catch (error) {
+      console.error("Deposit error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [walletAddress, signTransaction, quotes, quotesParams, connection]);
 
   const isDepositDisabled =
-    !depositAmount || !allocation?.length || !vaults?.length || !selectedAsset || !walletAddress || isAllocationError;
+    isLoading ||
+    !depositAmount ||
+    !totalAllocationArray?.length ||
+    !vaults?.length ||
+    !selectedAsset ||
+    !walletAddress ||
+    isAllocationError;
 
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
@@ -129,13 +162,13 @@ export const StrategySetup = ({
         title="Total deposit amount"
       />
 
-      {allocation && allocation.length > 0 && vaults?.length > 0 && (
+      {totalAllocationArray && totalAllocationArray.length > 0 && vaults?.length > 0 && (
         <>
           <div className="flex w-full flex-row items-center justify-between">
             <span className="justify-start font-bold text-neutral-800 text-sm">Allocation</span>
             <div className="flex flex-row items-center font-bold text-neutral-800 text-sm">
               <span className={cn("font-bold text-sm text-zinc-400", isAllocationError && "text-pink-800")}>
-                {totalAllocation}
+                {totalAllocationSum}
               </span>
               /100%
             </div>
@@ -143,12 +176,12 @@ export const StrategySetup = ({
 
           {vaults.map((vault, index) => (
             <VaultAllocationCard
-              allocation={allocation[index]}
-              depositAmount={(depositAmount / 100) * (allocation[index] || 0)}
+              allocation={totalAllocation[index]}
+              depositAmount={(depositAmount / 100) * (totalAllocation[index] || 0)}
               isAllocationError={isAllocationError}
               key={vault.id}
               removeVaultFromStrategy={onRemoveVault}
-              setAllocation={(amount) => onAllocationChange(index, amount)}
+              setAllocation={(amount) => onAllocationChange(vault.id, amount)}
               vault={vault}
             />
           ))}
@@ -169,11 +202,11 @@ export const StrategySetup = ({
       {depositAmount > 0 && selectedAsset && quotes.length > 0 && (
         <div className="flex flex-col gap-2">
           {quotes.map((quote, index) => {
-            if (!quote.data?.routePlan) return null;
+            if (!quote.data || quote.error) return null;
 
             return (
               <RouteDisplay
-                key={tokenAllocations[index].token}
+                key={quotesParams[index].outputMint}
                 routeSteps={quote.data.routePlan.map((step) => (
                   <>
                     {step.swapInfo.label}
@@ -214,11 +247,13 @@ export const StrategySetup = ({
 
       <div className="flex flex-col gap-[9px] rounded-2xl border border-zinc-100 bg-white">
         <Button disabled={isDepositDisabled} onClick={handleDeposit} size="xl" variant="tertiary">
-          {walletAddress ? (
+          {isLoading ? (
+            "Processing..."
+          ) : walletAddress ? (
             <>
               Deposit {depositAmount} {selectedAsset?.symbol}{" "}
               {selectedAsset?.icon && (
-                <img alt={selectedAsset?.symbol} className="size-[14px]" src={selectedAsset?.icon} />
+                <img alt={selectedAsset?.symbol} className="size-[14px] rounded-full" src={selectedAsset?.icon} />
               )}
             </>
           ) : (

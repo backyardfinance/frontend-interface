@@ -158,7 +158,10 @@ export default function DashboardStrategyIdPage() {
             id: strategy.strategyId,
             vaults: [],
             depositAmount: strategy.strategyDepositedAmount,
-            allocation: strategy.vaults.map((v) => v.depositedAmount),
+            totalAllocation: strategy.vaults.reduce(
+              (acc, v) => ({ ...acc, [v.id]: v.depositedAmount }),
+              {} as Record<string, number>
+            ),
           }}
           onAllocationChange={() => {}}
           onDepositAmountChange={() => {}}
