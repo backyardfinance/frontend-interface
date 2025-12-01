@@ -13,6 +13,28 @@ export default function WhitelistPage() {
   const { data: isMintedNFT } = useIsMintedNFT(address ?? "");
   const showWhitelistSuccess = progress?.isComplete && isMintedNFT;
 
+  const isMaintenanceMode = true;
+
+  if (isMaintenanceMode) {
+    return (
+      <div className="relative z-0 flex min-h-screen flex-col px-4 pb-20">
+        <div className="noise" />
+        <img
+          alt="whitelist-bg"
+          className="-z-10 -translate-x-1/2 -translate-y-1/2 pointer-events-none absolute top-[45%] left-1/2 h-full w-full object-cover"
+          src={WhitelistBg}
+        />
+        <LandingHeader />
+
+        <div className="flex w-full flex-1 items-center justify-center">
+          <p className="text-center font-bold text-3xl uppercase leading-[normal] md:text-5xl lg:max-w-2/3">
+            We’re doing a quick maintenance - we’ll be back shortly ;)
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative z-0 flex min-h-screen flex-col gap-12 px-4 pb-20 md:gap-24">
       <div className="noise" />
