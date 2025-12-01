@@ -66,7 +66,7 @@ export const useSolanaWallet = () => {
         throw error;
       }
     },
-    [connection]
+    [connection, signTransaction]
   );
 
   const handleSignMessage = useCallback(
@@ -95,6 +95,7 @@ export const useSolanaWallet = () => {
       handleSignMessage,
       handleSendV0Transaction,
       handleSignTransaction,
+      handleSignAllTransactions,
       wallet,
     ]
   );

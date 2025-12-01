@@ -1,4 +1,4 @@
-import { cn, formatWithPrecision } from "@/common/utils";
+import { cn } from "@/common/utils";
 import ArcIcon from "@/whitelist/assets/arc.webp";
 import ArcLogoIcon from "@/whitelist/assets/arc-logo.webp";
 import MenIcon from "@/whitelist/assets/men.webp";
@@ -34,7 +34,7 @@ export const WhitelistStats = () => {
         <NftCard />
       ) : (
         <Card
-          className="h-[263px] flex-shrink-0 lg:h-[217px]"
+          className="h-[263px] shrink-0 lg:h-[217px]"
           title={
             <div className="flex w-full items-center justify-between gap-2 font-bold text-xs leading-[128%]">
               <p>Completed tasks</p>
@@ -60,7 +60,7 @@ export const WhitelistStats = () => {
           </Button>
         </Card>
       )}
-      <Card className="h-[263px] flex-shrink-0 lg:h-[217px]" title="Whitelisted users">
+      <Card className="h-[263px] shrink-0 lg:h-[217px]" title="Whitelisted users">
         <div className="relative">
           <img alt="Men" className="" src={MenIcon} />
           <p className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 font-bold text-[#ABFACA] text-[56px] uppercase leading-[normal]">
@@ -68,10 +68,10 @@ export const WhitelistStats = () => {
           </p>
         </div>
       </Card>
-      <Card className="h-[263px] flex-shrink-0 lg:h-[217px]" title="Backyard FOMO">
+      <Card className="h-[263px] shrink-0 lg:h-[217px]" title="Backyard FOMO">
         <div className="relative flex w-full flex-1 items-center justify-center">
           <div className="absolute top-0 left-0 flex h-[34px] items-center justify-center border border-[rgba(166,248,239,0.21)] border-dashed bg-[rgba(255,255,255,0.03)] px-2">
-            <p className="font-bold text-xl leading-[normal]">{formatWithPrecision(fomo, 1)}</p>
+            <p className="font-bold text-xl leading-[normal]">{fomo.toFixed(1)}</p>
           </div>
 
           <img

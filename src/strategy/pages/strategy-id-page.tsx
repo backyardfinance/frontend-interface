@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import BigLogo from "@/common/assets/images/big-logo.png";
 import { CompactHybridTooltip } from "@/common/components/ui/hybrid-tooltip";
-import { formatMonetaryAmount, formatWithPrecision } from "@/common/utils";
+import { formatMonetaryAmount } from "@/common/utils";
 import { InfoCircleIcon } from "@/icons/info-circle";
 import { StarsIcon } from "@/icons/stars";
 import { StrategyControl } from "@/position-panel/StrategyControl";
@@ -86,7 +86,7 @@ export default function DashboardStrategyIdPage() {
     },
     {
       title: "APY",
-      value: `${formatWithPrecision(strategy.strategyApy)}%`,
+      value: `${strategy.strategyApy.toFixed(0)}%`,
       valueComponent: <StarsIcon />,
     },
     {
@@ -167,10 +167,7 @@ export default function DashboardStrategyIdPage() {
           onDepositAmountChange={() => {}}
           onRemoveVault={() => {}}
           onSlippageChange={() => {}}
-          routeSteps={[]}
-          showTabs={false}
           slippage={0}
-          title="Strategy setup"
         />
         <RecentActivity activity={recentActivity} />
       </div>

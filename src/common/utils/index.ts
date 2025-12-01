@@ -2,17 +2,6 @@ import Big from "big.js";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-type ValueType = string | number | Big;
-
-export const BigNumber = (value: ValueType | undefined | null) => {
-  try {
-    return Big(value || ZERO_STRING);
-  } catch (error) {
-    console.warn(`Error: ${error} \n\n while working with this value ${value} of such a type ${typeof value} `);
-    return Big(ZERO_STRING);
-  }
-};
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -33,14 +22,6 @@ export const shortFormIntegerFormatter = Intl.NumberFormat("en-US", {
   notation: "compact",
 });
 
-export const formatWithPrecision = (number: number, precision = 2): string => {
-  return removeTrailingZeros(Big(number).toFixed(precision));
-};
-
-export const parseTokenAmount = (amount: string, decimals = 18): Big => {
-  return Big(amount).mul(Big(BASE).pow(decimals));
-};
-
 export const formatUsdAmount = (value: number): string => {
   try {
     let maximumFractionDigits = 2;
@@ -54,28 +35,6 @@ export const formatUsdAmount = (value: number): string => {
   } catch {
     return "";
   }
-};
-
-export const formatTokenAmount = (value: string | number | Big, decimals = 18, precision?: number): string =>
-  BigNumber(value).div(BigNumber(BASE).pow(decimals)).toFixed(precision);
-
-const MIN_AMOUNT = "0.00001";
-const ZERO_STRING = "0";
-const BASE = 10;
-
-export const removeTrailingZeros = (amount: string) => {
-  if (amount.includes(".") || amount.includes(",")) {
-    return amount.replace(/\.?0*$/, "");
-  }
-  return amount;
-};
-
-export const displayAmount = (amount: string, decimals?: number, precision = 5): string => {
-  const formateAmount = formatTokenAmount(amount, decimals || 0);
-  const amountBig = BigNumber(formateAmount);
-  if (amountBig.eq(ZERO_STRING)) return ZERO_STRING;
-  if (amountBig.lte(MIN_AMOUNT)) return `>${MIN_AMOUNT}`;
-  return removeTrailingZeros(amountBig.toFixed(precision));
 };
 
 export function formatMonetaryAmount(value: number | string): string {

@@ -2,8 +2,7 @@ import { useMemo } from "react";
 import type { UserTokenView } from "@/api";
 import { SOL_MINT } from "@/config";
 import type { JupiterSwap } from "@/jupiter/api";
-import { useJupiterSwapHoldings } from "@/jupiter/queries/useJupiterSwap";
-import { useJupiterTokensSearch } from "@/jupiter/queries/useJupiterTokens";
+import { useJupiterSwapHoldings, useJupiterSwapSearch } from "@/jupiter/queries/useJupiterSwap";
 
 const buildSolToken = (
   holdings: JupiterSwap.HoldingsResponse,
@@ -82,7 +81,7 @@ export const useUserTokens = () => {
     return [SOL_MINT, ...splMints];
   }, [holdings, isHoldingsLoading]);
 
-  const { data: tokens, isLoading: isTokensLoading } = useJupiterTokensSearch(mintList);
+  const { data: tokens, isLoading: isTokensLoading } = useJupiterSwapSearch(mintList);
 
   const userTokens = useMemo(() => {
     if (!holdings || !tokens) {

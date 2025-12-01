@@ -12,7 +12,9 @@ export const TokenInputComponent = ({
   setCurrentValue,
   selectedAsset,
   setSelectedAsset,
+  sufficientBalance,
 }: {
+  sufficientBalance: boolean;
   title: string;
   assets: UserTokenView[];
   currentValue: number;
@@ -22,12 +24,10 @@ export const TokenInputComponent = ({
 }) => {
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
-  const suffientbalance = Big(selectedAsset?.uiAmount.toString() || "0").gte(currentValue);
-
   return (
     <div className="flex w-full flex-col items-center justify-between gap-[14px] rounded-3xl bg-white p-[14px]">
       <div className={cn("flex w-full flex-row items-center justify-between")}>
-        {suffientbalance ? (
+        {sufficientBalance ? (
           <span className="font-bold text-neutral-400 text-xs">{title}</span>
         ) : (
           <span className="flex flex-row gap-2 rounded-xl bg-[#F4EFF1] p-1 font-bold text-[#A03152] text-xs">
@@ -45,19 +45,21 @@ export const TokenInputComponent = ({
       <div
         className={cn(
           "flex w-full flex-row items-center justify-between rounded-xl border border-zinc-100 bg-neutral-50 px-2 py-1.5",
-          !suffientbalance && "bg-[#F4EFF1] font-bold text-[#A03152]"
+          !sufficientBalance && "bg-[#F4EFF1] font-bold text-[#A03152]"
         )}
       >
         <div className="flex flex-col">
           <input
             className="w-full font-bold text-sm text-zinc-800 outline-none"
             inputMode="decimal"
-            onChange={(e) => setCurrentValue(Number(e.target.value))}
+            onChange={(e) => {
+              setCurrentValue(Number(e.target.value));
+            }}
             onWheel={(e) => e.currentTarget.blur()}
             type="number"
-            value={currentValue.toString()}
+            value={currentValue}
           />
-          <span className="font-normal text-[9px] text-stone-300">
+          <span className="font-normal text-[9px] text-stone-400">
             $
             {Big(currentValue)
               .mul(selectedAsset?.usdPrice || 0)

@@ -30,13 +30,9 @@ export const queryKeys = {
     quote: (params: { inputMint: string; outputMint: string; amount: string; slippageBps?: number }) =>
       [...queryKeys.jupiterSwap.all, "quote", params] as const,
     holdings: (walletAddress: string) => [...queryKeys.jupiterSwap.all, "holdings", walletAddress] as const,
-    search: (query: string) => [...queryKeys.jupiterSwap.all, "search", query] as const,
+    search: (mints: string[]) => [...queryKeys.jupiterSwap.all, "search", mints.sort().join(",")] as const,
     shield: (mints: string[]) => [...queryKeys.jupiterSwap.all, "shield", mints.sort().join(",")] as const,
     routers: () => [...queryKeys.jupiterSwap.all, "routers"] as const,
-  },
-  jupiterTokens: {
-    all: ["jupiter-tokens"],
-    search: (mints: string[]) => [...queryKeys.jupiterTokens.all, "search", mints.join(",")] as const,
   },
 } as const;
 

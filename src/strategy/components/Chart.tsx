@@ -7,7 +7,6 @@ import { ChartArea } from "@/common/components/charts/ChartArea";
 import { ChartPieDonut } from "@/common/components/charts/ChartPieDonut";
 import { Table } from "@/common/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/common/components/ui/tabs";
-import { formatWithPrecision } from "@/common/utils";
 import { buildChartDataByKey, calculateWeights } from "@/common/utils/calculations";
 import { toVaultRoute } from "@/routes";
 
@@ -43,9 +42,7 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
         `${vault.apy}%`,
         <>{calculateWeights(strategy.strategyDepositedAmount, vault.depositedAmount).weightPercent.toFixed(0)}%</>,
         <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
-          <div className="justify-start font-bold text-neutral-800 text-sm">
-            {formatWithPrecision(vault.depositedAmount)}
-          </div>
+          <div className="justify-start font-bold text-neutral-800 text-sm">{vault.depositedAmount.toFixed(2)}</div>
         </div>,
       ];
     }),

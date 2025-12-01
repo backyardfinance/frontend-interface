@@ -7,7 +7,7 @@ import { Button } from "@/common/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/common/components/ui/select";
 import { Switch } from "@/common/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/common/components/ui/tabs";
-import { cn, formatWithPrecision } from "@/common/utils";
+import { cn } from "@/common/utils";
 import { FeesDisplay } from "@/position-panel/components/FeesDisplay";
 import { RouteDisplay } from "@/position-panel/components/RouteDisplay";
 import { SlippageSettings } from "@/position-panel/components/SlippageSettings";
@@ -59,11 +59,11 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
   const estAnnualReturn = useMemo(() => {
     if (!vault) return 0;
     return depositAmount * (vault.apy / 100);
-  }, [depositAmount, vault.apy]);
+  }, [depositAmount, vault.apy, vault]);
 
   const selectedTokens = useMemo(
     () => getSelectedTokensForWithdrawal(strategies, userTokens.map),
-    [strategies, userTokens.arr]
+    [strategies, userTokens.map]
   );
 
   const handleToggleStrategy = useCallback((strategyId: string, isActive: boolean) => {
@@ -77,6 +77,8 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
   const handleUpdateAsset = useCallback((strategyId: string, assetAddress: string) => {
     setStrategies((prev) => updateStrategyAsset(prev, strategyId, assetAddress));
   }, []);
+
+  const sufficientBalance = Big(selectedAsset?.uiAmount.toString() || "0").gte(depositAmount);
 
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
@@ -102,6 +104,7 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
           selectedAsset={selectedAsset}
           setCurrentValue={setDepositAmount}
           setSelectedAsset={setSelectedAsset}
+          sufficientBalance={sufficientBalance}
           title={currentAction === Action.Deposit ? "Total deposit amount" : "Total withdraw amount"}
         />
       )}
@@ -230,7 +233,7 @@ const StrategyWithdrawComponent = ({
 
   const tokenUsdValue = useMemo(() => {
     if (!selectedAsset?.usdPrice || !vault?.depositedAmount) return 0;
-    return formatWithPrecision(selectedAsset?.usdPrice * vault?.depositedAmount);
+    return selectedAsset?.usdPrice * vault?.depositedAmount;
   }, [selectedAsset?.usdPrice, vault?.depositedAmount]);
 
   return (
@@ -260,10 +263,15 @@ const StrategyWithdrawComponent = ({
               !strategy.isActive && "text-zinc-400 opacity-50"
             )}
             disabled={!strategy.isActive}
-            onChange={(e) => onUpdateAmount(strategy.strategyId, Number(e.target.value))}
-            value={strategy.amountWithdraw.toString()}
+            onChange={(e) => {
+              onUpdateAmount(strategy.strategyId, Number(e.target.value));
+            }}
+            type="number"
+            value={strategy.amountWithdraw}
           />
-          <span className="font-normal text-[9px] text-stone-300">${strategy.isActive ? tokenUsdValue : 0}</span>
+          <span className="font-normal text-[9px] text-stone-300">
+            ${strategy.isActive ? tokenUsdValue.toFixed(2) : 0}
+          </span>
         </div>
         <Select
           onOpenChange={setIsSelectOpen}

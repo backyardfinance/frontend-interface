@@ -1,6 +1,6 @@
 import type { UseQueryOptions } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
-import { type StrategyInfoResponse, strategyApi } from "@/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { type CreateDepositTransactionsDto, type StrategyInfoResponse, strategyApi, transactionApi } from "@/api";
 import { queryKeys } from "@/api/query-keys";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
 
@@ -61,3 +61,15 @@ export const useUserStrategies = (options?: UseStrategiesOptions) => {
 //     retry: false,
 //   });
 // };
+
+export const useCreateDepositTransactions = () => {
+  return useMutation({
+    mutationFn: async (createDepositTransactionsDto: CreateDepositTransactionsDto) => {
+      const { data } = await transactionApi.transactionControllerCreateDepositTransactions({
+        createDepositTransactionsDto,
+      });
+      //TODO: remove this when backend fixed
+      return data as unknown as { serializedTransaction: string }[];
+    },
+  });
+};

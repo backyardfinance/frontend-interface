@@ -1,4 +1,11 @@
-
+# Run security audit before commit
+echo "🔐 Running security audit..."
+bun audit --silent || {
+  echo "⚠️  Security vulnerabilities detected!"
+  echo "Run 'bun run security:check' for details"
+  echo "To skip this check (not recommended), use: git commit --no-verify"
+  exit 1
+}
 
 # Run lint-staged
 bunx --bun lint-staged

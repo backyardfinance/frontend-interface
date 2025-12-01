@@ -13,8 +13,7 @@
     "preview": "vite preview",
     "prepare": "husky",
     "api:generate": "rimraf ./src/api/generated && npx openapi-generator-cli generate",
-    "api:generate-jupiter-swap": "rimraf ./src/jupiter/api/generated-swap && npx openapi-generator-cli generate --generator-key jupiter-swap",
-    "api:generate-jupiter-tokens": "rimraf ./src/jupiter/api/generated-tokens && npx openapi-generator-cli generate --generator-key jupiter-tokens",
+    "api:generate-jupiter-swap": "rimraf ./src/jupiter/api/generated/swap && npx openapi-generator-cli generate --generator-key jupiter-swap",
     "security:audit": "bun audit",
     "security:audit:fix": "bun audit --fix",
     "security:check": "bun audit && bun outdated",
@@ -22,7 +21,6 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "0.32.1",
-    "@jup-ag/lend": "^0.0.106",
     "@radix-ui/react-popover": "1.1.15",
     "@radix-ui/react-select": "2.2.6",
     "@radix-ui/react-separator": "1.1.8",
