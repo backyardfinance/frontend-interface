@@ -1,5 +1,5 @@
 import axios from "axios";
-import { localStorageService } from "@/services/localStorageService";
+import { localStorageService } from "@/common/utils/localStorageService";
 
 const baseURL = import.meta.env.VITE_PUBLIC_BACKEND_URL;
 
@@ -27,7 +27,7 @@ api.interceptors.request.use(
   (request) => {
     const accessToken = localStorageService.getAccessToken();
     if (accessToken) {
-      request.headers["Authorization"] = `Bearer ${accessToken}`;
+      request.headers.Authorization = `Bearer ${accessToken}`;
     }
     return request;
   },
@@ -47,7 +47,7 @@ api.interceptors.response.use(
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
-            originalRequest.headers["Authorization"] = `Bearer ${token}`;
+            originalRequest.headers.Authorization = `Bearer ${token}`;
             return api(originalRequest);
           })
           .catch((err) => {
@@ -80,8 +80,8 @@ api.interceptors.response.use(
 
         localStorageService.setTokens(accessToken, newRefreshToken);
 
-        api.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-        originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
+        api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
         processQueue(null, accessToken);
         isRefreshing = false;

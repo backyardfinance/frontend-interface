@@ -24,3 +24,4 @@ dist-ssr
 .env
 
 # src/api/generated
+# src/api/jupiter-generated
