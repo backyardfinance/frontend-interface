@@ -1,7 +1,9 @@
-import { useConnection } from "@solana/wallet-adapter-react";
-import { VersionedTransaction } from "@solana/web3.js";
-import { useCallback, useMemo, useState } from "react";
-
+import type NodeWallet from "@coral-xyz/anchor/dist/cjs/nodewallet";
+import { getDepositContext } from "@jup-ag/lend/earn";
+import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
+import { PublicKey, TransactionMessage, VersionedTransaction } from "@solana/web3.js";
+import { BN } from "bn.js";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { UserTokenView } from "@/api";
 import { TokenInputComponent } from "@/common/components/token-input";
 import { Button } from "@/common/components/ui/button";
@@ -16,8 +18,10 @@ import { SlippageSettings } from "@/position-panel/components/SlippageSettings";
 import { SummaryRow } from "@/position-panel/components/SummaryRow";
 import { VaultAllocationCard } from "@/position-panel/components/VaultAllocationCard";
 import { getTotalAllocation } from "@/position-panel/utils/strategy-helpers";
+import { LendingProgram } from "@/solana/contract";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
 import { useUserTokens } from "@/solana/hooks/useUserTokens";
+import { vaultIdToLp } from "@/vaults/queries";
 
 interface StrategySetupProps {
   currentStrategy: Strategy;
@@ -38,27 +42,36 @@ export const StrategySetup = ({
 }: StrategySetupProps) => {
   const { totalAllocation, depositAmount, vaults } = currentStrategy;
   const totalAllocationArray = Object.values(totalAllocation);
+  const totalAllocationEntries = Object.entries(totalAllocation);
   const { address: walletAddress, signTransaction, signAllTransactions } = useSolanaWallet();
   const [selectedAsset, setSelectedAsset] = useState<UserTokenView | null>(null);
-  const { userTokens } = useUserTokens(setSelectedAsset);
+  const { userTokens, isLoading: isUserTokensLoading } = useUserTokens();
   const [isLoading, setIsLoading] = useState(false);
   const { connection } = useConnection();
-  const quotesParams = useMemo(() => {
-    return Object.entries(totalAllocation)
-      .map(([_, tokenAllocation], index) => {
-        const amountForToken = (depositAmount * tokenAllocation) / 100;
-        const amount = parseTokenAmount(amountForToken.toFixed(), selectedAsset?.decimals ?? 0).toFixed();
+  const wallet = useAnchorWallet();
+  useEffect(() => {
+    if (!isUserTokensLoading && userTokens.arr.length > 0) {
+      setSelectedAsset(userTokens.arr[0] ?? null);
+    }
+  }, [isUserTokensLoading, userTokens.arr]);
 
-        return {
-          inputMint: selectedAsset?.mint ?? "",
-          outputMint: vaults[index].inputTokenMint,
-          amount: amount,
-        };
-      })
-      .filter((quote) => quote.inputMint !== quote.outputMint);
+  const quotesParams = useMemo(() => {
+    return totalAllocationEntries.reduce(
+      (acc, [vaultId, amount], index) => {
+        return Object.assign(acc, {
+          [vaultId]: {
+            vaultId: vaultId,
+            inputMint: selectedAsset?.mint ?? "",
+            outputMint: vaults[index].inputTokenMint,
+            amount: ((depositAmount * amount) / 100 + (acc[vaultId]?.amount ?? 0)).toString(),
+          },
+        });
+      },
+      {} as Record<string, { vaultId: string; inputMint: string; outputMint: string; amount: string }>
+    );
   }, [totalAllocation, depositAmount, selectedAsset]);
 
-  const quotes = useJupiterMultipleQuotes(quotesParams);
+  const quotes = useJupiterMultipleQuotes(Object.values(quotesParams));
   console.log(quotes.map((quote) => quote.data));
   const totalAllocationSum = getTotalAllocation(totalAllocationArray);
   const isAllocationError = totalAllocationSum > 100;
@@ -80,56 +93,93 @@ export const StrategySetup = ({
   const handleDeposit = useCallback(async () => {
     if (!walletAddress || !signTransaction) return;
 
+    const lendingProgram = new LendingProgram(connection, wallet as NodeWallet);
     setIsLoading(true);
     try {
-      // const tx = quotes[0];
-
-      // const signedTransaction = await signTransaction(
-      //   VersionedTransaction.deserialize(Buffer.from(tx.data?.transaction ?? "", "base64"))
-      // );
-      // if (!signedTransaction) throw new Error("Failed to sign transaction");
-      // const bundle = await jupiterSwapApi.executePost({
-      //   executePostRequest: {
-      //     signedTransaction: Buffer.from(signedTransaction.serialize()).toString("base64"),
-      //     requestId: tx.data?.requestId ?? "",
-      //   },
-      // });
-      // console.log(bundle);
-
-      const transactions = quotes
-        .filter((quote) => quote.data && quote.data.transaction)
+      const swapTransactions = quotes
+        .filter((quote) => quote?.data?.transaction)
         .reduce(
-          (acc, quote) => ({
-            ...acc,
-            [quote.data?.requestId ?? ""]: VersionedTransaction.deserialize(
-              Buffer.from(quote.data?.transaction ?? "", "base64")
-            ),
-          }),
+          (acc, quote) => {
+            return Object.assign(acc, {
+              [quote.data?.requestId ?? ""]: VersionedTransaction.deserialize(
+                Buffer.from(quote.data?.transaction ?? "", "base64")
+              ),
+            });
+          },
           {} as Record<string, VersionedTransaction>
         );
 
-      const signedTransactions = await signAllTransactions(
-        Object.values(transactions).map((transaction) => transaction)
+      const depositContexts = await Promise.all(
+        Object.values(quotesParams).map(async (vault) => {
+          const context = await getDepositContext({
+            asset: new PublicKey(vault.outputMint),
+            signer: new PublicKey(walletAddress),
+            connection,
+          });
+          return { ...vault, ...context };
+        })
       );
 
-      const requestIds = Object.keys(transactions);
+      const depositTransactions = await Promise.all(
+        depositContexts.map((context) => {
+          console.log(Object.entries(context).map(([key, value]) => `${key}: ${value.toString()}`));
+          return lendingProgram.makeDepositTx(
+            context.vault,
+            new BN(parseTokenAmount(quotesParams[context.vaultId].amount, 6).toString()),
+            new PublicKey(walletAddress),
+            new PublicKey(context.outputMint),
+            context,
+            new PublicKey(vaultIdToLp[context.vaultId as keyof typeof vaultIdToLp])
+          );
+        })
+      );
+      const blockhash = await connection.getLatestBlockhash("confirmed");
+      const versionedTransactions = depositTransactions.map(
+        (tx) =>
+          new VersionedTransaction(
+            new TransactionMessage({
+              payerKey: new PublicKey(walletAddress),
+              recentBlockhash: blockhash.blockhash,
+              instructions: tx?.instructions ?? [],
+            }).compileToV0Message()
+          )
+      );
+
+      const signedTransactions = await signAllTransactions([
+        ...Object.values(swapTransactions).map((transaction) => transaction),
+        ...versionedTransactions,
+      ]);
+
+      const requestIds = Object.keys(swapTransactions);
 
       if (!signedTransactions) throw new Error("Failed to sign transactions");
 
-      const bundle = await Promise.all(
-        signedTransactions.map((tx, index) =>
-          jupiterSwapApi.executePost({
-            executePostRequest: {
-              signedTransaction: Buffer.from(tx.serialize()).toString("base64"),
-              requestId: requestIds[index],
-            },
-          })
-        )
-      );
-      console.log(bundle);
-      if (!bundle) throw new Error("Failed to send transactions");
+      try {
+        const bundle = await Promise.all(
+          signedTransactions.slice(0, Object.values(swapTransactions).length).map((tx, index) =>
+            jupiterSwapApi.executePost({
+              executePostRequest: {
+                signedTransaction: Buffer.from(tx.serialize()).toString("base64"),
+                requestId: requestIds[index],
+              },
+            })
+          )
+        );
+        console.log(bundle);
+      } catch (error) {
+        console.error("Execute error:", error);
+      }
 
-      console.log("Bundle sent:", bundle);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      const txs = await Promise.all(
+        signedTransactions.slice(Object.values(swapTransactions).length).map((tx) => connection.sendTransaction(tx))
+      );
+
+      console.log(txs);
+      // if (!bundle) throw new Error("Failed to send transactions");
+
+      console.log("Bundle sent:");
     } catch (error) {
       console.error("Deposit error:", error);
     } finally {
@@ -202,11 +252,11 @@ export const StrategySetup = ({
       {depositAmount > 0 && selectedAsset && quotes.length > 0 && (
         <div className="flex flex-col gap-2">
           {quotes.map((quote, index) => {
-            if (!quote.data || quote.error) return null;
-
+            if (!quote.data || quote.error || !quotesParams) return null;
+            console.log(quotesParams, quotesParams[index]);
             return (
               <RouteDisplay
-                key={quotesParams[index].outputMint}
+                key={quote.data.expireAt?.toString() ?? ""}
                 routeSteps={quote.data.routePlan.map((step) => (
                   <>
                     {step.swapInfo.label}

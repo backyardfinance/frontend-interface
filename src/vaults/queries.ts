@@ -12,6 +12,11 @@ const vaultIdToMint = {
   ["02cea256-d3f2-45ed-a750-6cd9e0e6a83b"]: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
 };
 
+export const vaultIdToLp = {
+  ["20bcbb4b-6db6-423c-bdd1-26c9b8fad24d"]: "CcHiq8Z7iweXrXXcfrh66n8ugghDjggfsunBdm8MDaiJ",
+  ["02cea256-d3f2-45ed-a750-6cd9e0e6a83b"]: "9MHGzf767LATMwWrHKV1cXpo59phHgPTYKaDoibJPCtK",
+};
+
 export const useVaults = (options?: UseVaultsOptions) => {
   return useQuery({
     queryKey: queryKeys.vaults.all,

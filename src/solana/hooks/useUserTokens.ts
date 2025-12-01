@@ -71,7 +71,7 @@ const buildSplTokens = (
     .filter((token): token is UserTokenView => token !== null);
 };
 
-export const useUserTokens = (setSelectedAsset?: (asset: UserTokenView | null) => void) => {
+export const useUserTokens = () => {
   const { data: holdings, isLoading: isHoldingsLoading } = useJupiterSwapHoldings();
 
   const mintList = useMemo(() => {
@@ -96,8 +96,6 @@ export const useUserTokens = (setSelectedAsset?: (asset: UserTokenView | null) =
 
     const allTokens = solToken ? [solToken, ...splTokens] : splTokens;
     const tokenMap = new Map(allTokens.map((t) => [t.mint, t]));
-
-    setSelectedAsset?.(allTokens[0] ?? null);
 
     return { arr: allTokens, map: tokenMap };
   }, [holdings, tokens]);

@@ -12,9 +12,9 @@ export const calculateVaultAmounts = (
   }));
 };
 
-export const createEvenAllocation = (vaultCount: number): Record<string, number> => {
-  const allocation = Array(vaultCount).fill(100 / vaultCount);
-  return vaultCount > 0 ? Object.fromEntries(allocation.map((value, index) => [index.toString(), value])) : {};
+export const createEvenAllocation = (vaults: VaultInfoResponse[], vaultCount: number): Record<string, number> => {
+  const allocation = vaults.map((vault) => ({ id: vault.id, allocation: 100 / vaultCount }));
+  return vaultCount > 0 ? Object.fromEntries(allocation.map((value) => [value.id, value.allocation])) : {};
 };
 
 export const updateDepositAmount = (strategy: Strategy, newDepositAmount: number): Strategy => {
@@ -39,7 +39,7 @@ export const updateAllocation = (strategy: Strategy, vaultId: string, newAllocat
 export const addVaultToStrategy = (strategy: Strategy | null, vault: VaultInfoResponse): Strategy => {
   const existingVaults = strategy?.vaults || [];
   const updatedVaults = [...existingVaults, vault];
-  const newTotalAllocation = createEvenAllocation(updatedVaults.length);
+  const newTotalAllocation = createEvenAllocation(updatedVaults, updatedVaults.length);
 
   return {
     id: strategy?.id || "",
@@ -51,7 +51,7 @@ export const addVaultToStrategy = (strategy: Strategy | null, vault: VaultInfoRe
 
 export const removeVaultFromStrategy = (strategy: Strategy, vaultId: string): Strategy => {
   const updatedVaults = strategy.vaults.filter((v) => v.id !== vaultId);
-  const newTotalAllocation = createEvenAllocation(updatedVaults.length);
+  const newTotalAllocation = createEvenAllocation(updatedVaults, updatedVaults.length);
 
   return {
     ...strategy,

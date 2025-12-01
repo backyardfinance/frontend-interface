@@ -26,7 +26,7 @@ export const useSolanaWallet = () => {
   }, [disconnect, queryClient]);
 
   const handleSendTransaction = useCallback(
-    async (tx: Transaction) => {
+    async (tx: Transaction | VersionedTransaction) => {
       return sendTransaction?.(tx, connection);
     },
     [sendTransaction, connection]
