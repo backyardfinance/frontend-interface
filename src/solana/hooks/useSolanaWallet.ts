@@ -59,7 +59,7 @@ export const useSolanaWallet = () => {
         throw error;
       }
     },
-    [connection]
+    [connection, signTransaction]
   );
 
   const handleSignMessage = useCallback(
