@@ -54,7 +54,7 @@ export class LendingProgram {
   ) {
     try {
       console.log(jupiterVaultId, amount, signer, inputToken, depositContext, lpToken);
-      const depositTx = this.program.methods.jupiterDeposit(jupiterVaultId, amount).accounts({
+      const depositTx = this.program.methods.deposit(jupiterVaultId, amount).accounts({
         signer: signer,
         inputToken: inputToken,
         tokenProgram: TOKEN_PROGRAM_ID,
