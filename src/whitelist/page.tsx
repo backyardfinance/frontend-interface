@@ -13,7 +13,7 @@ export default function WhitelistPage() {
   const { data: isMintedNFT } = useIsMintedNFT(address ?? "");
   const showWhitelistSuccess = progress?.isComplete && isMintedNFT;
 
-  const isMaintenanceMode = false;
+  const isMaintenanceMode = true;
 
   if (isMaintenanceMode) {
     return (
