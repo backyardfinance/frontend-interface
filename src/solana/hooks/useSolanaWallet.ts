@@ -87,6 +87,7 @@ export const useSolanaWallet = () => {
       sendV0Transaction: handleSendV0Transaction,
       signTransaction: handleSignTransaction,
       signAllTransactions: handleSignAllTransactions,
+      connection,
     }),
     [
       handleSignIn,
@@ -97,6 +98,7 @@ export const useSolanaWallet = () => {
       handleSignTransaction,
       handleSignAllTransactions,
       wallet,
+      connection,
     ]
   );
 };

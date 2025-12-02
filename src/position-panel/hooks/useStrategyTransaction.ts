@@ -1,4 +1,3 @@
-import { useConnection } from "@solana/wallet-adapter-react";
 import { VersionedTransaction } from "@solana/web3.js";
 import { useCallback, useState } from "react";
 import { CreateDepositTransactionsDtoTypeEnum, type UserTokenView, type VaultInfoResponse } from "@/api";
@@ -70,8 +69,7 @@ export const useStrategyTransaction = ({
   selectedAsset,
   depositAmount,
 }: UseStrategyTransactionOptions) => {
-  const { address: walletAddress, signAllTransactions } = useSolanaWallet();
-  const { connection } = useConnection();
+  const { address: walletAddress, signAllTransactions, connection } = useSolanaWallet();
 
   const { mutateAsync: createDepositTransactions } = useCreateDepositTransactions();
   const { mutateAsync: executeSwap } = useJupiterSwapExecute();
@@ -84,6 +82,7 @@ export const useStrategyTransaction = ({
       swapTransactions: SwapTransactionMap,
       depositTxs: VersionedTransaction[]
     ) => {
+      // First execute swaps
       const swapResults = await Promise.all(
         signedSwapTxs.map((tx, index) =>
           executeSwap({
@@ -94,6 +93,7 @@ export const useStrategyTransaction = ({
       );
       console.log("Swap transactions sent:", swapResults);
 
+      // Then execute deposits
       console.log("Sending deposit transactions...");
       const depositResults = await Promise.all(depositTxs.map((tx) => connection.sendTransaction(tx)));
       console.log("Deposit transactions sent:", depositResults);

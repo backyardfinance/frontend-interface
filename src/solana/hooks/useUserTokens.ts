@@ -1,41 +1,8 @@
 import { useMemo } from "react";
 import type { UserTokenView } from "@/api";
-import { SOL_MINT } from "@/config";
 import type { JupiterSwap } from "@/jupiter/api";
 import { useJupiterSwapHoldings, useJupiterSwapSearch } from "@/jupiter/queries/useJupiterSwap";
-
-const buildSolToken = (
-  holdings: JupiterSwap.HoldingsResponse,
-  solTokenInfo: JupiterSwap.MintInformation | undefined
-): UserTokenView | null => {
-  if (
-    !holdings.amount ||
-    !solTokenInfo?.decimals ||
-    !solTokenInfo?.usdPrice ||
-    !solTokenInfo?.name ||
-    !solTokenInfo?.symbol ||
-    !solTokenInfo?.icon
-  ) {
-    return null;
-  }
-
-  const amount = BigInt(holdings.amount);
-  const uiAmount = holdings.uiAmount;
-  const amountUsd = uiAmount * solTokenInfo.usdPrice;
-
-  return {
-    mint: SOL_MINT,
-    isNative: true,
-    name: solTokenInfo.name,
-    decimals: solTokenInfo.decimals,
-    symbol: solTokenInfo.symbol,
-    icon: solTokenInfo.icon,
-    usdPrice: solTokenInfo.usdPrice,
-    amount,
-    amountUsd,
-    uiAmount,
-  };
-};
+import { useVaults } from "@/vaults/queries";
 
 const buildSplTokens = (
   tokensMap: { [key: string]: Array<JupiterSwap.TokenAccount> },
@@ -71,15 +38,16 @@ const buildSplTokens = (
 };
 
 export const useUserTokens = () => {
+  const { data: vaults } = useVaults();
+  const mints = useMemo(() => new Set(vaults?.map((vault) => vault.inputTokenMint) ?? []), [vaults]);
+
   const { data: holdings, isLoading: isHoldingsLoading } = useJupiterSwapHoldings();
 
   const mintList = useMemo(() => {
-    if (isHoldingsLoading) return [];
-    if (!holdings) return [SOL_MINT];
-
+    if (!holdings) return [];
     const splMints = Object.keys(holdings.tokens);
-    return [SOL_MINT, ...splMints];
-  }, [holdings, isHoldingsLoading]);
+    return splMints.filter((mint) => mints.has(mint));
+  }, [holdings, mints]);
 
   const { data: tokens, isLoading: isTokensLoading } = useJupiterSwapSearch(mintList);
 
@@ -89,17 +57,15 @@ export const useUserTokens = () => {
     }
     const tokenInfoMap = new Map(tokens.filter((t) => t.id).map((t) => [t.id as string, t]));
 
-    const solToken = buildSolToken(holdings, tokenInfoMap.get(SOL_MINT));
-
     const splTokens = buildSplTokens(holdings.tokens, tokenInfoMap);
 
-    const allTokens = solToken ? [solToken, ...splTokens] : splTokens;
-    const tokenMap = new Map(allTokens.map((t) => [t.mint, t]));
+    const tokenMap = new Map(splTokens.map((t) => [t.mint, t]));
 
-    return { arr: allTokens, map: tokenMap };
+    return { arr: splTokens, map: tokenMap };
   }, [holdings, tokens]);
 
   return {
+    sol: { amount: holdings?.amount ?? "0", uiAmount: holdings?.uiAmountString ?? "0" },
     userTokens,
     isLoading: isHoldingsLoading || isTokensLoading,
   };
