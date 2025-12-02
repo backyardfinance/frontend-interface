@@ -132,7 +132,7 @@ export const StrategySetup = ({
       console.log(depositTransaction);
 
       const versionedTransactions = VersionedTransaction.deserialize(
-        Buffer.from((depositTransaction[0].serializedTransaction ?? "", "base64"))
+        Buffer.from(depositTransaction[0].serializedTransaction ?? "", "base64")
       );
 
       const signedTransactions = await signAllTransactions([
@@ -142,7 +142,6 @@ export const StrategySetup = ({
 
       if (!signedTransactions) throw new Error("Failed to sign transactions");
 
-      //TODO: uncomment when backend fixed vaults
       // try {
       //   const bundle = await Promise.all(
       //     signedTransactions.slice(0, Object.values(swapTransactions).length).map((tx, index) =>
