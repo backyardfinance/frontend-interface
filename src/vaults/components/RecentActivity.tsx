@@ -6,65 +6,15 @@ import { Badge } from "@/common/components/ui/badge";
 import { ArrowIcon } from "@/icons/arrow";
 import { toVaultRoute } from "@/routes";
 
-const isSecondStrategyActive = localStorage.getItem("isSecondStrategyActive") || false;
-
 export const RecentActivity = () => {
   const [page, setPage] = useState(1);
-  const activity = [
-    {
-      id: "1",
-      token: "USDC",
-      amount: "200",
-      strategy: "STR-01",
-      status: "Deposited",
-    },
-    ...(isSecondStrategyActive === "true"
-      ? [
-          {
-            id: "2",
-            token: "USDC",
-            amount: "100",
-            strategy: "STR-02",
-            status: "Deposited",
-          },
-        ]
-      : []),
-    // {
-    //   id: "3",
-    //   token: "USDT",
-    //   amount: "1000",
-    //   strategy: "STR-02",
-    //   status: "Deposited",
-    // },
-    // {
-    //   id: "4",
-    //   token: "USDT",
-    //   amount: "1000",
-    //   strategy: "STR-02",
-    //   status: "Deposited",
-    // },
-    // {
-    //   id: "5",
-    //   token: "USDT",
-    //   amount: "1000",
-    //   strategy: "STR-02",
-    //   status: "Withdrawn",
-    // },
-    // {
-    //   id: "6",
-    //   token: "USDT",
-    //   amount: "1000",
-    //   strategy: "STR-02",
-    //   status: "Deposited",
-    // },
-    // {
-    //   id: "7",
-    //   token: "USDT",
-    //   amount: "1000",
-    //   strategy: "STR-02",
-    //   status: "Deposited",
-    // },
-  ];
+  const activity = [] as {
+    id: string;
+    token: string;
+    amount: string;
+    strategy: string;
+    status: string;
+  }[];
 
   const table = {
     headers: ["token", "amount", "strategy", "status"],
@@ -86,7 +36,7 @@ export const RecentActivity = () => {
   return (
     <div className="flex min-h-[131px] flex-col gap-4 rounded-[23px] border-2 border-[#F6F6F6] border-solid px-4 py-4 [background:#FAFAFA]">
       <p className="font-bold text-neutral-800 text-sm">Recent Activity</p>
-      <div className="flex flex-1">
+      <div className="flex flex-1 flex-col">
         {!activity.length ? (
           <>
             <p className="flex-1 self-center text-center font-normal text-[#949494] text-sm">

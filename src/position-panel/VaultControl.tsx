@@ -47,14 +47,14 @@ export const VaultControl = ({ vault }: { vault: VaultInfoResponse }) => {
   const { userTokens } = useUserTokens();
 
   const [strategies, setStrategies] = useState<WithdrawalStrategy[]>(() =>
-    initializeWithdrawalStrategies(userStrategies, vault.token)
+    initializeWithdrawalStrategies(userStrategies, vault.inputTokenMint)
   );
 
   useEffect(() => {
     if (userStrategies) {
-      setStrategies(initializeWithdrawalStrategies(userStrategies, vault.token));
+      setStrategies(initializeWithdrawalStrategies(userStrategies, vault.inputTokenMint));
     }
-  }, [userStrategies, vault.token]);
+  }, [userStrategies, vault.inputTokenMint]);
 
   const estAnnualReturn = useMemo(() => {
     if (!vault) return 0;

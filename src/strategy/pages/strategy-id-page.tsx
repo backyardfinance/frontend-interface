@@ -1,13 +1,12 @@
-import { useParams } from "react-router";
-import BigLogo from "@/common/assets/images/big-logo.png";
 import { CompactHybridTooltip } from "@/common/components/ui/hybrid-tooltip";
-import { formatMonetaryAmount } from "@/common/utils";
+import { formatMonetaryAmount, truncateAddress } from "@/common/utils";
+import { formatUnits } from "@/common/utils/format";
 import { InfoCircleIcon } from "@/icons/info-circle";
 import { StarsIcon } from "@/icons/stars";
 import { StrategyControl } from "@/position-panel/StrategyControl";
-import { Chart } from "@/strategy/components/Chart";
 import { RecentActivity } from "@/strategy/components/RecentActivity";
-import { useStrategyById } from "@/strategy/queries";
+import { StrategyAnalytics } from "@/strategy/components/StrategyAnalytics";
+import { useStrategyPosition } from "@/strategy/hooks/useStrategyPosition";
 
 type Props = {
   title: string;
@@ -30,58 +29,31 @@ const Item: React.FC<Props> = ({ title, value, additionalValue, valueComponent }
 };
 
 export default function DashboardStrategyIdPage() {
-  const { strategyId } = useParams<{ strategyId: string }>();
-  const { data: strategy } = useStrategyById({ strategyId: strategyId ?? "" });
-  if (!strategyId || !strategy) return <div>No found</div>;
+  const strategy = useStrategyPosition();
+
+  if (!strategy) return <div>No found</div>;
 
   const uniquePlatforms = new Set(strategy.vaults.map((v) => v.platform)).size;
-
   const uniqueTokens = new Set(strategy.vaults.map((v) => v.name)).size;
-  const recentActivity =
-    strategy.strategyId === "STR-01"
-      ? [
-          {
-            id: "1",
-            token: "USDC",
-            amount: "200",
-            strategy: "STR-02",
-            status: "Withdrawing",
-          },
-          {
-            id: "2",
-            token: "USDG",
-            amount: "100",
-            strategy: "STR-02",
-            status: "Withdrawn",
-          },
-        ]
-      : [
-          {
-            id: "1",
-            token: "USDC",
-            amount: "100",
-            strategy: "STR-02",
-            status: "Withdrawing",
-          },
-          {
-            id: "2",
-            token: "CASH",
-            amount: "200",
-            strategy: "STR-02",
-            status: "Withdrawn",
-          },
-          {
-            id: "3",
-            token: "USDC",
-            amount: "700",
-            strategy: "STR-02",
-            status: "Deposited",
-          },
-        ];
+
+  //TODO: add real recent activity
+  const recentActivity = [] as {
+    id: string;
+    token: string;
+    amount: string;
+    strategy: string;
+    status: string;
+  }[];
+
+  const myPosition = strategy.vaults.reduce((acc, v) => {
+    const amountInUsd = Number(formatUnits(v.amount.toFixed(), v.token.decimals)) * v.token.usdPrice;
+    return acc + amountInUsd;
+  }, 0);
+
   const data = [
     {
       title: "My Position",
-      value: `$${formatMonetaryAmount(strategy.strategyDepositedAmount)}`,
+      value: `$${formatMonetaryAmount(myPosition.toFixed(2))}`,
       valueComponent: <StarsIcon color="#2ED650" />,
     },
     {
@@ -121,10 +93,10 @@ export default function DashboardStrategyIdPage() {
       <div className="flex flex-1 flex-col gap-3">
         <div className="flex h-36 gap-4">
           <div className="relative flex h-full w-48 shrink-0 flex-col justify-center gap-5 rounded-3xl bg-[#FAFAFA] p-3">
-            <div className="-translate-x-1/2 -top-[0px] absolute left-1/2 h-24 w-24">
-              <img alt="Big Logo" src={BigLogo} />
+            <div className="-translate-x-1/2 -translate-y-1/2 absolute top-0 left-1/2 flex h-24 w-24 items-center justify-center rounded-full bg-neutral-500">
+              <p className="font-bold text-7xl text-white">S</p>
             </div>
-            <p className="text-center font-bold text-neutral-800 text-xl">{strategy.strategyName}</p>
+            <p className="text-center font-bold text-neutral-800 text-xl">{truncateAddress(strategy.strategyId)}</p>
           </div>
           <div className="relative flex h-full w-full items-center justify-between gap-5 rounded-3xl bg-[#FAFAFA] px-6 py-4.5">
             {data.map((el) => (
@@ -132,7 +104,7 @@ export default function DashboardStrategyIdPage() {
             ))}
           </div>
         </div>
-        <Chart strategy={strategy} />
+        <StrategyAnalytics strategy={strategy} />
         <div className="flex flex-col gap-y-4.5 rounded-[23px] border border-[rgba(214,214,214,0.26)] border-solid bg-[#FAFAFA] px-5.5 py-4.5">
           <p className="font-bold text-[22px] text-neutral-800 leading-[normal]">Additional info</p>
           <div className="flex flex-col gap-2">
@@ -156,7 +128,7 @@ export default function DashboardStrategyIdPage() {
         <StrategyControl
           currentStrategy={{
             id: strategy.strategyId,
-            vaults: [],
+            vaults: strategy.vaults,
             depositAmount: strategy.strategyDepositedAmount,
             totalAllocation: strategy.vaults.reduce(
               (acc, v) => ({ ...acc, [v.id]: v.depositedAmount }),

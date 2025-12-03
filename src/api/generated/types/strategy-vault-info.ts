@@ -28,6 +28,12 @@ export interface StrategyVaultInfo {
     'id': string;
     /**
      * 
+     * @type {number}
+     * @memberof StrategyVaultInfo
+     */
+    'amount': number;
+    /**
+     * 
      * @type {string}
      * @memberof StrategyVaultInfo
      */

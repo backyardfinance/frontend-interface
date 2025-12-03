@@ -68,8 +68,6 @@ export interface VaultInfoResponse {
      * @memberof VaultInfoResponse
      */
     'platform': string;
-
-
     /**
      * 
      * @type {string}

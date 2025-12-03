@@ -1,5 +1,5 @@
 import { useConnection } from "@solana/wallet-adapter-react";
-import { VersionedTransaction } from "@solana/web3.js";
+import { SendTransactionError, VersionedTransaction } from "@solana/web3.js";
 import Big from "big.js";
 // import { BN } from "bn.js";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -19,7 +19,7 @@ import { VaultAllocationCard } from "@/position-panel/components/VaultAllocation
 import { getTotalAllocation } from "@/position-panel/utils/strategy-helpers";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
 import { useUserTokens } from "@/solana/hooks/useUserTokens";
-import { useCreateDepositTransactions } from "@/strategy/queries";
+import { useCreateDepositTransactions, useCreateStrategy } from "@/strategy/queries";
 
 // import { useGetDepositTransactions } from "@/transactions/queries";
 // import { vaultIdToLp } from "@/vaults/queries";
@@ -52,6 +52,7 @@ export const StrategySetup = ({
 
   // const { mutateAsync: executeSwap } = useJupiterSwapExecute();
   const { mutateAsync: createDepositTransactions } = useCreateDepositTransactions();
+  const { mutateAsync: createStrategy } = useCreateStrategy();
 
   useEffect(() => {
     if (!isUserTokensLoading && userTokens.arr.length > 0) {
@@ -79,6 +80,7 @@ export const StrategySetup = ({
   }, [depositAmount, selectedAsset?.mint, totalAllocationEntries, vaults]);
 
   const sufficientBalance = Big(selectedAsset?.uiAmount.toString() || "0").gte(depositAmount);
+  //TODO: inputMint cannot be same as outputMint
   const quotes = useJupiterMultipleQuotes(Object.values(quotesParams), {
     enabled: sufficientBalance && Object.values(quotesParams).length > 0,
   });
@@ -135,6 +137,10 @@ export const StrategySetup = ({
         Buffer.from(depositTransaction[0].serializedTransaction ?? "", "base64")
       );
 
+      const { blockhash } = await connection.getLatestBlockhash();
+
+      versionedTransactions.message.recentBlockhash = blockhash;
+
       const signedTransactions = await signAllTransactions([
         ...Object.values(swapTransactions).map((transaction) => transaction),
         versionedTransactions,
@@ -162,12 +168,30 @@ export const StrategySetup = ({
         signedTransactions.slice(Object.values(swapTransactions).length).map((tx) => connection.sendTransaction(tx))
       );
 
+      await createStrategy({
+        name: "",
+        walletAddress,
+        vaultDeposits: Object.values(quotesParams).reduce(
+          (acc, curr) => {
+            return Object.assign(acc, {
+              [curr.vaultId]: curr.amount,
+            });
+          },
+          {} as Record<string, number>
+        ),
+      });
+
       console.log(txs);
       // if (!bundle) throw new Error("Failed to send transactions");
 
       console.log("Bundle sent:");
     } catch (error) {
-      console.error("Deposit error:", error);
+      if (error instanceof SendTransactionError) {
+        const logs = await error.getLogs(connection);
+        console.error("Simulation logs:", logs, "\n\n", error);
+      } else {
+        console.error("Deposit error:", error);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -179,6 +203,7 @@ export const StrategySetup = ({
     connection,
     signAllTransactions,
     createDepositTransactions,
+    createStrategy,
   ]);
 
   const isDepositDisabled =

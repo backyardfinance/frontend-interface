@@ -1,48 +1,56 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import type { StrategyInfoResponse } from "@/api";
+import type { StrategyVaultInfo, UserTokenView, VaultInfoResponse } from "@/api";
 import { getPlatformImage } from "@/common/assets/platforms";
-import { getTokenImage } from "@/common/assets/tokens";
+import { getVaultTokenImage } from "@/common/assets/tokens";
 import { ChartArea } from "@/common/components/charts/ChartArea";
 import { ChartPieDonut } from "@/common/components/charts/ChartPieDonut";
 import { Table } from "@/common/components/table";
 import { Tabs, TabsList, TabsTrigger } from "@/common/components/ui/tabs";
 import { buildChartDataByKey, calculateWeights } from "@/common/utils/calculations";
+import { formatUnits } from "@/common/utils/format";
 import { toVaultRoute } from "@/routes";
 
 const positionMetrics = ["performance", "apy", "exposure"] as const;
 type MetricType = (typeof positionMetrics)[number];
 
 type Props = {
-  strategy: StrategyInfoResponse;
+  strategy: {
+    vaults: (VaultInfoResponse & StrategyVaultInfo & { token: UserTokenView })[];
+    strategyDepositedAmount: number;
+  };
 };
-export const Chart: React.FC<Props> = ({ strategy }) => {
-  const [selectedMetric, setSelectedMetric] = useState<MetricType>("performance");
 
+export const StrategyAnalytics: React.FC<Props> = ({ strategy }) => {
+  const navigate = useNavigate();
+
+  const [selectedMetric, setSelectedMetric] = useState<MetricType>("performance");
   const platformExposure = useMemo(() => {
     return buildChartDataByKey(strategy.vaults, "platform");
   }, [strategy.vaults]);
 
   const tokenExposure = useMemo(() => {
-    return buildChartDataByKey(strategy.vaults, "name");
-  }, [strategy.vaults]);
+    const inputTokens = strategy.vaults.map((v) => v.token);
+    return buildChartDataByKey(inputTokens, "symbol");
+  }, [strategy.vaults.map]);
 
-  const navigate = useNavigate();
   const table = {
     headers: ["Markets Exposure", "Platform", "APY", "Strategy weight", "My Position"],
     rows: strategy.vaults.map((vault) => {
       return [
         <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
-          <div className="size-3">{getTokenImage(vault.name)}</div>
+          <div className="size-3">{getVaultTokenImage(vault.publicKey)}</div>
           <div className="justify-start font-bold text-neutral-800 text-sm">{vault.name}</div>
         </div>,
         <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
           <div className="size-3">{getPlatformImage(vault.platform)}</div> {vault.platform}
         </div>,
         `${vault.apy}%`,
-        <>{calculateWeights(strategy.strategyDepositedAmount, vault.depositedAmount).weightPercent.toFixed(0)}%</>,
+        <>{calculateWeights(strategy.strategyDepositedAmount, vault.amount).weightPercent.toFixed(0)}%</>,
         <div className="inline-flex items-center justify-start gap-1.5" key={vault.id}>
-          <div className="justify-start font-bold text-neutral-800 text-sm">{vault.depositedAmount.toFixed(2)}</div>
+          <div className="justify-start font-bold text-neutral-800 text-sm">
+            ${formatUnits(vault.amount.toString(), vault.token.decimals, 2)}
+          </div>
         </div>,
       ];
     }),
@@ -81,7 +89,7 @@ export const Chart: React.FC<Props> = ({ strategy }) => {
             chartConfig={tokenExposure.chartConfig}
             chartData={tokenExposure.chartData}
             className="max-w-[254px] flex-1 border-none bg-transparent"
-            nameKey="token"
+            nameKey="symbol"
             title="Token Exposure"
           />
         </div>

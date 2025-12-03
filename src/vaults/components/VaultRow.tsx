@@ -16,7 +16,7 @@ export const VaultRow: React.FC<Props> = ({ vault, onAdd }) => {
   const navigate = useNavigate();
   return (
     <button
-      className="relative flex min-h-[21px] w-full cursor-pointer flex-row items-center justify-between overflow-hidden rounded-2xl bg-neutral-50 px-[16px] py-[13px] outline outline-zinc-300/30 outline-offset-[-1px]"
+      className="-outline-offset-1 relative flex min-h-[21px] w-full cursor-pointer flex-row items-center justify-between overflow-hidden rounded-2xl bg-neutral-50 px-[16px] py-[13px] outline outline-zinc-300/30"
       onClick={() => navigate(toVaultRoute(vault.id))}
       type="button"
     >

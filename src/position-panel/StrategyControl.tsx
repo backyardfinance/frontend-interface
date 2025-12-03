@@ -64,7 +64,7 @@ export const StrategyControl = ({
         if (!needsSwap) return acc;
 
         const swapAmount = (depositAmount * amount) / 100;
-        const accAmount = Number(acc[vaultId].amount ?? 0);
+        const accAmount = Number(acc[vaultId]?.amount ?? 0);
 
         return Object.assign(acc, {
           [vaultId]: {

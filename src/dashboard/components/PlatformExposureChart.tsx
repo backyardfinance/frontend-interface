@@ -1,20 +1,19 @@
 import { useMemo } from "react";
 import { ChartPieDonut } from "@/common/components/charts/ChartPieDonut";
 import { buildChartDataByKey } from "@/common/utils/calculations";
-import { useUserStrategies } from "@/strategy/queries";
+import { useStrategiesPositions } from "@/dashboard/hooks/useStrategiesPositions";
 
 export const PlatformExposureChart = () => {
-  const { data: userStrategies } = useUserStrategies();
+  const positions = useStrategiesPositions();
 
   const { chartData, chartConfig } = useMemo(() => {
-    if (!userStrategies?.length) {
+    if (!positions?.length) {
       return { chartData: [], chartConfig: {} };
     }
+    const platforms = positions.flatMap((p) => p.vaults);
 
-    const allVaults = userStrategies.flatMap((strategy) => strategy.vaults || []);
-
-    return buildChartDataByKey(allVaults, "platform");
-  }, [userStrategies]);
+    return buildChartDataByKey(platforms, "platform");
+  }, [positions]);
 
   return <ChartPieDonut chartConfig={chartConfig} chartData={chartData} nameKey="platform" title="Platform Exposure" />;
 };

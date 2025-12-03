@@ -23,6 +23,8 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
 import type { CreateDepositTransactionsDto } from '../types';
+// @ts-ignore
+import type { CreateDepositTransactionsResponseDto } from '../types';
 /**
  * TransactionsApi - axios parameter creator
  * @export
@@ -80,7 +82,7 @@ export const TransactionsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async transactionControllerCreateDepositTransactions(createDepositTransactionsDto: CreateDepositTransactionsDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async transactionControllerCreateDepositTransactions(createDepositTransactionsDto: CreateDepositTransactionsDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<CreateDepositTransactionsResponseDto>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.transactionControllerCreateDepositTransactions(createDepositTransactionsDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TransactionsApi.transactionControllerCreateDepositTransactions']?.[localVarOperationServerIndex]?.url;
@@ -102,7 +104,7 @@ export const TransactionsApiFactory = function (configuration?: Configuration, b
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        transactionControllerCreateDepositTransactions(requestParameters: TransactionsApiTransactionControllerCreateDepositTransactionsRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        transactionControllerCreateDepositTransactions(requestParameters: TransactionsApiTransactionControllerCreateDepositTransactionsRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<CreateDepositTransactionsResponseDto>> {
             return localVarFp.transactionControllerCreateDepositTransactions(requestParameters.createDepositTransactionsDto, options).then((request) => request(axios, basePath));
         },
     };

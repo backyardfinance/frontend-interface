@@ -40,7 +40,6 @@ const buildSplTokens = (
 export const useUserTokens = () => {
   const { data: vaults } = useVaults();
   const mints = useMemo(() => new Set(vaults?.map((vault) => vault.inputTokenMint) ?? []), [vaults]);
-
   const { data: holdings, isLoading: isHoldingsLoading } = useJupiterSwapHoldings();
 
   const mintList = useMemo(() => {

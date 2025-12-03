@@ -82,7 +82,7 @@ export const QuoteApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async quoteControllerGetQuote(getQuoteDto: GetQuoteDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<QuoteResponseDto>> {
+        async quoteControllerGetQuote(getQuoteDto: GetQuoteDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<QuoteResponseDto>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.quoteControllerGetQuote(getQuoteDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['QuoteApi.quoteControllerGetQuote']?.[localVarOperationServerIndex]?.url;
@@ -104,7 +104,7 @@ export const QuoteApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        quoteControllerGetQuote(requestParameters: QuoteApiQuoteControllerGetQuoteRequest, options?: RawAxiosRequestConfig): AxiosPromise<QuoteResponseDto> {
+        quoteControllerGetQuote(requestParameters: QuoteApiQuoteControllerGetQuoteRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<QuoteResponseDto>> {
             return localVarFp.quoteControllerGetQuote(requestParameters.getQuoteDto, options).then((request) => request(axios, basePath));
         },
     };

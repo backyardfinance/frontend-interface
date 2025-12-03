@@ -20,7 +20,9 @@ types/auth-response-dto.ts
 types/claim-nonce-dto.ts
 types/claim-nonce-response-dto.ts
 types/create-deposit-transactions-dto.ts
+types/create-deposit-transactions-response-dto.ts
 types/create-strategy-dto.ts
+types/create-strategy-response-dto.ts
 types/create-user-dto.ts
 types/follow-status-response.ts
 types/get-quote-dto.ts
