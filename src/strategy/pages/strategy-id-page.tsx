@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { CompactHybridTooltip } from "@/common/components/ui/hybrid-tooltip";
 import { formatMonetaryAmount, truncateAddress } from "@/common/utils";
+import { calculateWeights } from "@/common/utils/calculations";
 import { formatUnits } from "@/common/utils/format";
 import { InfoCircleIcon } from "@/icons/info-circle";
 import { StarsIcon } from "@/icons/stars";
@@ -30,6 +32,8 @@ const Item: React.FC<Props> = ({ title, value, additionalValue, valueComponent }
 
 export default function DashboardStrategyIdPage() {
   const strategy = useStrategyPosition();
+  const [depositAmount, setDepositAmount] = useState(0);
+  const [slippage, setSlippage] = useState(0.1);
 
   if (!strategy) return <div>No found</div>;
 
@@ -129,17 +133,19 @@ export default function DashboardStrategyIdPage() {
           currentStrategy={{
             id: strategy.strategyId,
             vaults: strategy.vaults,
-            depositAmount: strategy.strategyDepositedAmount,
+            depositAmount: depositAmount,
+            depositedAmount: strategy.strategyDepositedAmountUi,
             totalAllocation: strategy.vaults.reduce(
-              (acc, v) => ({ ...acc, [v.id]: v.depositedAmount }),
+              (acc, v) => ({
+                ...acc,
+                [v.id]: calculateWeights(strategy.strategyDepositedAmount, v.amount).weightPercent,
+              }),
               {} as Record<string, number>
             ),
           }}
-          onAllocationChange={() => {}}
-          onDepositAmountChange={() => {}}
-          onRemoveVault={() => {}}
-          onSlippageChange={() => {}}
-          slippage={0}
+          onDepositAmountChange={setDepositAmount}
+          onSlippageChange={setSlippage}
+          slippage={slippage}
         />
         <RecentActivity activity={recentActivity} />
       </div>

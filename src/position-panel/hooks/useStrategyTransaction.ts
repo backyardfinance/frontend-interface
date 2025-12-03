@@ -1,58 +1,17 @@
-import { VersionedTransaction } from "@solana/web3.js";
+import { SendTransactionError, VersionedTransaction } from "@solana/web3.js";
+import Big from "big.js";
 import { useCallback, useState } from "react";
 import { CreateDepositTransactionsDtoTypeEnum, type UserTokenView, type VaultInfoResponse } from "@/api";
+import { parseUnits } from "@/common/utils/format";
 import type { JupiterSwap } from "@/jupiter/api";
 import { useJupiterSwapExecute } from "@/jupiter/queries/useJupiterSwap";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
 import { useCreateDepositTransactions } from "@/strategy/queries";
 
-interface SwapTransactionMap {
-  [requestId: string]: VersionedTransaction;
+interface SwapTransaction {
+  requestId: string;
+  transaction: VersionedTransaction;
 }
-
-const deserializeTransaction = (base64Transaction: string): VersionedTransaction => {
-  return VersionedTransaction.deserialize(Buffer.from(base64Transaction, "base64"));
-};
-
-const serializeTransaction = (transaction: VersionedTransaction): string => {
-  return Buffer.from(transaction.serialize()).toString("base64");
-};
-
-const buildSwapTransactionMap = (
-  quotes: { data?: JupiterSwap.OrderGet200Response; error?: unknown }[]
-): SwapTransactionMap => {
-  return quotes
-    .filter((quote) => quote.data?.transaction)
-    .reduce<SwapTransactionMap>((acc, quote) => {
-      const requestId = quote.data?.requestId ?? "";
-      acc[requestId] = deserializeTransaction(quote.data?.transaction ?? "");
-      return acc;
-    }, {});
-};
-
-const buildVaultParams = (
-  totalAllocationEntries: [string, number][],
-  vaults: VaultInfoResponse[],
-  selectedMint: string,
-  depositAmount: number,
-  currentAction: CreateDepositTransactionsDtoTypeEnum
-) => {
-  const isDeposit = currentAction === CreateDepositTransactionsDtoTypeEnum.DEPOSIT;
-
-  return totalAllocationEntries.map(([vaultId, allocation], index) => {
-    const vault = vaults[index];
-    const vaultInputMint = vault.inputTokenMint;
-    const vaultAmount = (depositAmount * allocation) / 100;
-
-    return {
-      vaultId,
-      inputMint: isDeposit ? selectedMint : vaultInputMint,
-      outputMint: isDeposit ? vaultInputMint : selectedMint,
-      platform: "Jupiter", // TODO: change to the actual platform
-      amount: vaultAmount.toFixed(),
-    };
-  });
-};
 
 interface UseStrategyTransactionOptions {
   quotes: { data?: JupiterSwap.OrderGet200Response; error?: unknown }[];
@@ -62,6 +21,53 @@ interface UseStrategyTransactionOptions {
   depositAmount: number;
 }
 
+const deserializeTransaction = (base64: string): VersionedTransaction => {
+  return VersionedTransaction.deserialize(Buffer.from(base64, "base64"));
+};
+
+const serializeTransaction = (transaction: VersionedTransaction): string => {
+  return Buffer.from(transaction.serialize()).toString("base64");
+};
+
+const buildSwapTransactions = (
+  quotes: { data?: JupiterSwap.OrderGet200Response; error?: unknown }[]
+): SwapTransaction[] => {
+  return quotes
+    .filter((quote): quote is { data: JupiterSwap.OrderGet200Response } =>
+      Boolean(quote.data?.transaction && quote.data?.requestId)
+    )
+    .map((quote) => ({
+      requestId: quote.data.requestId!,
+      transaction: deserializeTransaction(quote.data.transaction!),
+    }));
+};
+
+const buildVaultParams = (
+  totalAllocationEntries: [string, number][],
+  vaults: VaultInfoResponse[],
+  selectedMint: string,
+  depositAmount: number,
+  actionType: CreateDepositTransactionsDtoTypeEnum
+) => {
+  const isDeposit = actionType === CreateDepositTransactionsDtoTypeEnum.DEPOSIT;
+  // TODO: add token decimals support
+  const depositAmountInMint = parseUnits(depositAmount.toString(), 6);
+
+  return totalAllocationEntries.map(([vaultId, allocation], index) => {
+    const vault = vaults[index];
+    const vaultInputMint = vault.inputTokenMint;
+    const vaultAmount = Big(depositAmountInMint).mul(Big(allocation).div(100)).toFixed();
+
+    return {
+      vaultId,
+      inputMint: isDeposit ? selectedMint : vaultInputMint,
+      outputMint: isDeposit ? vaultInputMint : selectedMint,
+      platform: "Jupiter", // TODO: change to the actual platform
+      amount: vaultAmount,
+    };
+  });
+};
+
 export const useStrategyTransaction = ({
   quotes,
   totalAllocationEntries,
@@ -70,108 +76,119 @@ export const useStrategyTransaction = ({
   depositAmount,
 }: UseStrategyTransactionOptions) => {
   const { address: walletAddress, signAllTransactions, connection } = useSolanaWallet();
-
   const { mutateAsync: createDepositTransactions } = useCreateDepositTransactions();
   const { mutateAsync: executeSwap } = useJupiterSwapExecute();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const executeDeposit = useCallback(
-    async (
-      signedSwapTxs: VersionedTransaction[],
-      swapTransactions: SwapTransactionMap,
-      depositTxs: VersionedTransaction[]
-    ) => {
-      // First execute swaps
-      const swapResults = await Promise.all(
+  const executeSwapTransactions = useCallback(
+    async (swaps: SwapTransaction[], signedSwapTxs: VersionedTransaction[]) => {
+      if (signedSwapTxs.length === 0) {
+        return [];
+      }
+
+      const results = await Promise.all(
         signedSwapTxs.map((tx, index) =>
           executeSwap({
             signedTransaction: serializeTransaction(tx),
-            requestId: Object.keys(swapTransactions)[index],
+            requestId: swaps[index].requestId,
           })
         )
       );
-      console.log("Swap transactions sent:", swapResults);
-
-      // Then execute deposits
-      console.log("Sending deposit transactions...");
-      const depositResults = await Promise.all(depositTxs.map((tx) => connection.sendTransaction(tx)));
-      console.log("Deposit transactions sent:", depositResults);
-
-      return { swapResults, depositResults };
+      console.log("Swap transactions executed:", results);
+      return results;
     },
-    [executeSwap, connection]
+    [executeSwap]
   );
 
-  const executeWithdraw = useCallback(
-    async (
-      signedSwapTxs: VersionedTransaction[],
-      swapTransactions: SwapTransactionMap,
-      withdrawTxs: VersionedTransaction[]
-    ) => {
-      // First execute withdrawals
-      console.log("Sending withdraw transactions...");
-      const withdrawResults = await Promise.all(withdrawTxs.map((tx) => connection.sendTransaction(tx)));
-      console.log("Withdraw transactions sent:", withdrawResults);
+  const executeVaultTransactions = useCallback(
+    async (vaultTxs: VersionedTransaction[], actionType: CreateDepositTransactionsDtoTypeEnum) => {
+      if (vaultTxs.length === 0) {
+        return [];
+      }
 
-      // Then execute swaps
-      const swapResults = await Promise.all(
-        signedSwapTxs.map((tx, index) =>
-          executeSwap({
-            signedTransaction: serializeTransaction(tx),
-            requestId: Object.keys(swapTransactions)[index],
-          })
-        )
-      );
-      console.log("Swap transactions sent:", swapResults);
-
-      return { swapResults, withdrawResults };
+      console.log(`Executing ${actionType} transactions...`);
+      const results = await Promise.all(vaultTxs.map((tx) => connection.sendTransaction(tx)));
+      console.log(`${actionType} transactions executed:`, results);
+      return results;
     },
-    [executeSwap, connection]
+    [connection]
   );
 
   const handleTransaction = useCallback(
-    async (currentAction: CreateDepositTransactionsDtoTypeEnum) => {
+    async (actionType: CreateDepositTransactionsDtoTypeEnum) => {
       if (!walletAddress || !signAllTransactions) return;
 
       setIsLoading(true);
 
       try {
-        const swapTransactions = buildSwapTransactionMap(quotes);
         const selectedMint = selectedAsset?.mint ?? "";
+        const isDeposit = actionType === CreateDepositTransactionsDtoTypeEnum.DEPOSIT;
 
-        const vaultParams = buildVaultParams(
-          totalAllocationEntries,
-          vaults,
-          selectedMint,
-          depositAmount,
-          currentAction
-        );
+        // 1. Build swap transactions from quotes (may be empty if no swaps needed)
+        const swapTransactions = buildSwapTransactions(quotes);
+        const hasSwaps = swapTransactions.length > 0;
 
-        const depositWithdrawTxsRaw = await createDepositTransactions({
+        // 2. Build vault params and create vault transactions
+        const vaultParams = buildVaultParams(totalAllocationEntries, vaults, selectedMint, depositAmount, actionType);
+
+        const vaultTxsRaw = await createDepositTransactions({
           signer: walletAddress,
-          type: currentAction,
+          type: actionType,
           vaults: vaultParams,
         });
 
-        const depositWithdrawTxs = depositWithdrawTxsRaw.map((tx) =>
-          deserializeTransaction(tx.serializedTransaction ?? "")
-        );
+        const vaultTxs = vaultTxsRaw.map((tx) => {
+          const versionedTx = deserializeTransaction(tx.serializedTransaction ?? "");
+          versionedTx.message.recentBlockhash = tx.blockhash;
+          return versionedTx;
+        });
 
-        const signedSwapTxs = await signAllTransactions(Object.values(swapTransactions));
-        if (!signedSwapTxs) throw new Error("Failed to sign transactions");
+        // 3. Prepare transactions for signing in correct order
+        const swapTxsUnsigned = swapTransactions.map((s) => s.transaction);
+        const transactionsToSign = isDeposit ? [...swapTxsUnsigned, ...vaultTxs] : [...vaultTxs, ...swapTxsUnsigned];
 
-        console.log(`Sending ${signedSwapTxs.length} transactions for ${currentAction}...`);
-
-        if (currentAction === CreateDepositTransactionsDtoTypeEnum.DEPOSIT) {
-          await executeDeposit(signedSwapTxs, swapTransactions, depositWithdrawTxs);
-        } else {
-          await executeWithdraw(signedSwapTxs, swapTransactions, depositWithdrawTxs);
+        // 4. Sign all transactions at once
+        const signedTransactions = await signAllTransactions(transactionsToSign);
+        if (!signedTransactions) {
+          throw new Error("Failed to sign transactions");
         }
 
-        console.log(`${currentAction} completed successfully`);
+        console.log(`Executing ${signedTransactions.length} transactions for ${actionType}...`);
+
+        // 5. Split signed transactions and execute in correct order
+        let vaultSignatures: string[] = [];
+        if (isDeposit) {
+          const signedSwapTxs = signedTransactions.slice(0, swapTransactions.length);
+          const signedVaultTxs = signedTransactions.slice(swapTransactions.length);
+
+          if (hasSwaps) {
+            await executeSwapTransactions(swapTransactions, signedSwapTxs);
+          }
+          vaultSignatures = await executeVaultTransactions(
+            signedVaultTxs,
+            CreateDepositTransactionsDtoTypeEnum.DEPOSIT
+          );
+        } else {
+          const signedVaultTxs = signedTransactions.slice(0, vaultTxs.length);
+          const signedSwapTxs = signedTransactions.slice(vaultTxs.length);
+
+          vaultSignatures = await executeVaultTransactions(
+            signedVaultTxs,
+            CreateDepositTransactionsDtoTypeEnum.WITHDRAW
+          );
+          if (hasSwaps) {
+            await executeSwapTransactions(swapTransactions, signedSwapTxs);
+          }
+        }
+
+        console.log(`${actionType} completed successfully`, { vaultSignatures });
       } catch (error) {
-        console.error(`${currentAction} error:`, error);
+        if (error instanceof SendTransactionError) {
+          const logs = await error.getLogs(connection);
+          console.error("Simulation logs:", logs, "\n\n", error);
+        }
+        console.error(`${actionType} error:`, error);
         throw error;
       } finally {
         setIsLoading(false);
@@ -180,14 +197,15 @@ export const useStrategyTransaction = ({
     [
       walletAddress,
       signAllTransactions,
-      quotes,
       selectedAsset?.mint,
+      quotes,
       totalAllocationEntries,
       vaults,
       depositAmount,
       createDepositTransactions,
-      executeDeposit,
-      executeWithdraw,
+      executeSwapTransactions,
+      executeVaultTransactions,
+      connection,
     ]
   );
 

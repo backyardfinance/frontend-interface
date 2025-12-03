@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useParams } from "react-router";
+import { formatUnits } from "@/common/utils/format";
 import { useUserTokens } from "@/solana/hooks/useUserTokens";
 import { useStrategyById } from "@/strategy/queries";
 import { useVaults } from "@/vaults/queries";
@@ -32,7 +33,11 @@ export const useStrategyPosition = () => {
     return {
       ...strategy,
       vaults: strategyVaults,
-      strategyDepositedAmount: strategy.vaults.reduce((acc, v) => acc + v.amount, 0),
+      strategyDepositedAmount: strategyVaults.reduce((acc, v) => acc + v.amount, 0),
+      strategyDepositedAmountUi: strategyVaults.reduce(
+        (acc, v) => acc + Number(formatUnits(v.amount.toFixed(), v.token.decimals)),
+        0
+      ),
     };
   }, [vaults, userTokens.map, strategy]);
 

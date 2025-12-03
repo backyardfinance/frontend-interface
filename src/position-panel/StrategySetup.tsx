@@ -133,17 +133,17 @@ export const StrategySetup = ({
       });
       console.log(depositTransaction);
 
-      const versionedTransactions = VersionedTransaction.deserialize(
-        Buffer.from(depositTransaction[0].serializedTransaction ?? "", "base64")
-      );
-
-      const { blockhash } = await connection.getLatestBlockhash();
-
-      versionedTransactions.message.recentBlockhash = blockhash;
+      const depositTxs = depositTransaction.map((tx) => {
+        const versionedTransaction = VersionedTransaction.deserialize(
+          Buffer.from(tx.serializedTransaction ?? "", "base64")
+        );
+        versionedTransaction.message.recentBlockhash = tx.blockhash;
+        return versionedTransaction;
+      });
 
       const signedTransactions = await signAllTransactions([
         ...Object.values(swapTransactions).map((transaction) => transaction),
-        versionedTransactions,
+        ...depositTxs,
       ]);
 
       if (!signedTransactions) throw new Error("Failed to sign transactions");

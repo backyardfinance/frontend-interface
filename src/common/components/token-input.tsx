@@ -4,6 +4,7 @@ import type { UserTokenView } from "@/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/common/components/ui/select";
 import { InfoCircleIcon } from "@/icons/info-circle";
 import { cn } from "../utils";
+import { inputEnforcer } from "../utils/input";
 
 export const TokenInputComponent = ({
   title,
@@ -22,6 +23,7 @@ export const TokenInputComponent = ({
   selectedAsset: UserTokenView | null;
   setSelectedAsset: (value: UserTokenView) => void;
 }) => {
+  const [value, setValue] = useState<string>("");
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
   return (
@@ -53,11 +55,21 @@ export const TokenInputComponent = ({
             className="w-full font-bold text-sm text-zinc-800 outline-none"
             inputMode="decimal"
             onChange={(e) => {
-              setCurrentValue(Number(e.target.value));
+              const value = inputEnforcer(e.target.value);
+              if (value === null) {
+                return;
+              }
+              setValue(value);
+              const num = Number(value);
+              if (Number.isNaN(num)) {
+                return;
+              }
+              setCurrentValue(num);
             }}
             onWheel={(e) => e.currentTarget.blur()}
-            type="number"
-            value={currentValue}
+            placeholder="0"
+            type="text"
+            value={value}
           />
           <span className="font-normal text-[9px] text-stone-400">
             $
