@@ -133,11 +133,12 @@ export const StrategySetup = ({
       });
       console.log(depositTransaction);
 
+      const newBlockhash = await connection.getLatestBlockhash("confirmed");
       const depositTxs = depositTransaction.map((tx) => {
         const versionedTransaction = VersionedTransaction.deserialize(
           Buffer.from(tx.serializedTransaction ?? "", "base64")
         );
-        versionedTransaction.message.recentBlockhash = tx.blockhash;
+        versionedTransaction.message.recentBlockhash = newBlockhash.blockhash;
         return versionedTransaction;
       });
 
@@ -169,7 +170,7 @@ export const StrategySetup = ({
       );
 
       await createStrategy({
-        name: "",
+        name: "Strategy " + Date.now(),
         walletAddress,
         vaultDeposits: Object.values(quotesParams).reduce(
           (acc, curr) => {
