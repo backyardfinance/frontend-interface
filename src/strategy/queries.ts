@@ -1,6 +1,12 @@
 import type { UseQueryOptions } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
-import { type StrategyInfoResponse, strategyApi } from "@/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  type CreateDepositTransactionsDto,
+  type CreateStrategyDto,
+  type StrategyInfoResponse,
+  strategyApi,
+  transactionApi,
+} from "@/api";
 import { queryKeys } from "@/api/query-keys";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
 
@@ -16,7 +22,7 @@ export const useStrategyById = ({ strategyId }: StrategyByIdRequest, options?: U
     queryFn: async () => {
       if (!strategyId) throw Error("useStrategyById: strategyId is missing");
       const { data } = await strategyApi.strategyControllerGetStrategy({ strategyId });
-      return data as unknown as StrategyInfoResponse;
+      return data;
     },
     ...options,
     enabled: !!strategyId && options?.enabled,
@@ -31,10 +37,9 @@ export const useUserStrategies = (options?: UseStrategiesOptions) => {
   return useQuery({
     queryKey: queryKeys.strategies.strategyByUser(address ?? ""),
     queryFn: async () => {
-      const userId = localStorage.getItem("userId");
-      if (!userId) throw Error("useStrategies: userId is missing");
-      const { data } = await strategyApi.strategyControllerGetStrategies({ walletAddress: userId });
-      return data as unknown as StrategyInfoResponse[];
+      if (!address) throw Error("useUserStrategies: address is missing");
+      const { data } = await strategyApi.strategyControllerGetStrategies({ walletAddress: address });
+      return data;
     },
     ...options,
     enabled: !!address && options?.enabled,
@@ -61,3 +66,23 @@ export const useUserStrategies = (options?: UseStrategiesOptions) => {
 //     retry: false,
 //   });
 // };
+
+export const useCreateDepositTransactions = () => {
+  return useMutation({
+    mutationFn: async (createDepositTransactionsDto: CreateDepositTransactionsDto) => {
+      const { data } = await transactionApi.transactionControllerCreateDepositTransactions({
+        createDepositTransactionsDto,
+      });
+      return data;
+    },
+  });
+};
+
+export const useCreateStrategy = () => {
+  return useMutation({
+    mutationFn: async (createStrategyDto: CreateStrategyDto) => {
+      const { data } = await strategyApi.strategyControllerCreate({ createStrategyDto });
+      return data;
+    },
+  });
+};

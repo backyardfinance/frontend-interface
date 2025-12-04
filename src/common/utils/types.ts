@@ -4,5 +4,5 @@ export interface Strategy {
   id: string;
   vaults: VaultInfoResponse[];
   depositAmount: number;
-  allocation: number[];
+  totalAllocation: Record<string, number>;
 }

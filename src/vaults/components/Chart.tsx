@@ -1,12 +1,11 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "react-router";
-import type { VaultInfoResponse } from "@/api";
-import { getTokenImage } from "@/common/assets/tokens";
+import { Link } from "react-router";
+import type { UserTokenView, VaultInfoResponse } from "@/api";
 import { ChartArea } from "@/common/components/charts/ChartArea";
 import { Table } from "@/common/components/table";
 import { Button } from "@/common/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/common/components/ui/tabs";
-import { formatWithPrecision } from "@/common/utils";
+import { formatUnits } from "@/common/utils/format";
 import { ArrowIcon } from "@/icons/arrow";
 import { toStrategyRoute } from "@/routes";
 import { useVaultByIdWithUser, useVaultHistory } from "@/vaults/queries";
@@ -24,15 +23,15 @@ const MetricMap: Record<ChartCategory, MetricType[]> = {
 
 type Props = {
   vault: VaultInfoResponse;
+  token: UserTokenView;
 };
 
-export const Chart: React.FC<Props> = ({ vault }) => {
+export const Chart: React.FC<Props> = ({ vault, token }) => {
   const { data: vaultHistory } = useVaultHistory(vault.id);
   const { data: vaultWithUser } = useVaultByIdWithUser(vault.id);
 
   const [selectedCategory, setSelectedCategory] = useState<ChartCategory>("overview");
   const [selectedMetric, setSelectedMetric] = useState<MetricType>("apy");
-  const navigate = useNavigate();
   const handleCategoryChange = (val: string) => {
     const newCategory = val as ChartCategory;
     setSelectedCategory(newCategory);
@@ -44,30 +43,28 @@ export const Chart: React.FC<Props> = ({ vault }) => {
     rows: vaultWithUser?.strategies?.map((strategy) => [
       <div className="flex flex-col items-start justify-between" key={strategy.strategyId}>
         <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>
-          <div className="size-3">{getTokenImage(vault.name)}</div>
-          <div className="justify-start font-bold text-neutral-800 text-sm">{strategy.depositedAmount}</div>
+          <img alt={token.symbol} className="size-3" src={token.icon} />
+          <div className="justify-start font-bold text-neutral-800 text-sm">
+            {formatUnits(strategy.depositedAmount.toFixed(), token.decimals)}
+          </div>
         </div>
         <div className="w-16 justify-start font-normal text-xs text-zinc-500 uppercase">
-          ${strategy.depositedAmount.toFixed(2)}
+          ${formatUnits(strategy.depositedAmount.toFixed(), token.decimals)}
         </div>
       </div>,
-      `${formatWithPrecision(strategy.vaultWeight)}%`,
+      `${strategy.vaultWeight * 100}%`,
       <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>
-        <div className="justify-start font-bold text-neutral-800 text-sm">
-          {formatWithPrecision(strategy.interestEarned)}
-        </div>
-        <div className="size-3">{getTokenImage(vault.name)}</div>
+        <div className="justify-start font-bold text-neutral-800 text-sm">{strategy.interestEarned.toFixed(2)}</div>
+        <img alt={token.symbol} className="size-3" src={token.icon} />
       </div>,
-      <Button
-        key={strategy.strategyId}
-        onClick={() => navigate(toStrategyRoute(strategy.strategyId))}
-        size="sm"
-        variant="white"
-      >
-        <span className="overflow-ellipsis">{strategy.strategyId.slice(0, 10)}...</span>
-        <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
-          <ArrowIcon className="size-2 rotate-45" />
-        </div>
+
+      <Button asChild key={strategy.strategyId} size="sm" variant="white">
+        <Link to={toStrategyRoute(strategy.strategyId)}>
+          <span className="overflow-ellipsis">{strategy.strategyId.slice(0, 10)}...</span>
+          <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
+            <ArrowIcon className="size-2 rotate-45" />
+          </div>
+        </Link>
       </Button>,
     ]),
   };

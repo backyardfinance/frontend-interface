@@ -3,7 +3,6 @@ import { Link } from "react-router";
 import { getTokenImage } from "@/common/assets/tokens";
 import { Table } from "@/common/components/table";
 import { Badge } from "@/common/components/ui/badge";
-import { formatWithPrecision } from "@/common/utils";
 import { ArrowIcon } from "@/icons/arrow";
 import { toVaultRoute } from "@/routes";
 
@@ -18,7 +17,7 @@ export const RecentActivity = ({ activity }: { activity: any[] }) => {
         <span className="size-3">{getTokenImage(item.token)}</span>
         {item.token}
       </span>,
-      formatWithPrecision(item.amount),
+      item.amount.toFixed(2),
       <Badge key={item.id} variant="secondary">
         {item.strategy}
       </Badge>,
@@ -31,7 +30,7 @@ export const RecentActivity = ({ activity }: { activity: any[] }) => {
   return (
     <div className="flex min-h-[131px] flex-col gap-4 rounded-[23px] border-2 border-[#F6F6F6] border-solid px-4 py-4 [background:#FAFAFA]">
       <p className="font-bold text-neutral-800 text-sm">Recent Activity</p>
-      <div className="flex flex-1">
+      <div className="flex flex-1 flex-col">
         {!activity.length ? (
           <>
             <p className="flex-1 self-center text-center font-normal text-[#949494] text-sm">

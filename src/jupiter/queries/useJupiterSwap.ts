@@ -42,7 +42,10 @@ export const useJupiterQuote = (params: JupiterSwap.DefaultApiOrderGetRequest, o
   });
 };
 
-export const useJupiterMultipleQuotes = (quotesParams: JupiterSwap.DefaultApiOrderGetRequest[]) => {
+export const useJupiterMultipleQuotes = (
+  quotesParams: JupiterSwap.DefaultApiOrderGetRequest[],
+  options?: UseJupiterQuoteOptions
+) => {
   const { address } = useSolanaWallet();
 
   return useQueries({
@@ -62,42 +65,50 @@ export const useJupiterMultipleQuotes = (quotesParams: JupiterSwap.DefaultApiOrd
         });
         return data;
       },
-      enabled:
-        !!address && !!params.inputMint && !!params.outputMint && !!params.amount && Big(params.amount ?? "0").gt(0),
       refetchOnWindowFocus: false,
+      ...options,
+      enabled:
+        !!address &&
+        !!params.inputMint &&
+        !!params.outputMint &&
+        !!params.amount &&
+        Big(params.amount ?? "0").gt(0) &&
+        options?.enabled,
     })),
   });
 };
 
-// export const useSwap = (): UseMutationResult<
-//   JupiterSwap.ExecutePost200Response,
-//   AxiosError<JupiterSwap.ExecutePost400Response>,
-//   JupiterSwap.ExecutePostRequest,
-//   unknown
-// > => {
-//   return useMutation({
-//     mutationFn: async (executePostRequest: JupiterSwap.ExecutePostRequest): Promise<JupiterSwap.ExecutePost200Response> => {
-//       const { data } = await jupiterSwapApi.executePost({
-//         executePostRequest,
-//       });
-//       return data;
-//     },
-//   });
-// };
+export const useJupiterSwapExecute = (): UseMutationResult<
+  JupiterSwap.ExecutePost200Response,
+  AxiosError<JupiterSwap.ExecutePost400Response>,
+  JupiterSwap.ExecutePostRequest,
+  unknown
+> => {
+  return useMutation({
+    mutationFn: async (
+      executePostRequest: JupiterSwap.ExecutePostRequest
+    ): Promise<JupiterSwap.ExecutePost200Response> => {
+      const { data } = await jupiterSwapApi.executePost({
+        executePostRequest,
+      });
+      return data;
+    },
+  });
+};
 
 type useJupiterSwapSearchOptions = Omit<
   UseQueryOptions<JupiterSwap.MintInformation[], AxiosError<{ message: string }>>,
   "queryKey" | "queryFn"
 >;
 
-export const useJupiterSwapSearch = (query: string, options?: useJupiterSwapSearchOptions) => {
+export const useJupiterSwapSearch = (mints: string[], options?: useJupiterSwapSearchOptions) => {
   return useQuery({
-    queryKey: queryKeys.jupiterSwap.search(query),
+    queryKey: queryKeys.jupiterSwap.search(mints),
     queryFn: async () => {
-      const { data } = await jupiterSwapApi.searchGet({ query });
+      const { data } = await jupiterSwapApi.searchGet({ query: mints.join(",") });
       return data;
     },
-    enabled: Boolean(query.trim()),
+    enabled: Boolean(mints.length),
     refetchOnWindowFocus: false,
     ...options,
   });

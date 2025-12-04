@@ -1,20 +1,24 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Button } from "@/common/components/ui/button";
 import { Separator } from "@/common/components/ui/separator";
 import { formatMonetaryAmount } from "@/common/utils";
+import { useStrategiesPositions } from "@/dashboard/hooks/useStrategiesPositions";
 import { StarsIcon } from "@/icons/stars";
-import { useUserStrategies } from "@/strategy/queries";
 
 export const DashboardData = () => {
-  const { data: userStrategies } = useUserStrategies();
+  const positions = useStrategiesPositions();
 
-  const summaryData = (userStrategies ?? [])?.reduce(
-    (acc, item) => {
-      const deposited = acc.deposited + item.strategyDepositedAmount;
-      const weightedApySum = acc.weightedApySum + item.strategyApy * item.strategyDepositedAmount;
-      return { deposited, weightedApySum };
-    },
-    { deposited: 0, weightedApySum: 0 }
+  const summaryData = useMemo(
+    () =>
+      (positions ?? [])?.reduce(
+        (acc, item) => {
+          const deposited = acc.deposited + item.myPositionUsd;
+          const weightedApySum = acc.weightedApySum + item.strategyApy * item.myPositionUsd;
+          return { deposited, weightedApySum };
+        },
+        { deposited: 0, weightedApySum: 0 }
+      ),
+    [positions]
   );
 
   const avgAPY = summaryData.deposited > 0 ? summaryData.weightedApySum / summaryData.deposited : 0;
@@ -22,7 +26,7 @@ export const DashboardData = () => {
   const data = [
     {
       title: "My Positions",
-      value: formatMonetaryAmount(summaryData.deposited),
+      value: `$${formatMonetaryAmount(summaryData.deposited.toFixed(2))}`,
       icon: <StarsIcon className="h-3.5 w-3.5" color="#2ED650" />,
     },
     {
@@ -55,7 +59,7 @@ export const DashboardData = () => {
         ))}
       </div>
       <div className="relative flex w-[348px] justify-end pe-11">
-        <div className="-top-0.5 pointer-events-none absolute left-4 h-[117px] w-[348px] bg-[linear-gradient(90deg,_rgba(255,255,255,0)_0%,_rgba(255,255,255,0.35)_10%,_#ffffff_45%,_#ffffff_100%)]" />
+        <div className="-top-0.5 pointer-events-none absolute left-4 h-[117px] w-[348px] bg-[linear-gradient(90deg,rgba(255,255,255,0)_0%,rgba(255,255,255,0.35)_10%,#ffffff_45%,#ffffff_100%)]" />
 
         <img alt="pattern" className="pointer-events-none absolute top-0 left-0 size-full" src="/pattern.webp" />
         <Button

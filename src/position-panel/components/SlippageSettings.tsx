@@ -1,3 +1,5 @@
+import { X } from "lucide-react";
+import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/common/components/ui/popover";
 import { cn } from "@/common/utils";
 import { SettingsIcon } from "@/icons/settings";
@@ -15,15 +17,16 @@ export const SlippageSettings = ({
   onSlippageChange,
   options = DEFAULT_SLIPPAGE_OPTIONS,
 }: SlippageSettingsProps) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <Popover>
+    <Popover onOpenChange={setIsOpen} open={isOpen}>
       <PopoverTrigger asChild>
         <div className="cursor-pointer rounded-xl border border-zinc-100 bg-white p-1.5">
-          <SettingsIcon />
+          {isOpen ? <X className="size-4" /> : <SettingsIcon className="size-4" />}
         </div>
       </PopoverTrigger>
-      <PopoverContent align="end" asChild>
-        <div className="flex min-w-[332px] flex-col gap-[16px] rounded-3xl border-2 border-zinc-300/25 bg-white p-[14px]">
+      <PopoverContent align="end" asChild className="rounded-3xl border-none p-[14px]">
+        <div className="flex min-w-[332px] flex-col gap-4">
           <div className="flex flex-row items-center justify-between font-bold text-base text-neutral-800">
             Slippage
             <span className="font-bold text-sm text-zinc-400">{slippage}%</span>

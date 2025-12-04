@@ -12,7 +12,7 @@ export const useSolanaWallet = () => {
   const { connection } = useConnection();
   const queryClient = useQueryClient();
 
-  const { disconnect, signTransaction, signMessage, sendTransaction } = wallet;
+  const { disconnect, signTransaction, signMessage, sendTransaction, signAllTransactions } = wallet;
 
   const handleSignIn = useCallback(async () => {
     setVisible(true);
@@ -26,7 +26,7 @@ export const useSolanaWallet = () => {
   }, [disconnect, queryClient]);
 
   const handleSendTransaction = useCallback(
-    async (tx: Transaction) => {
+    async (tx: Transaction | VersionedTransaction) => {
       return sendTransaction?.(tx, connection);
     },
     [sendTransaction, connection]
@@ -36,6 +36,13 @@ export const useSolanaWallet = () => {
       return signTransaction?.(tx);
     },
     [signTransaction]
+  );
+
+  const handleSignAllTransactions = useCallback(
+    async (txs: VersionedTransaction[]) => {
+      return signAllTransactions?.(txs);
+    },
+    [signAllTransactions]
   );
 
   const handleSendV0Transaction = useCallback(
@@ -79,6 +86,8 @@ export const useSolanaWallet = () => {
       signMessage: handleSignMessage,
       sendV0Transaction: handleSendV0Transaction,
       signTransaction: handleSignTransaction,
+      signAllTransactions: handleSignAllTransactions,
+      connection,
     }),
     [
       handleSignIn,
@@ -87,7 +96,9 @@ export const useSolanaWallet = () => {
       handleSignMessage,
       handleSendV0Transaction,
       handleSignTransaction,
+      handleSignAllTransactions,
       wallet,
+      connection,
     ]
   );
 };

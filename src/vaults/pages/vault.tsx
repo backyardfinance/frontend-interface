@@ -4,10 +4,12 @@ import { getVaultTokenImage } from "@/common/assets/tokens";
 import { Button } from "@/common/components/ui/button";
 import { CompactHybridTooltip } from "@/common/components/ui/hybrid-tooltip";
 import { formatMonetaryAmount, formatUsdAmount } from "@/common/utils";
+import { formatUnits } from "@/common/utils/format";
 import { ArrowIcon } from "@/icons/arrow";
 import { InfoCircleIcon } from "@/icons/info-circle";
 import { StarsIcon } from "@/icons/stars";
 import { VaultControl } from "@/position-panel/VaultControl";
+import { useUserTokens } from "@/solana/hooks/useUserTokens";
 import { Chart } from "@/vaults/components/Chart";
 import { RecentActivity } from "@/vaults/components/RecentActivity";
 import { useVaultByIdWithUser, useVaults } from "@/vaults/queries";
@@ -22,24 +24,28 @@ export default function VaultIdPage() {
     enabled: !!vault,
   });
 
-  if (!vaultId || !vault) return <div>No found</div>;
+  const { userTokens } = useUserTokens();
 
-  const myPosition = (vaultWithUser?.strategies ?? []).reduce(
-    (acc, strategy) => acc + strategy.depositedAmount + strategy.interestEarned,
-    0
-  );
+  const token = vault ? userTokens.map.get(vault.inputTokenMint) : null;
+
+  if (!vaultId || !vault || !token) return <div>No found</div>;
+
+  const myPosition = (vaultWithUser?.strategies ?? []).reduce((acc, strategy) => {
+    const depositedAmount = formatUnits(strategy.depositedAmount.toFixed(), token.decimals);
+    return acc + Number(depositedAmount) + strategy.interestEarned;
+  }, 0);
 
   const data = [
     {
       title: "Total Deposits",
       value: formatMonetaryAmount(vault.tvl),
-      additionalValue: formatUsdAmount(vault.tvl * vault.assetPrice),
+      additionalValue: formatUsdAmount(vault.tvl * token.usdPrice),
       valueComponent: <InfoCircleIcon />,
     },
     {
       title: "My Position",
       value: formatMonetaryAmount(myPosition),
-      additionalValue: formatUsdAmount(myPosition * vault.assetPrice),
+      additionalValue: formatUsdAmount(myPosition * token.usdPrice),
       valueComponent: <StarsIcon color="#2ED650" />,
     },
     {
@@ -89,7 +95,7 @@ export default function VaultIdPage() {
             </div>
           </div>
           <div className="relative flex h-full w-full flex-col justify-between gap-5 rounded-3xl bg-[#FAFAFA] px-6 py-4.5">
-            <p className="font-normal text-[#828282] text-xs">{vault.description}</p>
+            <p className="font-normal text-[#828282] text-xs">{"vault.description"}</p>
             <div className="flex justify-between">
               {data.map((el) => (
                 <div className="flex flex-col items-start gap-px" key={el.title}>
@@ -106,7 +112,7 @@ export default function VaultIdPage() {
             </div>
           </div>
         </div>
-        <Chart vault={vault} />
+        <Chart token={token} vault={vault} />
         <div className="flex flex-col gap-y-4.5 rounded-[23px] border border-[rgba(214,214,214,0.26)] border-solid bg-[#FAFAFA] px-5.5 py-4.5">
           <p className="font-bold text-[22px] text-neutral-800 leading-[normal]">Additional info</p>
           <div className="flex flex-col gap-2">

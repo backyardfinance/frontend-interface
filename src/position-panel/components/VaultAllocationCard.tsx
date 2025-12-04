@@ -2,7 +2,8 @@ import { MinusIcon } from "lucide-react";
 import type { VaultInfoResponse } from "@/api";
 import { getPlatformImage } from "@/common/assets/platforms";
 import { getVaultTokenImage } from "@/common/assets/tokens";
-import { cn, displayAmount } from "@/common/utils";
+import { cn } from "@/common/utils";
+import { displayAmount } from "@/common/utils/format";
 import { StarsIcon } from "@/icons/stars";
 
 export interface VaultAllocationCardProps {
@@ -10,7 +11,7 @@ export interface VaultAllocationCardProps {
   allocation?: number;
   depositAmount?: number;
   setAllocation?: (amount: number) => void;
-  removeVaultFromStrategy: (vaultId: string) => void;
+  removeVaultFromStrategy?: (vaultId: string) => void;
   isAllocationError?: boolean;
 }
 
@@ -40,7 +41,12 @@ export const VaultAllocationCard = ({
           </div>
         </div>
       </div>
-      <div className="flex shrink flex-col items-end gap-2 transition-all duration-300 ease-in-out group-hover:translate-x-[-31px]">
+      <div
+        className={cn(
+          "flex shrink flex-col items-end gap-2 transition-all duration-300 ease-in-out",
+          removeVaultFromStrategy && "group-hover:translate-x-[-31px]"
+        )}
+      >
         <div
           className={cn(
             "inline-flex h-[30px] items-center justify-start gap-1 rounded-xl border border-zinc-100 bg-neutral-50 px-3.5 py-1.5 transition-all duration-300 ease-in-out group-hover:opacity-80",
@@ -49,8 +55,11 @@ export const VaultAllocationCard = ({
         >
           <input
             className="max-w-[30px] font-bold text-sm outline-none"
-            onChange={(e) => setAllocation?.(Number(e.target.value))}
-            value={displayAmount(allocation?.toString() || "0", 0, 0)}
+            disabled={!setAllocation}
+            onChange={(e) => {
+              setAllocation?.(Number(e.target.value));
+            }}
+            value={allocation}
           />
           <div
             className={cn(
@@ -65,19 +74,21 @@ export const VaultAllocationCard = ({
           {displayAmount(depositAmount?.toString() || "0", 0, 3)} {vault.name}
         </div>
       </div>
-      <button
-        aria-label="Remove vault"
-        className="-translate-y-1/2 absolute top-[26px] right-[14px] flex size-[23px] items-center justify-center rounded-full bg-stone-50 opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100"
-        onClick={() => removeVaultFromStrategy(vault.id)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            removeVaultFromStrategy(vault.id);
-          }
-        }}
-        type="button"
-      >
-        <MinusIcon className="h-[9px] w-[9px]" />
-      </button>
+      {removeVaultFromStrategy && (
+        <button
+          aria-label="Remove vault"
+          className="-translate-y-1/2 absolute top-[26px] right-[14px] flex size-[23px] items-center justify-center rounded-full bg-stone-50 opacity-0 transition-all duration-300 ease-in-out group-hover:opacity-100"
+          onClick={() => removeVaultFromStrategy(vault.id)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              removeVaultFromStrategy(vault.id);
+            }
+          }}
+          type="button"
+        >
+          <MinusIcon className="h-[9px] w-[9px]" />
+        </button>
+      )}
     </div>
   );
 };

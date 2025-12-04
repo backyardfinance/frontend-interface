@@ -24,6 +24,8 @@ import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError
 // @ts-ignore
 import type { CreateStrategyDto } from '../types';
 // @ts-ignore
+import type { CreateStrategyResponseDto } from '../types';
+// @ts-ignore
 import type { StrategyHistoryPoint } from '../types';
 // @ts-ignore
 import type { StrategyInfoResponse } from '../types';
@@ -249,7 +251,7 @@ export const StrategyApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async strategyControllerCreate(createStrategyDto: CreateStrategyDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async strategyControllerCreate(createStrategyDto: CreateStrategyDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateStrategyResponseDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerCreate(createStrategyDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['StrategyApi.strategyControllerCreate']?.[localVarOperationServerIndex]?.url;
@@ -331,7 +333,7 @@ export const StrategyApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        strategyControllerCreate(requestParameters: StrategyApiStrategyControllerCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+        strategyControllerCreate(requestParameters: StrategyApiStrategyControllerCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<CreateStrategyResponseDto> {
             return localVarFp.strategyControllerCreate(requestParameters.createStrategyDto, options).then((request) => request(axios, basePath));
         },
         /**

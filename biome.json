@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!src/api/generated", "!src/jupiter/api/generated-swap", "!src/jupiter/api/generated-tokens"]
+    "includes": ["**", "!src/api/generated", "!src/jupiter/api/generated"]
   },
   "formatter": {
     "enabled": true,
@@ -31,7 +31,7 @@
       "correctness": {
         "noUnusedImports": "error",
         "noUnusedVariables": "error",
-        "useExhaustiveDependencies": "off"
+        "useExhaustiveDependencies": "warn"
       },
       "suspicious": {
         "noConsole": {

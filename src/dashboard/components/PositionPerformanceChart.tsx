@@ -1,7 +1,16 @@
+import { useMemo } from "react";
 import { ChartArea } from "@/common/components/charts/ChartArea";
+import { formatNumber } from "@/common/utils";
+import { useStrategiesPositions } from "@/dashboard/hooks/useStrategiesPositions";
 
 //TODO: add data for PositionPerformanceChart
 export const PositionPerformanceChart = () => {
+  const positions = useStrategiesPositions();
+
+  const myPositionUsd = useMemo(
+    () => (positions ?? [])?.reduce((acc, item) => acc + item.myPositionUsd, 0),
+    [positions]
+  );
   //fix height
   return (
     <ChartArea
@@ -22,7 +31,7 @@ export const PositionPerformanceChart = () => {
         { date: "2024-04-08", position: 2000 },
       ]}
       title="Position Performance"
-      value="2004$"
+      value={`$${formatNumber(myPositionUsd)}`}
       valueTooltip="“Positions” indicator consists of the sum of all deposits and profits. “YARD reward” is calculated based on the projected FDV."
     />
   );

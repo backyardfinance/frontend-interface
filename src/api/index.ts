@@ -27,37 +27,8 @@ export interface UserPortfolioView {
   totalValueUsd: number;
 }
 
-export interface VaultInfoResponse {
-  apy: number;
-  assetPrice: number;
-  tvl: number;
-  yardReward: number;
-  id: string;
-  name: string;
-  platform: string;
-  token: string;
-  description: string;
-  publicKey?: string;
-}
-
 export interface ApiErrorResponse {
   error: string;
   message: string;
   statusCode: number;
-}
-
-//TODO: remove types
-export interface VaultDepositDto {
-  /**
-   *
-   * @type {string}
-   * @memberof VaultDepositDto
-   */
-  vaultId: string;
-  /**
-   *
-   * @type {string}
-   * @memberof VaultDepositDto
-   */
-  amount: string;
 }

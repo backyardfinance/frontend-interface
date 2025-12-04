@@ -72,6 +72,12 @@ export interface VaultInfoStrategyResponse {
      */
     'platform': string;
     /**
+     * 
+     * @type {string}
+     * @memberof VaultInfoStrategyResponse
+     */
+    'inputTokenMint': string;
+    /**
      * List of user strategies connected to this vault
      * @type {Array<UserStrategyInfoResponse>}
      * @memberof VaultInfoStrategyResponse

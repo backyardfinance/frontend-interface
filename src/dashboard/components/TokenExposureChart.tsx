@@ -1,20 +1,20 @@
 import { useMemo } from "react";
 import { ChartPieDonut } from "@/common/components/charts/ChartPieDonut";
 import { buildChartDataByKey } from "@/common/utils/calculations";
-import { useUserStrategies } from "@/strategy/queries";
+import { useStrategiesPositions } from "@/dashboard/hooks/useStrategiesPositions";
 
 export const TokenExposureChart = () => {
-  const { data: userStrategies } = useUserStrategies();
+  const positions = useStrategiesPositions();
 
   const { chartData, chartConfig } = useMemo(() => {
-    if (!userStrategies?.length) {
+    if (!positions?.length) {
       return { chartData: [], chartConfig: {} };
     }
 
-    const allVaults = userStrategies.flatMap((strategy) => strategy.vaults || []);
+    const tokens = positions.flatMap((p) => p.vaults.map((v) => v.token));
 
-    return buildChartDataByKey(allVaults, "name");
-  }, [userStrategies]);
+    return buildChartDataByKey(tokens, "symbol");
+  }, [positions]);
 
-  return <ChartPieDonut chartConfig={chartConfig} chartData={chartData} nameKey="token" title="Token Exposure" />;
+  return <ChartPieDonut chartConfig={chartConfig} chartData={chartData} nameKey="symbol" title="Token Exposure" />;
 };
