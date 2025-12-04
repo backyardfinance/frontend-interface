@@ -82,7 +82,7 @@ export const TransactionsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async transactionControllerCreateDepositTransactions(createDepositTransactionsDto: CreateDepositTransactionsDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<CreateDepositTransactionsResponseDto>>> {
+        async transactionControllerCreateDepositTransactions(createDepositTransactionsDto: CreateDepositTransactionsDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateDepositTransactionsResponseDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.transactionControllerCreateDepositTransactions(createDepositTransactionsDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TransactionsApi.transactionControllerCreateDepositTransactions']?.[localVarOperationServerIndex]?.url;
@@ -104,7 +104,7 @@ export const TransactionsApiFactory = function (configuration?: Configuration, b
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        transactionControllerCreateDepositTransactions(requestParameters: TransactionsApiTransactionControllerCreateDepositTransactionsRequest, options?: RawAxiosRequestConfig): AxiosPromise<Array<CreateDepositTransactionsResponseDto>> {
+        transactionControllerCreateDepositTransactions(requestParameters: TransactionsApiTransactionControllerCreateDepositTransactionsRequest, options?: RawAxiosRequestConfig): AxiosPromise<CreateDepositTransactionsResponseDto> {
             return localVarFp.transactionControllerCreateDepositTransactions(requestParameters.createDepositTransactionsDto, options).then((request) => request(axios, basePath));
         },
     };

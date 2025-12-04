@@ -13,6 +13,9 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { QuoteVaultDataDto } from './quote-vault-data-dto';
 
 /**
  * 
@@ -34,10 +37,10 @@ export interface CreateDepositTransactionsDto {
     'type': CreateDepositTransactionsDtoTypeEnum;
     /**
      * 
-     * @type {object}
+     * @type {QuoteVaultDataDto}
      * @memberof CreateDepositTransactionsDto
      */
-    'vaults': object;
+    'vaults': QuoteVaultDataDto[];
 }
 
 export const CreateDepositTransactionsDtoTypeEnum = {

@@ -17,23 +17,26 @@
 /**
  * 
  * @export
- * @interface CreateDepositTransactionsResponseDto
+ * @interface QuoteVaultDataDto
  */
-export interface CreateDepositTransactionsResponseDto {
+export interface QuoteVaultDataDto {
     /**
      * 
      * @type {string}
-     * @memberof CreateDepositTransactionsResponseDto
+     * @memberof QuoteVaultDataDto
      */
-    'strategyId': string;
+    'vaultId': string;
     /**
      * 
-     * @type {Array<string>}
-     * @memberof CreateDepositTransactionsResponseDto
+     * @type {string}
+     * @memberof QuoteVaultDataDto
      */
-    'transactions': Array<{
-        serializedTransaction: string;
-        blockhash: string;
-    }>;
+    'platform': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof QuoteVaultDataDto
+     */
+    'amount': string;
 }
 

@@ -13,30 +13,27 @@
  */
 
 
+// May contain unused imports in some cases
+// @ts-ignore
+import type { VaultConfirmation } from './vault-confirmation';
 
 /**
  * 
  * @export
- * @interface CreateStrategyDto
+ * @interface ConfirmStrategyDto
  */
-export interface CreateStrategyDto {
+export interface ConfirmStrategyDto {
     /**
      * 
      * @type {string}
-     * @memberof CreateStrategyDto
+     * @memberof ConfirmStrategyDto
      */
-    'name': string;
+    'strategyId': string;
     /**
      * 
-     * @type {string}
-     * @memberof CreateStrategyDto
+     * @type {Array<VaultConfirmation>}
+     * @memberof ConfirmStrategyDto
      */
-    'walletAddress': string;
-    /**
-     * Record of vaultId -> deposited amount
-     * @type {{ [key: string]: number; }}
-     * @memberof CreateStrategyDto
-     */
-    'vaultDeposits': { [key: string]: number; };
+    'vaults': Array<VaultConfirmation>;
 }
 

@@ -19,16 +19,16 @@ index.ts
 types/auth-response-dto.ts
 types/claim-nonce-dto.ts
 types/claim-nonce-response-dto.ts
+types/confirm-strategy-dto.ts
 types/create-deposit-transactions-dto.ts
 types/create-deposit-transactions-response-dto.ts
-types/create-strategy-dto.ts
-types/create-strategy-response-dto.ts
 types/create-user-dto.ts
 types/follow-status-response.ts
 types/get-quote-dto.ts
 types/index.ts
 types/mint-transaction-result.ts
 types/quote-response-dto.ts
+types/quote-vault-data-dto.ts
 types/quote-vault-dto.ts
 types/retweet-status-response.ts
 types/send-email-dto.ts
@@ -41,6 +41,7 @@ types/token-info-response.ts
 types/user-strategy-info-response.ts
 types/user-vault-history-info-response.ts
 types/usert-info-response.ts
+types/vault-confirmation.ts
 types/vault-deposit-dto.ts
 types/vault-history-info-response.ts
 types/vault-history-user-slice.ts

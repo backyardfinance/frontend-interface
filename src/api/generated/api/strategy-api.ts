@@ -22,9 +22,7 @@ import { DUMMY_BASE_URL, assertParamExists, setApiKeyToObject, setBasicAuthToObj
 // @ts-ignore
 import { BASE_PATH, COLLECTION_FORMATS, type RequestArgs, BaseAPI, RequiredError, operationServerMap } from '../base';
 // @ts-ignore
-import type { CreateStrategyDto } from '../types';
-// @ts-ignore
-import type { CreateStrategyResponseDto } from '../types';
+import type { ConfirmStrategyDto } from '../types';
 // @ts-ignore
 import type { StrategyHistoryPoint } from '../types';
 // @ts-ignore
@@ -37,14 +35,14 @@ export const StrategyApiAxiosParamCreator = function (configuration?: Configurat
     return {
         /**
          * 
-         * @param {CreateStrategyDto} createStrategyDto 
+         * @param {ConfirmStrategyDto} confirmStrategyDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        strategyControllerCreate: async (createStrategyDto: CreateStrategyDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'createStrategyDto' is not null or undefined
-            assertParamExists('strategyControllerCreate', 'createStrategyDto', createStrategyDto)
-            const localVarPath = `/strategies/create`;
+        strategyControllerConfirmStrategy: async (confirmStrategyDto: ConfirmStrategyDto, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'confirmStrategyDto' is not null or undefined
+            assertParamExists('strategyControllerConfirmStrategy', 'confirmStrategyDto', confirmStrategyDto)
+            const localVarPath = `/strategies/strategy/confirm`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -63,40 +61,7 @@ export const StrategyApiAxiosParamCreator = function (configuration?: Configurat
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(createStrategyDto, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} strategyId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        strategyControllerDeleteStrategy: async (strategyId: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'strategyId' is not null or undefined
-            assertParamExists('strategyControllerDeleteStrategy', 'strategyId', strategyId)
-            const localVarPath = `/strategies/{strategyId}`
-                .replace(`{${"strategyId"}}`, encodeURIComponent(String(strategyId)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(confirmStrategyDto, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -247,26 +212,14 @@ export const StrategyApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {CreateStrategyDto} createStrategyDto 
+         * @param {ConfirmStrategyDto} confirmStrategyDto 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async strategyControllerCreate(createStrategyDto: CreateStrategyDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CreateStrategyResponseDto>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerCreate(createStrategyDto, options);
+        async strategyControllerConfirmStrategy(confirmStrategyDto: ConfirmStrategyDto, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerConfirmStrategy(confirmStrategyDto, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['StrategyApi.strategyControllerCreate']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {string} strategyId 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async strategyControllerDeleteStrategy(strategyId: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.strategyControllerDeleteStrategy(strategyId, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['StrategyApi.strategyControllerDeleteStrategy']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['StrategyApi.strategyControllerConfirmStrategy']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -329,21 +282,12 @@ export const StrategyApiFactory = function (configuration?: Configuration, baseP
     return {
         /**
          * 
-         * @param {StrategyApiStrategyControllerCreateRequest} requestParameters Request parameters.
+         * @param {StrategyApiStrategyControllerConfirmStrategyRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        strategyControllerCreate(requestParameters: StrategyApiStrategyControllerCreateRequest, options?: RawAxiosRequestConfig): AxiosPromise<CreateStrategyResponseDto> {
-            return localVarFp.strategyControllerCreate(requestParameters.createStrategyDto, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {StrategyApiStrategyControllerDeleteStrategyRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        strategyControllerDeleteStrategy(requestParameters: StrategyApiStrategyControllerDeleteStrategyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.strategyControllerDeleteStrategy(requestParameters.strategyId, options).then((request) => request(axios, basePath));
+        strategyControllerConfirmStrategy(requestParameters: StrategyApiStrategyControllerConfirmStrategyRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.strategyControllerConfirmStrategy(requestParameters.confirmStrategyDto, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -385,31 +329,17 @@ export const StrategyApiFactory = function (configuration?: Configuration, baseP
 };
 
 /**
- * Request parameters for strategyControllerCreate operation in StrategyApi.
+ * Request parameters for strategyControllerConfirmStrategy operation in StrategyApi.
  * @export
- * @interface StrategyApiStrategyControllerCreateRequest
+ * @interface StrategyApiStrategyControllerConfirmStrategyRequest
  */
-export interface StrategyApiStrategyControllerCreateRequest {
+export interface StrategyApiStrategyControllerConfirmStrategyRequest {
     /**
      * 
-     * @type {CreateStrategyDto}
-     * @memberof StrategyApiStrategyControllerCreate
+     * @type {ConfirmStrategyDto}
+     * @memberof StrategyApiStrategyControllerConfirmStrategy
      */
-    readonly createStrategyDto: CreateStrategyDto
-}
-
-/**
- * Request parameters for strategyControllerDeleteStrategy operation in StrategyApi.
- * @export
- * @interface StrategyApiStrategyControllerDeleteStrategyRequest
- */
-export interface StrategyApiStrategyControllerDeleteStrategyRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof StrategyApiStrategyControllerDeleteStrategy
-     */
-    readonly strategyId: string
+    readonly confirmStrategyDto: ConfirmStrategyDto
 }
 
 /**
@@ -477,24 +407,13 @@ export interface StrategyApiStrategyControllerGetStrategyHistoryRequest {
 export class StrategyApi extends BaseAPI {
     /**
      * 
-     * @param {StrategyApiStrategyControllerCreateRequest} requestParameters Request parameters.
+     * @param {StrategyApiStrategyControllerConfirmStrategyRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof StrategyApi
      */
-    public strategyControllerCreate(requestParameters: StrategyApiStrategyControllerCreateRequest, options?: RawAxiosRequestConfig) {
-        return StrategyApiFp(this.configuration).strategyControllerCreate(requestParameters.createStrategyDto, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {StrategyApiStrategyControllerDeleteStrategyRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof StrategyApi
-     */
-    public strategyControllerDeleteStrategy(requestParameters: StrategyApiStrategyControllerDeleteStrategyRequest, options?: RawAxiosRequestConfig) {
-        return StrategyApiFp(this.configuration).strategyControllerDeleteStrategy(requestParameters.strategyId, options).then((request) => request(this.axios, this.basePath));
+    public strategyControllerConfirmStrategy(requestParameters: StrategyApiStrategyControllerConfirmStrategyRequest, options?: RawAxiosRequestConfig) {
+        return StrategyApiFp(this.configuration).strategyControllerConfirmStrategy(requestParameters.confirmStrategyDto, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -1,8 +1,8 @@
 import type { UseQueryOptions } from "@tanstack/react-query";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  type ConfirmStrategyDto,
   type CreateDepositTransactionsDto,
-  type CreateStrategyDto,
   type StrategyInfoResponse,
   strategyApi,
   transactionApi,
@@ -78,10 +78,10 @@ export const useCreateDepositTransactions = () => {
   });
 };
 
-export const useCreateStrategy = () => {
+export const useStrategyConfirm = () => {
   return useMutation({
-    mutationFn: async (createStrategyDto: CreateStrategyDto) => {
-      const { data } = await strategyApi.strategyControllerCreate({ createStrategyDto });
+    mutationFn: async (confirmStrategyDto: ConfirmStrategyDto) => {
+      const { data } = await strategyApi.strategyControllerConfirmStrategy({ confirmStrategyDto });
       return data;
     },
   });
