@@ -8,6 +8,7 @@ interface SlippageSettingsProps {
   slippage: number;
   onSlippageChange: (slippage: number) => void;
   options?: number[];
+  sideOffset?: number;
 }
 
 const DEFAULT_SLIPPAGE_OPTIONS = [0.1, 0.5, 1, 3];
@@ -16,6 +17,7 @@ export const SlippageSettings = ({
   slippage,
   onSlippageChange,
   options = DEFAULT_SLIPPAGE_OPTIONS,
+  sideOffset = 4,
 }: SlippageSettingsProps) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
@@ -25,7 +27,13 @@ export const SlippageSettings = ({
           {isOpen ? <X className="size-4" /> : <SettingsIcon className="size-4" />}
         </div>
       </PopoverTrigger>
-      <PopoverContent align="end" asChild className="rounded-3xl border-none p-[14px]">
+      <PopoverContent
+        align="end"
+        asChild
+        className="rounded-3xl border-none p-[14px]"
+        side="bottom"
+        sideOffset={sideOffset}
+      >
         <div className="flex min-w-[332px] flex-col gap-4">
           <div className="flex flex-row items-center justify-between font-bold text-base text-neutral-800">
             Slippage

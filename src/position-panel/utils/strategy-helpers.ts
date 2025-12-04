@@ -17,11 +17,11 @@ export const createEvenAllocation = (vaults: VaultInfoResponse[], vaultCount: nu
   return vaultCount > 0 ? Object.fromEntries(allocation.map((value) => [value.id, value.allocation])) : {};
 };
 
-export const updateAmount = (strategy: Strategy, newamount: number): Strategy => {
+export const updateAmount = (strategy: Strategy, newDepositAmount: number): Strategy => {
   return {
     ...strategy,
-    amount: newamount,
-    vaults: calculateVaultAmounts(strategy.vaults, strategy.totalAllocation, newamount),
+    depositAmount: newDepositAmount,
+    vaults: calculateVaultAmounts(strategy.vaults, strategy.totalAllocation, newDepositAmount),
   };
 };
 
@@ -32,7 +32,7 @@ export const updateAllocation = (strategy: Strategy, vaultId: string, newAllocat
   return {
     ...strategy,
     totalAllocation: newTotalAllocation,
-    vaults: calculateVaultAmounts(strategy.vaults, newTotalAllocation, strategy.amount),
+    vaults: calculateVaultAmounts(strategy.vaults, newTotalAllocation, strategy.depositAmount),
   };
 };
 
@@ -43,8 +43,8 @@ export const addVaultToStrategy = (strategy: Strategy | null, vault: VaultInfoRe
 
   return {
     id: strategy?.id || "",
-    amount: strategy?.amount || 0,
-    vaults: calculateVaultAmounts(updatedVaults, newTotalAllocation, strategy?.amount || 0),
+    depositAmount: strategy?.depositAmount || 0,
+    vaults: calculateVaultAmounts(updatedVaults, newTotalAllocation, strategy?.depositAmount || 0),
     totalAllocation: newTotalAllocation,
   };
 };
@@ -55,16 +55,17 @@ export const removeVaultFromStrategy = (strategy: Strategy, vaultId: string): St
 
   return {
     ...strategy,
-    vaults: calculateVaultAmounts(updatedVaults, newTotalAllocation, strategy.amount),
+    vaults: calculateVaultAmounts(updatedVaults, newTotalAllocation, strategy.depositAmount),
     totalAllocation: newTotalAllocation,
   };
 };
 
-export const toggleVaultInStrategy = (strategy: Strategy | null, vault: VaultInfoResponse): Strategy => {
+export const toggleVaultInStrategy = (strategy: Strategy | null, vault: VaultInfoResponse): Strategy | null => {
   const existingVaults = strategy?.vaults || [];
   const isVaultInStrategy = existingVaults.some((v) => v.id === vault.id);
 
   if (isVaultInStrategy) {
+    if (existingVaults.length === 1) return null;
     return removeVaultFromStrategy(strategy as Strategy, vault.id);
   }
 
@@ -73,13 +74,4 @@ export const toggleVaultInStrategy = (strategy: Strategy | null, vault: VaultInf
 
 export const getTotalAllocation = (allocation: number[] | undefined): number => {
   return allocation?.reduce((acc, curr) => acc + curr, 0) || 0;
-};
-
-export const isStrategyValid = (strategy: Strategy | null): boolean => {
-  if (!strategy) return false;
-
-  const { amount, vaults } = strategy;
-  const totalAllocation = Object.values(strategy.totalAllocation);
-  const totalAllocationSum = totalAllocation.reduce((acc, curr) => acc + curr, 0);
-  return amount > 0 && vaults.length > 0 && totalAllocation && totalAllocation.length > 0 && totalAllocationSum === 100;
 };

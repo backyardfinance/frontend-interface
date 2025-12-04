@@ -2,23 +2,28 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router";
 import { getVaultTokenImage } from "@/common/assets/tokens";
 import { Table } from "@/common/components/table";
+import { Badge } from "@/common/components/ui/badge";
 import { CompactHybridTooltip } from "@/common/components/ui/hybrid-tooltip";
-import { formatNumber, truncateAddress } from "@/common/utils";
+import { formatNumber } from "@/common/utils";
 import { formatUnits } from "@/common/utils/format";
 import { useStrategiesPositions } from "@/dashboard/hooks/useStrategiesPositions";
 import { StarsIcon } from "@/icons/stars";
 import { toStrategyRoute } from "@/routes";
+import { getBadgeStrategyStatusVariant } from "@/strategy/utils";
 
 export const DashboardTable = () => {
   const positions = useStrategiesPositions();
   const navigate = useNavigate();
-  const headers = ["Strategy ID", "Allocation", "My position", "APY"];
+  const headers = ["Strategy ID", "Status", "Allocation", "My position", "APY"];
   const rows = useMemo(
     () =>
       positions.map((item) => [
         <span className="font-bold text-neutral-800 text-xs" key={`${item.strategyId}-id`}>
-          {truncateAddress(item.strategyId)}
+          {item.strategyName}
         </span>,
+        <Badge key={item.strategyId} variant={getBadgeStrategyStatusVariant(item.strategyStatus)}>
+          {item.strategyStatus.toLowerCase().charAt(0).toUpperCase() + item.strategyStatus.toLowerCase().slice(1)}
+        </Badge>,
         <div className="flex items-center gap-1" key={`${item.strategyId}-allocation`}>
           {item.vaults.map((vault) => (
             <CompactHybridTooltip

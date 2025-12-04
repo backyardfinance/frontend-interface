@@ -26,7 +26,7 @@ type Props = {
   token: UserTokenView;
 };
 
-export const Chart: React.FC<Props> = ({ vault, token }) => {
+export const VaultChart: React.FC<Props> = ({ vault, token }) => {
   const { data: vaultHistory } = useVaultHistory(vault.id);
   const { data: vaultWithUser } = useVaultByIdWithUser(vault.id);
 
@@ -60,7 +60,7 @@ export const Chart: React.FC<Props> = ({ vault, token }) => {
 
       <Button asChild key={strategy.strategyId} size="sm" variant="white">
         <Link to={toStrategyRoute(strategy.strategyId)}>
-          <span className="overflow-ellipsis">{strategy.strategyId.slice(0, 10)}...</span>
+          <span className="overflow-ellipsis">{strategy.strategyName}</span>
           <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
             <ArrowIcon className="size-2 rotate-45" />
           </div>

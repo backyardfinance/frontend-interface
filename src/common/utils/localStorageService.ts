@@ -1,6 +1,7 @@
 const STORAGE_KEYS = {
   ACCESS_TOKEN: "backyard-access-token",
   REFRESH_TOKEN: "backyard-refresh-token",
+  SLIPPAGE: "backyard-slippage",
 } as const;
 
 export const localStorageService = {
@@ -45,5 +46,14 @@ export const localStorageService = {
 
   hasTokens: (): boolean => {
     return !!(localStorageService.getAccessToken() && localStorageService.getRefreshToken());
+  },
+
+  getSlippage: (): number => {
+    const slippage = localStorage.getItem(STORAGE_KEYS.SLIPPAGE);
+    return slippage ? Number(slippage) : 0.01;
+  },
+
+  setSlippage: (slippage: number): void => {
+    localStorage.setItem(STORAGE_KEYS.SLIPPAGE, slippage.toString());
   },
 };
