@@ -138,9 +138,11 @@ export const useStrategyTransaction = ({
           vaults: vaultParams,
         });
 
+        const { blockhash } = await connection.getLatestBlockhash("confirmed");
         const vaultTxs = vaultTxsRaw.map((tx) => {
           const versionedTx = deserializeTransaction(tx.serializedTransaction ?? "");
-          versionedTx.message.recentBlockhash = tx.blockhash;
+          versionedTx.message.recentBlockhash = blockhash;
+          // versionedTx.message.recentBlockhash = tx.blockhash;
           return versionedTx;
         });
 
