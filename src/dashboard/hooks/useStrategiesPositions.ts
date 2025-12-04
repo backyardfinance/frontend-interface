@@ -43,7 +43,7 @@ export const useStrategiesPositions = () => {
           return acc + amountUSD;
         }, 0),
       }));
-  }, [userStrategies, vaults, userTokens.map]);
+  }, [userStrategies, vaults, userTokens]);
 
   return positions;
 };

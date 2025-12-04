@@ -123,13 +123,17 @@ export const StrategySetup = ({
       const depositTransaction = await createDepositTransactions({
         signer: walletAddress,
         type: CreateDepositTransactionsDtoTypeEnum.DEPOSIT,
-        vaults: Object.values(quotesParams).map((context) => ({
-          vaultId: context.vaultId,
-          inputMint: context.inputMint,
-          platform: "Jupiter",
-          outputMint: context.outputMint,
-          amount: context.amount,
-        })),
+        vaults: Object.values(quotesParams).map((context) => {
+          const swapAmountOutput =
+            quotes.find((quote) => quote.data?.inputMint === context.outputMint)?.data?.outAmount ?? context.amount;
+          return {
+            vaultId: context.vaultId,
+            inputMint: context.inputMint,
+            platform: "Jupiter",
+            outputMint: context.outputMint,
+            amount: swapAmountOutput,
+          };
+        }),
       });
       console.log(depositTransaction);
 

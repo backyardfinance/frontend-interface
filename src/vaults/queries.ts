@@ -8,15 +8,15 @@ type UseVaultsOptions = Omit<UseQueryOptions<VaultInfoResponse[], Error>, "query
 
 //TEMP FIX: remove this when the API is updated
 
-const vaultIdToMint = {
-  ["20bcbb4b-6db6-423c-bdd1-26c9b8fad24d"]: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  ["02cea256-d3f2-45ed-a750-6cd9e0e6a83b"]: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
-};
+// const vaultIdToMint = {
+//   ["20bcbb4b-6db6-423c-bdd1-26c9b8fad24d"]: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+//   ["46a5e9d6-2d3f-488b-b913-fd87aa4d319c"]: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+// };
 
-export const vaultIdToLp = {
-  ["20bcbb4b-6db6-423c-bdd1-26c9b8fad24d"]: "CcHiq8Z7iweXrXXcfrh66n8ugghDjggfsunBdm8MDaiJ",
-  ["02cea256-d3f2-45ed-a750-6cd9e0e6a83b"]: "9MHGzf767LATMwWrHKV1cXpo59phHgPTYKaDoibJPCtK",
-};
+// export const vaultIdToLp = {
+//   ["20bcbb4b-6db6-423c-bdd1-26c9b8fad24d"]: "CcHiq8Z7iweXrXXcfrh66n8ugghDjggfsunBdm8MDaiJ",
+//   ["46a5e9d6-2d3f-488b-b913-fd87aa4d319c"]: "9MHGzf767LATMwWrHKV1cXpo59phHgPTYKaDoibJPCtK",
+// };
 
 export const useVaults = (options?: UseVaultsOptions) => {
   return useQuery({
@@ -24,14 +24,14 @@ export const useVaults = (options?: UseVaultsOptions) => {
     queryFn: async () => {
       const { data } = await vaultApi.vaultControllerGetAllVaults();
 
-      const updatedVaults = data.map((vault) => {
-        return {
-          ...vault,
-          inputTokenMint: vaultIdToMint[vault.id as keyof typeof vaultIdToMint],
-        };
-      });
+      // const updatedVaults = data.map((vault) => {
+      //   return {
+      //     ...vault,
+      //     inputTokenMint: vaultIdToMint[vault.id as keyof typeof vaultIdToMint],
+      //   };
+      // });
 
-      return updatedVaults;
+      return data;
     },
     ...options,
   });
