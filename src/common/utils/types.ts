@@ -3,6 +3,6 @@ import type { VaultInfoResponse } from "@/api";
 export interface Strategy {
   id: string;
   vaults: VaultInfoResponse[];
-  depositAmount: number;
+  amount: number;
   totalAllocation: Record<string, number>;
 }

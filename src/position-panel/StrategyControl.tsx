@@ -35,7 +35,7 @@ export const StrategyControl = ({
   onAllocationChange,
   onRemoveVault,
 }: StrategyControlProps) => {
-  const { totalAllocation, depositAmount, vaults } = currentStrategy;
+  const { totalAllocation, amount: depositAmount, vaults } = currentStrategy;
   const totalAllocationArray = Object.values(totalAllocation);
   const totalAllocationEntries = Object.entries(totalAllocation);
   const totalAllocationSum = getTotalAllocation(totalAllocationArray);

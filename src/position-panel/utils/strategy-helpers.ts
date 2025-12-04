@@ -4,11 +4,11 @@ import type { Strategy } from "@/common/utils/types";
 export const calculateVaultAmounts = (
   vaults: VaultInfoResponse[],
   totalAllocation: Record<string, number>,
-  depositAmount: number
+  amount: number
 ): VaultInfoResponse[] => {
   return vaults.map((vault) => ({
     ...vault,
-    amount: (depositAmount / 100) * (totalAllocation[vault.id] || 0),
+    amount: (amount / 100) * (totalAllocation[vault.id] || 0),
   }));
 };
 
@@ -17,11 +17,11 @@ export const createEvenAllocation = (vaults: VaultInfoResponse[], vaultCount: nu
   return vaultCount > 0 ? Object.fromEntries(allocation.map((value) => [value.id, value.allocation])) : {};
 };
 
-export const updateDepositAmount = (strategy: Strategy, newDepositAmount: number): Strategy => {
+export const updateAmount = (strategy: Strategy, newamount: number): Strategy => {
   return {
     ...strategy,
-    depositAmount: newDepositAmount,
-    vaults: calculateVaultAmounts(strategy.vaults, strategy.totalAllocation, newDepositAmount),
+    amount: newamount,
+    vaults: calculateVaultAmounts(strategy.vaults, strategy.totalAllocation, newamount),
   };
 };
 
@@ -32,7 +32,7 @@ export const updateAllocation = (strategy: Strategy, vaultId: string, newAllocat
   return {
     ...strategy,
     totalAllocation: newTotalAllocation,
-    vaults: calculateVaultAmounts(strategy.vaults, newTotalAllocation, strategy.depositAmount),
+    vaults: calculateVaultAmounts(strategy.vaults, newTotalAllocation, strategy.amount),
   };
 };
 
@@ -43,8 +43,8 @@ export const addVaultToStrategy = (strategy: Strategy | null, vault: VaultInfoRe
 
   return {
     id: strategy?.id || "",
-    depositAmount: strategy?.depositAmount || 0,
-    vaults: calculateVaultAmounts(updatedVaults, newTotalAllocation, strategy?.depositAmount || 0),
+    amount: strategy?.amount || 0,
+    vaults: calculateVaultAmounts(updatedVaults, newTotalAllocation, strategy?.amount || 0),
     totalAllocation: newTotalAllocation,
   };
 };
@@ -55,7 +55,7 @@ export const removeVaultFromStrategy = (strategy: Strategy, vaultId: string): St
 
   return {
     ...strategy,
-    vaults: calculateVaultAmounts(updatedVaults, newTotalAllocation, strategy.depositAmount),
+    vaults: calculateVaultAmounts(updatedVaults, newTotalAllocation, strategy.amount),
     totalAllocation: newTotalAllocation,
   };
 };
@@ -78,14 +78,8 @@ export const getTotalAllocation = (allocation: number[] | undefined): number => 
 export const isStrategyValid = (strategy: Strategy | null): boolean => {
   if (!strategy) return false;
 
-  const { depositAmount, vaults } = strategy;
+  const { amount, vaults } = strategy;
   const totalAllocation = Object.values(strategy.totalAllocation);
   const totalAllocationSum = totalAllocation.reduce((acc, curr) => acc + curr, 0);
-  return (
-    depositAmount > 0 &&
-    vaults.length > 0 &&
-    totalAllocation &&
-    totalAllocation.length > 0 &&
-    totalAllocationSum === 100
-  );
+  return amount > 0 && vaults.length > 0 && totalAllocation && totalAllocation.length > 0 && totalAllocationSum === 100;
 };

@@ -18,7 +18,7 @@ import {
   removeVaultFromStrategy,
   toggleVaultInStrategy,
   updateAllocation,
-  updateDepositAmount,
+  updateAmount,
 } from "@/position-panel/utils/strategy-helpers";
 import { toVaultRoute } from "@/routes";
 import { TopVaults } from "@/vaults/components/TopVaults";
@@ -57,7 +57,7 @@ export default function VaultsPage() {
   const handleDepositAmountChange = useCallback((amount: number) => {
     setCurrentStrategy((prev) => {
       if (!prev) return null;
-      return updateDepositAmount(prev, amount);
+      return updateAmount(prev, amount);
     });
   }, []);
 
