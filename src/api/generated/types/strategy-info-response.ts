@@ -48,10 +48,25 @@ export interface StrategyInfoResponse {
      */
     'strategyApy': number;
     /**
+     * 
+     * @type {string}
+     * @memberof StrategyInfoResponse
+     */
+    'strategyStatus': StrategyInfoResponseStrategyStatusEnum;
+    /**
      * List of vaults that is used in this strategy
      * @type {Array<StrategyVaultInfo>}
      * @memberof StrategyInfoResponse
      */
     'vaults': Array<StrategyVaultInfo>;
 }
+
+export const StrategyInfoResponseStrategyStatusEnum = {
+    PROCESSING: 'PROCESSING',
+    CONFIRMED: 'CONFIRMED',
+    FAILED: 'FAILED'
+} as const;
+
+export type StrategyInfoResponseStrategyStatusEnum = typeof StrategyInfoResponseStrategyStatusEnum[keyof typeof StrategyInfoResponseStrategyStatusEnum];
+
 

@@ -13,7 +13,6 @@ export const DashboardTable = () => {
   const positions = useStrategiesPositions();
   const navigate = useNavigate();
   const headers = ["Strategy ID", "Allocation", "My position", "APY"];
-  console.log("positions", positions);
   const rows = useMemo(
     () =>
       positions.map((item) => [

@@ -17,14 +17,20 @@
 /**
  * 
  * @export
- * @interface CreateStrategyResponseDto
+ * @interface VaultConfirmation
  */
-export interface CreateStrategyResponseDto {
+export interface VaultConfirmation {
     /**
      * 
      * @type {string}
-     * @memberof CreateStrategyResponseDto
+     * @memberof VaultConfirmation
      */
-    'id': string;
+    'vaultId': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof VaultConfirmation
+     */
+    'signature': string;
 }
 

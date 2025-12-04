@@ -1,7 +1,4 @@
-import { useConnection } from "@solana/wallet-adapter-react";
-import { SendTransactionError, VersionedTransaction } from "@solana/web3.js";
 import Big from "big.js";
-// import { BN } from "bn.js";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CreateDepositTransactionsDtoTypeEnum, type UserTokenView } from "@/api";
 import { TokenInputComponent } from "@/common/components/token-input";
@@ -19,10 +16,7 @@ import { VaultAllocationCard } from "@/position-panel/components/VaultAllocation
 import { getTotalAllocation } from "@/position-panel/utils/strategy-helpers";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
 import { useUserTokens } from "@/solana/hooks/useUserTokens";
-import { useCreateDepositTransactions, useCreateStrategy } from "@/strategy/queries";
-
-// import { useGetDepositTransactions } from "@/transactions/queries";
-// import { vaultIdToLp } from "@/vaults/queries";
+import { useStrategyTransaction } from "./hooks/useStrategyTransaction";
 
 interface StrategySetupProps {
   currentStrategy: Strategy;
@@ -44,15 +38,9 @@ export const StrategySetup = ({
   const { totalAllocation, depositAmount, vaults } = currentStrategy;
   const totalAllocationArray = Object.values(totalAllocation);
   const totalAllocationEntries = Object.entries(totalAllocation);
-  const { address: walletAddress, signTransaction, signAllTransactions } = useSolanaWallet();
+  const { address: walletAddress } = useSolanaWallet();
   const [selectedAsset, setSelectedAsset] = useState<UserTokenView | null>(null);
   const { userTokens, isLoading: isUserTokensLoading } = useUserTokens();
-  const [isLoading, setIsLoading] = useState(false);
-  const { connection } = useConnection();
-
-  // const { mutateAsync: executeSwap } = useJupiterSwapExecute();
-  const { mutateAsync: createDepositTransactions } = useCreateDepositTransactions();
-  const { mutateAsync: createStrategy } = useCreateStrategy();
 
   useEffect(() => {
     if (!isUserTokensLoading && userTokens.arr.length > 0) {
@@ -63,15 +51,24 @@ export const StrategySetup = ({
   const quotesParams = useMemo(() => {
     return totalAllocationEntries.reduce(
       (acc, [vaultId, amount], index) => {
+        const vaultInputMint = vaults[index].inputTokenMint;
+        const selectedMint = selectedAsset?.mint ?? "";
+
+        const needsSwap = selectedMint !== vaultInputMint;
+
+        if (!needsSwap) return acc;
+
+        //TODO: we should use big for that
+        const swapAmount = (depositAmount * amount) / 100;
+        const swapDecimals = Number(parseUnits(swapAmount.toString(), selectedAsset?.decimals ?? 0));
+        const accAmount = Number(acc[vaultId]?.amount ?? 0);
+
         return Object.assign(acc, {
           [vaultId]: {
             vaultId: vaultId,
-            inputMint: selectedAsset?.mint ?? "",
-            outputMint: vaults[index].inputTokenMint,
-            amount: parseUnits(
-              (depositAmount * amount) / 100 + (acc[vaultId]?.amount ?? 0),
-              selectedAsset?.decimals ?? 0
-            ).toString(),
+            inputMint: selectedMint,
+            outputMint: vaultInputMint,
+            amount: (swapDecimals + accAmount).toFixed(),
           },
         });
       },
@@ -80,10 +77,22 @@ export const StrategySetup = ({
   }, [depositAmount, selectedAsset?.mint, totalAllocationEntries, vaults]);
 
   const sufficientBalance = Big(selectedAsset?.uiAmount.toString() || "0").gte(depositAmount);
-  //TODO: inputMint cannot be same as outputMint
+
   const quotes = useJupiterMultipleQuotes(Object.values(quotesParams), {
     enabled: sufficientBalance && Object.values(quotesParams).length > 0,
   });
+
+  const { handleTransaction, isLoading: isStrategyTransactionLoading } = useStrategyTransaction({
+    quotes,
+    totalAllocationEntries,
+    vaults,
+    selectedAsset,
+    depositAmount,
+    onConfirm: () => {
+      onDepositAmountChange(0);
+    },
+  });
+
   console.log("Quotes:", { response: quotes.map((quote) => quote.data), request: quotesParams });
   const totalAllocationSum = getTotalAllocation(totalAllocationArray);
   const isAllocationError = totalAllocationSum > 100;
@@ -103,124 +112,113 @@ export const StrategySetup = ({
   }, [depositAmount, averageApy]);
 
   const handleDeposit = useCallback(async () => {
-    if (!walletAddress || !signTransaction) return;
+    handleTransaction(CreateDepositTransactionsDtoTypeEnum.DEPOSIT);
+    // if (!walletAddress || !signTransaction) return;
 
-    setIsLoading(true);
-    try {
-      const swapTransactions = quotes
-        .filter((quote) => quote?.data?.transaction)
-        .reduce(
-          (acc, quote) => {
-            return Object.assign(acc, {
-              [quote.data?.requestId ?? ""]: VersionedTransaction.deserialize(
-                Buffer.from(quote.data?.transaction ?? "", "base64")
-              ),
-            });
-          },
-          {} as Record<string, VersionedTransaction>
-        );
+    // setIsLoading(true);
+    // try {
+    //   const swapTransactions = quotes
+    //     .filter((quote) => quote?.data?.transaction)
+    //     .reduce(
+    //       (acc, quote) => {
+    //         return Object.assign(acc, {
+    //           [quote.data?.requestId ?? ""]: VersionedTransaction.deserialize(
+    //             Buffer.from(quote.data?.transaction ?? "", "base64")
+    //           ),
+    //         });
+    //       },
+    //       {} as Record<string, VersionedTransaction>
+    //     );
 
-      const depositTransaction = await createDepositTransactions({
-        signer: walletAddress,
-        type: CreateDepositTransactionsDtoTypeEnum.DEPOSIT,
-        vaults: Object.values(quotesParams).map((context) => {
-          const swapAmountOutput =
-            quotes.find((quote) => quote.data?.inputMint === context.outputMint)?.data?.outAmount ?? context.amount;
-          return {
-            vaultId: context.vaultId,
-            inputMint: context.inputMint,
-            platform: "Jupiter",
-            outputMint: context.outputMint,
-            amount: swapAmountOutput,
-          };
-        }),
-      });
-      console.log(depositTransaction);
+    //   const depositTransaction = await createDepositTransactions({
+    //     signer: walletAddress,
+    //     type: CreateDepositTransactionsDtoTypeEnum.DEPOSIT,
+    //     vaults: Object.values(quotesParams).map((context) => {
+    //       const swapAmountOutput =
+    //         quotes.find((quote) => quote.data?.inputMint === context.outputMint)?.data?.outAmount ?? context.amount;
+    //       return {
+    //         vaultId: context.vaultId,
+    //         inputMint: context.inputMint,
+    //         platform: "Jupiter",
+    //         outputMint: context.outputMint,
+    //         amount: swapAmountOutput,
+    //       };
+    //     }),
+    //   });
+    //   console.log(depositTransaction);
 
-      const newBlockhash = await connection.getLatestBlockhash("confirmed");
-      const depositTxs = depositTransaction.map((tx) => {
-        const versionedTransaction = VersionedTransaction.deserialize(
-          Buffer.from(tx.serializedTransaction ?? "", "base64")
-        );
-        versionedTransaction.message.recentBlockhash = newBlockhash.blockhash;
-        return versionedTransaction;
-      });
+    //   const newBlockhash = await connection.getLatestBlockhash("confirmed");
+    //   const depositTxs = depositTransaction.transactions.map((tx) => {
+    //     const versionedTransaction = VersionedTransaction.deserialize(Buffer.from(tx ?? "", "base64"));
+    //     versionedTransaction.message.recentBlockhash = newBlockhash.blockhash;
+    //     return versionedTransaction;
+    //   });
 
-      const signedTransactions = await signAllTransactions([
-        ...Object.values(swapTransactions).map((transaction) => transaction),
-        ...depositTxs,
-      ]);
+    //   const signedTransactions = await signAllTransactions([
+    //     ...Object.values(swapTransactions).map((transaction) => transaction),
+    //     ...depositTxs,
+    //   ]);
 
-      if (!signedTransactions) throw new Error("Failed to sign transactions");
+    //   if (!signedTransactions) throw new Error("Failed to sign transactions");
 
-      // try {
-      //   const bundle = await Promise.all(
-      //     signedTransactions.slice(0, Object.values(swapTransactions).length).map((tx, index) =>
-      //       executeSwap({
-      //         signedTransaction: Buffer.from(tx.serialize()).toString("base64"),
-      //         requestId: requestIds[index],
-      //       })
-      //     )
-      //   );
-      //   console.log(bundle);
-      // } catch (error) {
-      //   console.error("Execute error:", error);
-      // }
+    //   // try {
+    //   //   const bundle = await Promise.all(
+    //   //     signedTransactions.slice(0, Object.values(swapTransactions).length).map((tx, index) =>
+    //   //       executeSwap({
+    //   //         signedTransaction: Buffer.from(tx.serialize()).toString("base64"),
+    //   //         requestId: requestIds[index],
+    //   //       })
+    //   //     )
+    //   //   );
+    //   //   console.log(bundle);
+    //   // } catch (error) {
+    //   //   console.error("Execute error:", error);
+    //   // }
 
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+    //   await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      const txs = await Promise.all(
-        signedTransactions.slice(Object.values(swapTransactions).length).map((tx) => connection.sendTransaction(tx))
-      );
+    //   const txs = await Promise.all(
+    //     signedTransactions.slice(Object.values(swapTransactions).length).map((tx) => connection.sendTransaction(tx))
+    //   );
 
-      await createStrategy({
-        name: "Strategy " + Date.now(),
-        walletAddress,
-        vaultDeposits: Object.values(quotesParams).reduce(
-          (acc, curr) => {
-            return Object.assign(acc, {
-              [curr.vaultId]: curr.amount,
-            });
-          },
-          {} as Record<string, number>
-        ),
-      });
+    //   await createStrategy({
+    //     name: "Strategy " + Date.now(),
+    //     walletAddress,
+    //     vaultDeposits: Object.values(quotesParams).reduce(
+    //       (acc, curr) => {
+    //         return Object.assign(acc, {
+    //           [curr.vaultId]: curr.amount,
+    //         });
+    //       },
+    //       {} as Record<string, number>
+    //     ),
+    //   });
 
-      console.log(txs);
-      // if (!bundle) throw new Error("Failed to send transactions");
+    //   console.log(txs);
+    //   // if (!bundle) throw new Error("Failed to send transactions");
 
-      console.log("Bundle sent:");
-    } catch (error) {
-      if (error instanceof SendTransactionError) {
-        const logs = await error.getLogs(connection);
-        console.error("Simulation logs:", logs, "\n\n", error);
-      } else {
-        console.error("Deposit error:", error);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-    walletAddress,
-    signTransaction,
-    quotes,
-    quotesParams,
-    connection,
-    signAllTransactions,
-    createDepositTransactions,
-    createStrategy,
-  ]);
+    //   console.log("Bundle sent:");
+    // } catch (error) {
+    //   if (error instanceof SendTransactionError) {
+    //     const logs = await error.getLogs(connection);
+    //     console.error("Simulation logs:", logs, "\n\n", error);
+    //   } else {
+    //     console.error("Deposit error:", error);
+    //   }
+    // } finally {
+    //   setIsLoading(false);
+    // }
+  }, [handleTransaction]);
 
   const isDepositDisabled =
-    isLoading ||
     !depositAmount ||
     !totalAllocationArray?.length ||
     !vaults?.length ||
     !selectedAsset ||
     !walletAddress ||
-    isAllocationError;
+    isAllocationError ||
+    isStrategyTransactionLoading;
 
-  console.log("totalAllocation", totalAllocation);
   return (
     <div className="flex flex-col gap-[13px] rounded-3xl border border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
       <div className="flex flex-row items-start justify-between font-bold text-neutral-800 text-sm">
@@ -323,7 +321,7 @@ export const StrategySetup = ({
 
       <div className="flex flex-col gap-[9px] rounded-2xl border border-zinc-100 bg-white">
         <Button disabled={isDepositDisabled} onClick={handleDeposit} size="xl" variant="tertiary">
-          {isLoading ? (
+          {isStrategyTransactionLoading ? (
             "Processing..."
           ) : walletAddress ? (
             <>

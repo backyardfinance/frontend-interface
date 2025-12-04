@@ -62,5 +62,17 @@ export interface StrategyVaultInfo {
      * @memberof StrategyVaultInfo
      */
     'depositedAmount': number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof StrategyVaultInfo
+     */
+    'isConfirmed': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof StrategyVaultInfo
+     */
+    'signature': string;
 }
 

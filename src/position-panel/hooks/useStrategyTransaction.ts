@@ -1,12 +1,13 @@
 import { SendTransactionError, VersionedTransaction } from "@solana/web3.js";
 import Big from "big.js";
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 import { CreateDepositTransactionsDtoTypeEnum, type UserTokenView, type VaultInfoResponse } from "@/api";
 import { parseUnits } from "@/common/utils/format";
 import type { JupiterSwap } from "@/jupiter/api";
 import { useJupiterSwapExecute } from "@/jupiter/queries/useJupiterSwap";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
-import { useCreateDepositTransactions } from "@/strategy/queries";
+import { useCreateDepositTransactions, useStrategyConfirm } from "@/strategy/queries";
 
 interface SwapTransaction {
   requestId: string;
@@ -19,6 +20,7 @@ interface UseStrategyTransactionOptions {
   vaults: VaultInfoResponse[];
   selectedAsset: UserTokenView | null;
   depositAmount: number;
+  onConfirm?: () => void;
 }
 
 const deserializeTransaction = (base64: string): VersionedTransaction => {
@@ -47,7 +49,8 @@ const buildVaultParams = (
   vaults: VaultInfoResponse[],
   selectedMint: string,
   depositAmount: number,
-  actionType: CreateDepositTransactionsDtoTypeEnum
+  actionType: CreateDepositTransactionsDtoTypeEnum,
+  quotes: { data?: JupiterSwap.OrderGet200Response; error?: unknown }[]
 ) => {
   const isDeposit = actionType === CreateDepositTransactionsDtoTypeEnum.DEPOSIT;
   // TODO: add token decimals support
@@ -58,12 +61,18 @@ const buildVaultParams = (
     const vaultInputMint = vault.inputTokenMint;
     const vaultAmount = Big(depositAmountInMint).mul(Big(allocation).div(100)).toFixed();
 
+    const swapAmount =
+      quotes?.find((quote) => quote.data?.inputMint === vaultInputMint)?.data?.outAmount ?? vaultAmount;
+
+    console.log("swapAmount", swapAmount);
+    console.log("quotes", quotes?.find((quote) => quote.data?.inputMint === vaultInputMint)?.data);
+
     return {
       vaultId,
       inputMint: isDeposit ? selectedMint : vaultInputMint,
       outputMint: isDeposit ? vaultInputMint : selectedMint,
       platform: "Jupiter", // TODO: change to the actual platform
-      amount: vaultAmount,
+      amount: isDeposit ? swapAmount : vaultAmount,
     };
   });
 };
@@ -74,9 +83,11 @@ export const useStrategyTransaction = ({
   vaults,
   selectedAsset,
   depositAmount,
+  onConfirm,
 }: UseStrategyTransactionOptions) => {
   const { address: walletAddress, signAllTransactions, connection } = useSolanaWallet();
   const { mutateAsync: createDepositTransactions } = useCreateDepositTransactions();
+  const { mutateAsync: confirmStrategy } = useStrategyConfirm();
   const { mutateAsync: executeSwap } = useJupiterSwapExecute();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -130,7 +141,14 @@ export const useStrategyTransaction = ({
         const hasSwaps = swapTransactions.length > 0;
 
         // 2. Build vault params and create vault transactions
-        const vaultParams = buildVaultParams(totalAllocationEntries, vaults, selectedMint, depositAmount, actionType);
+        const vaultParams = buildVaultParams(
+          totalAllocationEntries,
+          vaults,
+          selectedMint,
+          depositAmount,
+          actionType,
+          isDeposit ? quotes : []
+        );
 
         const vaultTxsRaw = await createDepositTransactions({
           signer: walletAddress,
@@ -139,10 +157,9 @@ export const useStrategyTransaction = ({
         });
 
         const { blockhash } = await connection.getLatestBlockhash("confirmed");
-        const vaultTxs = vaultTxsRaw.map((tx) => {
+        const vaultTxs = vaultTxsRaw.transactions.map((tx) => {
           const versionedTx = deserializeTransaction(tx.serializedTransaction ?? "");
           versionedTx.message.recentBlockhash = blockhash;
-          // versionedTx.message.recentBlockhash = tx.blockhash;
           return versionedTx;
         });
 
@@ -171,6 +188,15 @@ export const useStrategyTransaction = ({
             signedVaultTxs,
             CreateDepositTransactionsDtoTypeEnum.DEPOSIT
           );
+          await new Promise((resolve) => setTimeout(resolve, 10000));
+
+          await confirmStrategy({
+            strategyId: vaultTxsRaw.strategyId,
+            vaults: vaultSignatures.map((tx, index) => ({
+              vaultId: vaultParams[index].vaultId,
+              signature: tx,
+            })),
+          });
         } else {
           const signedVaultTxs = signedTransactions.slice(0, vaultTxs.length);
           const signedSwapTxs = signedTransactions.slice(vaultTxs.length);
@@ -182,15 +208,25 @@ export const useStrategyTransaction = ({
           if (hasSwaps) {
             await executeSwapTransactions(swapTransactions, signedSwapTxs);
           }
+          await confirmStrategy({
+            strategyId: vaultTxsRaw.strategyId,
+            vaults: vaultSignatures.map((tx, index) => ({
+              vaultId: vaultParams[index].vaultId,
+              signature: tx,
+            })),
+          });
         }
 
+        onConfirm?.();
         console.log(`${actionType} completed successfully`, { vaultSignatures });
+        toast.success(`${actionType} completed successfully`);
       } catch (error) {
         if (error instanceof SendTransactionError) {
           const logs = await error.getLogs(connection);
           console.error("Simulation logs:", logs, "\n\n", error);
         }
         console.error(`${actionType} error:`, error);
+        toast.error(`${actionType} failed`);
         throw error;
       } finally {
         setIsLoading(false);
@@ -208,6 +244,8 @@ export const useStrategyTransaction = ({
       executeSwapTransactions,
       executeVaultTransactions,
       connection,
+      confirmStrategy,
+      onConfirm,
     ]
   );
 

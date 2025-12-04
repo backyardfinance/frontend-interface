@@ -7,7 +7,7 @@ export const SOLANA_ENDPOINT =
 // -----------------------------------------------------------------------------------------------
 // --------------------------------- Jupiter Ultra Swap API --------------------------------------
 // -----------------------------------------------------------------------------------------------
-export const JUPITER_API_URL = import.meta.env.VITE_PUBLIC_JUPITER_API_URL ?? "https://lite-api.jup.ag";
+export const JUPITER_API_URL = import.meta.env.VITE_PUBLIC_JUPITER_API_URL ?? "https://api.jup.ag";
 export const JUPITER_API_KEY = import.meta.env.VITE_PUBLIC_JUPITER_API_KEY ?? "a83043f8-aee9-4238-9748-29bc8281f084";
 
 // -----------------------------------------------------------------------------------------------
