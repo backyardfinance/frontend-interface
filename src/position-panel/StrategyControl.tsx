@@ -19,19 +19,23 @@ import { getTotalAllocation } from "@/position-panel/utils/strategy-helpers";
 import { useUserTokens } from "@/solana/hooks/useUserTokens";
 
 interface StrategyControlProps {
-  currentStrategy: Strategy & { depositedAmount: number };
-  onDepositAmountChange: (amount: number) => void;
+  currentStrategy: Strategy;
   slippage: number;
+  onDepositAmountChange: (amount: number) => void;
   onSlippageChange: (slippage: number) => void;
+  onAllocationChange: (vaultId: string, amount: number) => void;
+  onRemoveVault: (vaultId: string) => void;
 }
 
 export const StrategyControl = ({
   currentStrategy,
-  onDepositAmountChange,
   slippage,
+  onDepositAmountChange,
   onSlippageChange,
+  onAllocationChange,
+  onRemoveVault,
 }: StrategyControlProps) => {
-  const { totalAllocation, depositAmount, vaults, depositedAmount } = currentStrategy;
+  const { totalAllocation, depositAmount, vaults } = currentStrategy;
   const totalAllocationArray = Object.values(totalAllocation);
   const totalAllocationEntries = Object.entries(totalAllocation);
   const totalAllocationSum = getTotalAllocation(totalAllocationArray);
@@ -92,8 +96,8 @@ export const StrategyControl = ({
 
   const estAnnualReturn = useMemo(() => {
     if (!averageApy) return 0;
-    return (depositedAmount + depositAmount) * (averageApy / 100);
-  }, [depositAmount, averageApy, depositedAmount]);
+    return depositAmount * (averageApy / 100);
+  }, [depositAmount, averageApy]);
 
   const { handleTransaction, isLoading, walletAddress } = useStrategyTransaction({
     quotes,
@@ -157,9 +161,11 @@ export const StrategyControl = ({
           {vaults.map((vault) => (
             <VaultAllocationCard
               allocation={totalAllocation[vault.id]}
-              depositAmount={((depositedAmount + depositAmount) / 100) * (totalAllocation[vault.id] || 0)}
+              depositAmount={(depositAmount / 100) * (totalAllocation[vault.id] || 0)}
               isAllocationError={isAllocationError}
               key={vault.id}
+              removeVaultFromStrategy={onRemoveVault}
+              setAllocation={(amount) => onAllocationChange(vault.id, amount)}
               vault={vault}
             />
           ))}
@@ -202,7 +208,7 @@ export const StrategyControl = ({
 
       <div className="flex w-full flex-col justify-start gap-[3px]">
         <SummaryRow
-          amount={depositedAmount + depositAmount}
+          amount={depositAmount}
           label="Total deposited"
           symbol={selectedAsset?.symbol}
           usdPrice={selectedAsset?.usdPrice}
