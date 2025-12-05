@@ -11,7 +11,7 @@ export const removeTrailingZeros = (amount: string) => {
  * @example
  * parseUnits("1000", 18) = "10000000000000000000"
  */
-export const parseUnits = (value: string, decimals: number, precision = 0) => {
+export const parseUnits = (value: string, decimals: number, precision?: number) => {
   try {
     return Big(value).mul(Big(10).pow(decimals)).toFixed(precision);
   } catch {
@@ -24,6 +24,7 @@ export const parseUnits = (value: string, decimals: number, precision = 0) => {
  * formatUnits("420000000000", 9) = "42"
  */
 export const formatUnits = (value: string, decimals: number, precision = 4) => {
+  //TODO: check if this creates problems
   try {
     return removeTrailingZeros(Big(value).div(Big(10).pow(decimals)).toFixed(precision));
   } catch {

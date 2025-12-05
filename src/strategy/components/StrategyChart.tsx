@@ -1,18 +1,15 @@
 import { useMemo, useState } from "react";
-import type { StrategyVaultInfo, UserTokenView, VaultInfoResponse } from "@/api";
 import { ChartArea } from "@/common/components/charts/ChartArea";
 import { ChartPieDonut } from "@/common/components/charts/ChartPieDonut";
 import { Tabs, TabsList, TabsTrigger } from "@/common/components/ui/tabs";
 import { buildChartDataByKey } from "@/common/utils/calculations";
+import type { StrategyPosition } from "@/strategy/hooks/useStrategyPosition";
 
 const positionMetrics = ["performance", "apy", "exposure"] as const;
 type MetricType = (typeof positionMetrics)[number];
 
 type Props = {
-  strategy: {
-    vaults: (VaultInfoResponse & StrategyVaultInfo & { token: UserTokenView })[];
-    strategyDepositedAmount: number;
-  };
+  strategy: StrategyPosition;
 };
 
 export const StrategyChart: React.FC<Props> = ({ strategy }) => {
@@ -81,11 +78,11 @@ export const StrategyChart: React.FC<Props> = ({ strategy }) => {
                   { date: "2025-11-26", [selectedMetric]: 0 },
                   { date: "2025-11-27", [selectedMetric]: 0 },
                   { date: "2025-11-28", [selectedMetric]: 0 },
-                  { date: "2025-11-29", [selectedMetric]: 1000 },
+                  { date: "2025-11-29", [selectedMetric]: strategy.strategyDepositedAmountUi },
                 ]
           }
           title={selectedMetric}
-          value={selectedMetric === "apy" ? "9.5%" : "1k"}
+          value={selectedMetric === "apy" ? "9.5%" : `$${strategy.strategyDepositedAmountUi.toFixed(2)}`}
           valueTooltip="APY"
         />
       )}

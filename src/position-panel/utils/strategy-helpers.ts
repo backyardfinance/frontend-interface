@@ -4,11 +4,11 @@ import type { Strategy } from "@/common/utils/types";
 export const calculateVaultAmounts = (
   vaults: VaultInfoResponse[],
   totalAllocation: Record<string, number>,
-  depositAmount: number
+  amount: number
 ): VaultInfoResponse[] => {
   return vaults.map((vault) => ({
     ...vault,
-    amount: (depositAmount / 100) * (totalAllocation[vault.id] || 0),
+    amount: (amount / 100) * (totalAllocation[vault.id] || 0),
   }));
 };
 
@@ -17,7 +17,7 @@ export const createEvenAllocation = (vaults: VaultInfoResponse[], vaultCount: nu
   return vaultCount > 0 ? Object.fromEntries(allocation.map((value) => [value.id, value.allocation])) : {};
 };
 
-export const updateDepositAmount = (strategy: Strategy, newDepositAmount: number): Strategy => {
+export const updateAmount = (strategy: Strategy, newDepositAmount: number): Strategy => {
   return {
     ...strategy,
     depositAmount: newDepositAmount,
@@ -60,11 +60,12 @@ export const removeVaultFromStrategy = (strategy: Strategy, vaultId: string): St
   };
 };
 
-export const toggleVaultInStrategy = (strategy: Strategy | null, vault: VaultInfoResponse): Strategy => {
+export const toggleVaultInStrategy = (strategy: Strategy | null, vault: VaultInfoResponse): Strategy | null => {
   const existingVaults = strategy?.vaults || [];
   const isVaultInStrategy = existingVaults.some((v) => v.id === vault.id);
 
   if (isVaultInStrategy) {
+    if (existingVaults.length === 1) return null;
     return removeVaultFromStrategy(strategy as Strategy, vault.id);
   }
 
@@ -73,19 +74,4 @@ export const toggleVaultInStrategy = (strategy: Strategy | null, vault: VaultInf
 
 export const getTotalAllocation = (allocation: number[] | undefined): number => {
   return allocation?.reduce((acc, curr) => acc + curr, 0) || 0;
-};
-
-export const isStrategyValid = (strategy: Strategy | null): boolean => {
-  if (!strategy) return false;
-
-  const { depositAmount, vaults } = strategy;
-  const totalAllocation = Object.values(strategy.totalAllocation);
-  const totalAllocationSum = totalAllocation.reduce((acc, curr) => acc + curr, 0);
-  return (
-    depositAmount > 0 &&
-    vaults.length > 0 &&
-    totalAllocation &&
-    totalAllocation.length > 0 &&
-    totalAllocationSum === 100
-  );
 };

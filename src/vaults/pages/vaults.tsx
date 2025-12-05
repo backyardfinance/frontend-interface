@@ -1,15 +1,15 @@
-import { MinusIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import type { VaultInfoResponse } from "@/api";
 import { getPlatformImage } from "@/common/assets/platforms";
 import { getVaultTokenImage } from "@/common/assets/tokens";
 import { Table } from "@/common/components/table";
+import { TogglePlusMinusButton } from "@/common/components/toggle-plus-minus-button";
 import { Input } from "@/common/components/ui/input";
 import { formatNumber } from "@/common/utils";
 import type { Strategy } from "@/common/utils/types";
 import Logo from "@/icons/backyard-logo.svg";
-import { PlusIcon } from "@/icons/plus";
+
 import PlusThickIcon from "@/icons/plus-thick.svg?react";
 import { SearchIcon } from "@/icons/search";
 import { StarsIcon } from "@/icons/stars";
@@ -18,7 +18,7 @@ import {
   removeVaultFromStrategy,
   toggleVaultInStrategy,
   updateAllocation,
-  updateDepositAmount,
+  updateAmount,
 } from "@/position-panel/utils/strategy-helpers";
 import { toVaultRoute } from "@/routes";
 import { TopVaults } from "@/vaults/components/TopVaults";
@@ -57,7 +57,7 @@ export default function VaultsPage() {
   const handleDepositAmountChange = useCallback((amount: number) => {
     setCurrentStrategy((prev) => {
       if (!prev) return null;
-      return updateDepositAmount(prev, amount);
+      return updateAmount(prev, amount);
     });
   }, []);
 
@@ -132,19 +132,7 @@ export default function VaultsPage() {
         <Table
           action={(rowIndex: number) => {
             const isAdded = currentStrategy?.vaults.find((v) => v.id === vaults?.[rowIndex].id);
-            return (
-              <button
-                className="flex min-h-[27px] min-w-[27px] cursor-pointer items-center justify-center border-none bg-transparent p-0"
-                onClick={(e) => handleAdd(e, rowIndex)}
-                type="button"
-              >
-                {!isAdded ? (
-                  <PlusIcon className="h-3.5 w-3.5" />
-                ) : (
-                  <MinusIcon className="h-3.5 w-3.5" stroke="#979797" />
-                )}
-              </button>
-            );
+            return <TogglePlusMinusButton handleToggle={(e) => handleAdd(e, rowIndex)} isAdded={!!isAdded} />;
           }}
           handleRowClick={handleRowClick}
           headers={headers}

@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { CreateDepositTransactionsDtoTypeEnum, type UserTokenView } from "@/api";
 import { TokenInputComponent } from "@/common/components/token-input";
 import { Button } from "@/common/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/common/components/ui/tabs";
 import { cn } from "@/common/utils";
 import { displayAmount } from "@/common/utils/format";
 import type { Strategy } from "@/common/utils/types";
@@ -11,39 +10,32 @@ import { InfoCircleIcon } from "@/icons/info-circle";
 import { useJupiterMultipleQuotes } from "@/jupiter/queries/useJupiterSwap";
 import { FeesDisplay } from "@/position-panel/components/FeesDisplay";
 import { RouteDisplay } from "@/position-panel/components/RouteDisplay";
-import { SlippageSettings } from "@/position-panel/components/SlippageSettings";
 import { SummaryRow } from "@/position-panel/components/SummaryRow";
 import { VaultAllocationCard } from "@/position-panel/components/VaultAllocationCard";
 import { useStrategyTransaction } from "@/position-panel/hooks/useStrategyTransaction";
 import { getTotalAllocation } from "@/position-panel/utils/strategy-helpers";
 import { useUserTokens } from "@/solana/hooks/useUserTokens";
 
-interface StrategyControlProps {
+interface StrategyDepositProps {
   currentStrategy: Strategy;
-  slippage: number;
   onDepositAmountChange: (amount: number) => void;
-  onSlippageChange: (slippage: number) => void;
   onAllocationChange: (vaultId: string, amount: number) => void;
   onRemoveVault: (vaultId: string) => void;
 }
 
-export const StrategyControl = ({
+export const StrategyDeposit = ({
   currentStrategy,
-  slippage,
   onDepositAmountChange,
-  onSlippageChange,
   onAllocationChange,
   onRemoveVault,
-}: StrategyControlProps) => {
+}: StrategyDepositProps) => {
   const { totalAllocation, depositAmount, vaults } = currentStrategy;
   const totalAllocationArray = Object.values(totalAllocation);
   const totalAllocationEntries = Object.entries(totalAllocation);
   const totalAllocationSum = getTotalAllocation(totalAllocationArray);
   const isAllocationError = totalAllocationSum > 100;
+
   const [selectedAsset, setSelectedAsset] = useState<UserTokenView | null>(null);
-  const [currentAction, setCurrentAction] = useState<CreateDepositTransactionsDtoTypeEnum>(
-    CreateDepositTransactionsDtoTypeEnum.DEPOSIT
-  );
 
   const { userTokens, isLoading: isUserTokensLoading } = useUserTokens();
 
@@ -69,15 +61,15 @@ export const StrategyControl = ({
         return Object.assign(acc, {
           [vaultId]: {
             vaultId: vaultId,
-            inputMint: currentAction === CreateDepositTransactionsDtoTypeEnum.DEPOSIT ? selectedMint : vaultInputMint,
-            outputMint: currentAction === CreateDepositTransactionsDtoTypeEnum.DEPOSIT ? vaultInputMint : selectedMint,
+            inputMint: selectedMint,
+            outputMint: vaultInputMint,
             amount: (swapAmount + accAmount).toFixed(),
           },
         });
       },
       {} as Record<string, { vaultId: string; inputMint: string; outputMint: string; amount: string }>
     );
-  }, [depositAmount, selectedAsset?.mint, totalAllocationEntries, vaults, currentAction]);
+  }, [depositAmount, selectedAsset?.mint, totalAllocationEntries, vaults]);
 
   const sufficientBalance = Big(selectedAsset?.uiAmount.toString() || "0").gte(depositAmount);
 
@@ -105,11 +97,14 @@ export const StrategyControl = ({
     vaults,
     selectedAsset,
     depositAmount,
+    onConfirm: () => {
+      onDepositAmountChange(0);
+    },
   });
 
   const handleDepositWithdraw = useCallback(() => {
-    handleTransaction(currentAction);
-  }, [handleTransaction, currentAction]);
+    handleTransaction(CreateDepositTransactionsDtoTypeEnum.DEPOSIT);
+  }, [handleTransaction]);
 
   const isDepositDisabled =
     !depositAmount ||
@@ -121,21 +116,7 @@ export const StrategyControl = ({
     isLoading;
 
   return (
-    <div className="flex flex-col gap-[13px] rounded-3xl border border-neutral-100 bg-neutral-50 px-[16px] py-[16px] pb-[23px] align-start">
-      <div className="flex flex-row items-start justify-between font-bold text-neutral-800 text-sm">
-        <Tabs
-          onValueChange={(val) => setCurrentAction(val as CreateDepositTransactionsDtoTypeEnum)}
-          value={currentAction}
-          variant="gray"
-        >
-          <TabsList>
-            <TabsTrigger value={CreateDepositTransactionsDtoTypeEnum.DEPOSIT}>Deposit</TabsTrigger>
-            <TabsTrigger value={CreateDepositTransactionsDtoTypeEnum.WITHDRAW}>Withdraw</TabsTrigger>
-          </TabsList>
-        </Tabs>
-        <SlippageSettings onSlippageChange={onSlippageChange} slippage={slippage} />
-      </div>
-
+    <>
       <TokenInputComponent
         assets={userTokens.arr}
         currentValue={depositAmount}
@@ -232,8 +213,7 @@ export const StrategyControl = ({
         <Button disabled={isDepositDisabled} onClick={handleDepositWithdraw} size="xl" variant="tertiary">
           {walletAddress ? (
             <>
-              {currentAction === CreateDepositTransactionsDtoTypeEnum.DEPOSIT ? "Deposit" : "Withdraw"} {depositAmount}{" "}
-              {selectedAsset?.symbol}{" "}
+              Deposit {depositAmount} {selectedAsset?.symbol}{" "}
               {selectedAsset?.icon && (
                 <img alt={selectedAsset?.symbol} className="size-[14px]" src={selectedAsset?.icon} />
               )}
@@ -244,6 +224,6 @@ export const StrategyControl = ({
         </Button>
         <FeesDisplay depositFee={0} routeFee={0.05} />
       </div>
-    </div>
+    </>
   );
 };

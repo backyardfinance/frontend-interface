@@ -11,6 +11,9 @@ const badgeVariants = cva(
       variant: {
         default: "border-transparent bg-slate-900 text-slate-50",
         secondary: "border-transparent bg-[#FAFAFA] text-[#383838]",
+        purple: "border-transparent bg-chart-1/5 text-chart-1",
+        blue: "border-transparent bg-[#EFF4F9] text-[#2F5FA9]",
+        red: "border-transparent bg-[#F4EFF1] text-[#A03152]",
       },
       text: {
         xs: "font-bold text-xs leading-[normal]",
@@ -24,6 +27,8 @@ const badgeVariants = cva(
   }
 );
 
+type BadgeVariants = VariantProps<typeof badgeVariants>["variant"];
+
 function Badge({
   className,
   variant,
@@ -36,4 +41,4 @@ function Badge({
   return <Comp className={cn(badgeVariants({ variant, text }), className)} data-slot="badge" {...props} />;
 }
 
-export { Badge, badgeVariants };
+export { Badge, badgeVariants, type BadgeVariants };

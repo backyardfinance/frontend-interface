@@ -1,17 +1,19 @@
 import { useParams } from "react-router";
+import type { VaultPlatform } from "@/api";
 import { getPlatformImage } from "@/common/assets/platforms";
 import { getVaultTokenImage } from "@/common/assets/tokens";
 import { Button } from "@/common/components/ui/button";
 import { CompactHybridTooltip } from "@/common/components/ui/hybrid-tooltip";
 import { formatMonetaryAmount, formatUsdAmount } from "@/common/utils";
 import { formatUnits } from "@/common/utils/format";
+import { PLATFORM_LINKS } from "@/config/links";
 import { ArrowIcon } from "@/icons/arrow";
 import { InfoCircleIcon } from "@/icons/info-circle";
 import { StarsIcon } from "@/icons/stars";
 import { VaultControl } from "@/position-panel/VaultControl";
 import { useUserTokens } from "@/solana/hooks/useUserTokens";
-import { Chart } from "@/vaults/components/Chart";
 import { RecentActivity } from "@/vaults/components/RecentActivity";
+import { VaultChart } from "@/vaults/components/VaultChart";
 import { useVaultByIdWithUser, useVaults } from "@/vaults/queries";
 
 export default function VaultIdPage() {
@@ -79,12 +81,14 @@ export default function VaultIdPage() {
             </div>
             <p className="flex-1 text-center font-bold text-neutral-800 text-xl">{vault.name}</p>
             <div className="flex flex-1 items-center justify-between gap-1">
-              <Button size="sm" variant="white">
-                <div className="size-[11px]">{getPlatformImage(vault.platform)}</div>
-                {vault.platform}
-                <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
-                  <ArrowIcon className="size-2 rotate-45" />
-                </div>
+              <Button asChild size="sm" variant="white">
+                <a href={PLATFORM_LINKS[vault.platform as VaultPlatform]} rel="noopener noreferrer" target="_blank">
+                  <div className="size-[11px]">{getPlatformImage(vault.platform)}</div>
+                  {vault.platform}
+                  <div className="flex size-[17px] items-center justify-center rounded-[21.5px] bg-[#F8F8F8]">
+                    <ArrowIcon className="size-2 rotate-45" />
+                  </div>
+                </a>
               </Button>
               <Button size="sm" variant="white">
                 Contracts
@@ -112,7 +116,7 @@ export default function VaultIdPage() {
             </div>
           </div>
         </div>
-        <Chart token={token} vault={vault} />
+        <VaultChart token={token} vault={vault} />
         <div className="flex flex-col gap-y-4.5 rounded-[23px] border border-[rgba(214,214,214,0.26)] border-solid bg-[#FAFAFA] px-5.5 py-4.5">
           <p className="font-bold text-[22px] text-neutral-800 leading-[normal]">Additional info</p>
           <div className="flex flex-col gap-2">
