@@ -23,7 +23,7 @@ export const parseUnits = (value: string, decimals: number, precision?: number) 
  * @example
  * formatUnits("420000000000", 9) = "42"
  */
-export const formatUnits = (value: string, decimals: number, precision = 4) => {
+export const formatUnits = (value: string, decimals: number, precision?: number) => {
   //TODO: check if this creates problems
   try {
     return removeTrailingZeros(Big(value).div(Big(10).pow(decimals)).toFixed(precision));

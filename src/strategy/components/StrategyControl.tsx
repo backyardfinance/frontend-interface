@@ -6,10 +6,11 @@ import { SlippageSettings } from "@/position-panel/components/SlippageSettings";
 import { StrategyDeposit } from "@/position-panel/StrategyDeposit";
 import { StrategyWithdraw } from "@/position-panel/StrategyWithdraw";
 import { useStrategyContext } from "../context/StrategyContext";
+import type { StrategyPosition } from "../hooks/useStrategyPosition";
 
-export const StrategyControl = () => {
+export const StrategyControl = ({ strategyPosition }: { strategyPosition: StrategyPosition }) => {
   const [currentAction, setCurrentAction] = useState<CreateDepositTransactionsDtoTypeEnum>(
-    CreateDepositTransactionsDtoTypeEnum.DEPOSIT
+    CreateDepositTransactionsDtoTypeEnum.WITHDRAW
   );
 
   const {
@@ -21,7 +22,10 @@ export const StrategyControl = () => {
     handleDepositAllocationChange,
     handleDepositRemoveVault,
     handleWithdrawAmountChange,
+    handleWithdrawByVaultChange,
     handleWithdrawToggleVaultActive,
+    handleWithdrawVaultAmountChange,
+    handleWithdrawVaultAssetChange,
   } = useStrategyContext();
 
   return (
@@ -37,7 +41,11 @@ export const StrategyControl = () => {
             <TabsTrigger value={CreateDepositTransactionsDtoTypeEnum.WITHDRAW}>Withdraw</TabsTrigger>
           </TabsList>
         </Tabs>
-        <SlippageSettings onSlippageChange={handleSlippageChange} sideOffset={16} slippage={slippage} />
+        <SlippageSettings
+          onSlippageChange={handleSlippageChange}
+          sideOffset={currentAction === CreateDepositTransactionsDtoTypeEnum.DEPOSIT ? 16 : 50}
+          slippage={slippage}
+        />
       </div>
       {currentAction === CreateDepositTransactionsDtoTypeEnum.DEPOSIT ? (
         depositStrategy ? (
@@ -62,8 +70,12 @@ export const StrategyControl = () => {
       ) : (
         <StrategyWithdraw
           currentStrategy={withdrawStrategy}
-          onDepositAmountChange={handleWithdrawAmountChange}
           onToggleActiveVault={handleWithdrawToggleVaultActive}
+          onVaultWithdrawAmountChange={handleWithdrawVaultAmountChange}
+          onWithdrawAmountChange={handleWithdrawAmountChange}
+          onWithdrawByVaultChange={handleWithdrawByVaultChange}
+          onWithdrawVaultAssetChange={handleWithdrawVaultAssetChange}
+          strategyDepositedAmountUi={strategyPosition.strategyDepositedAmountUi}
         />
       )}
     </div>

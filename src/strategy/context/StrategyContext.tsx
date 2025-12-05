@@ -1,5 +1,6 @@
 import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from "react";
-import type { VaultInfoResponse } from "@/api";
+import type { UserTokenView, VaultInfoResponse } from "@/api";
+import { localStorageService } from "@/common/utils/localStorageService";
 import type { Strategy } from "@/common/utils/types";
 import {
   addVaultToStrategy,
@@ -9,11 +10,11 @@ import {
   updateAmount,
 } from "@/position-panel/utils/strategy-helpers";
 import type { StrategyPosition, StrategyPositionVault } from "@/strategy/hooks/useStrategyPosition";
-import { localStorageService } from "@/common/utils/localStorageService";
 
 export interface WithdrawVault extends StrategyPositionVault {
   withdrawAmount: number;
   isActive: boolean;
+  selectedAsset: UserTokenView;
 }
 
 export interface WithdrawStrategy extends Omit<Strategy, "vaults" | "depositAmount" | "totalAllocation"> {
@@ -39,8 +40,10 @@ interface StrategyContextValue {
   handleDepositAddVault: (vault: VaultInfoResponse) => void;
 
   handleWithdrawAmountChange: (amount: number) => void;
+  handleWithdrawByVaultChange: (isActive: boolean) => void;
   handleWithdrawToggleVaultActive: (vaultId: string, isActive: boolean) => void;
-  handleVaultWithdrawAmountChange: (vaultId: string, amount: number) => void;
+  handleWithdrawVaultAmountChange: (vaultId: string, amount: number) => void;
+  handleWithdrawVaultAssetChange: (vaultId: string, asset: UserTokenView) => void;
 
   resetDepositStrategy: () => void;
   resetWithdrawStrategy: () => void;
@@ -56,20 +59,23 @@ interface StrategyProviderProps {
 const initialWithdrawStrategy = (strategyPosition: StrategyPosition): WithdrawStrategy => {
   return {
     id: strategyPosition.strategyId,
-    vaults: strategyPosition.vaults.map((vault) => ({
-      ...vault,
-      withdrawAmount: vault.amount,
-      isActive: false,
-    })),
     withdrawAmount: strategyPosition.strategyDepositedAmountUi,
     isWithdrawByVault: false,
+    vaults: strategyPosition.vaults.map((vault) => ({
+      ...vault,
+      withdrawAmount: vault.amountUi,
+      isActive: false,
+      selectedAsset: vault.token,
+    })),
   };
 };
 
 export const StrategyProvider = ({ children, strategyPosition }: StrategyProviderProps) => {
   const [depositStrategy, setDepositStrategy] = useState<Strategy | null>(null);
 
-  const [withdrawStrategy, setWithdrawStrategy] = useState<WithdrawStrategy>(initialWithdrawStrategy(strategyPosition));
+  const [withdrawStrategy, setWithdrawStrategy] = useState<WithdrawStrategy>(() =>
+    initialWithdrawStrategy(strategyPosition)
+  );
   const [slippage, setSlippage] = useState(localStorageService.getSlippage());
 
   const handleDepositAmountChange = useCallback((amount: number) => {
@@ -110,7 +116,16 @@ export const StrategyProvider = ({ children, strategyPosition }: StrategyProvide
     );
   }, []);
 
-  const handleVaultWithdrawAmountChange = useCallback((vaultId: string, amount: number) => {
+  const handleWithdrawByVaultChange = useCallback((isActive: boolean) => {
+    setWithdrawStrategy(
+      (prev): WithdrawStrategy => ({
+        ...prev,
+        isWithdrawByVault: isActive,
+      })
+    );
+  }, []);
+
+  const handleWithdrawVaultAmountChange = useCallback((vaultId: string, amount: number) => {
     setWithdrawStrategy(
       (prev): WithdrawStrategy => ({
         ...prev,
@@ -136,6 +151,18 @@ export const StrategyProvider = ({ children, strategyPosition }: StrategyProvide
     });
   }, []);
 
+  const handleWithdrawVaultAssetChange = useCallback((vaultId: string, asset: UserTokenView) => {
+    setWithdrawStrategy(
+      (prev): WithdrawStrategy => ({
+        ...prev,
+        vaults: prev.vaults.map((vault) => ({
+          ...vault,
+          selectedAsset: vault.id === vaultId ? asset : vault.selectedAsset,
+        })),
+      })
+    );
+  }, []);
+
   const resetDepositStrategy = useCallback(() => {
     setDepositStrategy(null);
   }, []);
@@ -156,15 +183,20 @@ export const StrategyProvider = ({ children, strategyPosition }: StrategyProvide
       withdrawStrategy,
       setWithdrawStrategy,
       slippage,
+
       handleSlippageChange,
       handleDepositAmountChange,
       handleDepositAllocationChange,
       handleDepositRemoveVault,
       handleDepositToggleVault,
       handleDepositAddVault,
+
       handleWithdrawAmountChange,
-      handleVaultWithdrawAmountChange,
+      handleWithdrawByVaultChange,
+      handleWithdrawVaultAmountChange,
       handleWithdrawToggleVaultActive,
+      handleWithdrawVaultAssetChange,
+
       resetDepositStrategy,
       resetWithdrawStrategy,
     }),
@@ -173,14 +205,19 @@ export const StrategyProvider = ({ children, strategyPosition }: StrategyProvide
       withdrawStrategy,
       slippage,
       handleSlippageChange,
+
       handleDepositAmountChange,
       handleDepositAllocationChange,
       handleDepositRemoveVault,
       handleDepositToggleVault,
       handleDepositAddVault,
+
       handleWithdrawAmountChange,
-      handleVaultWithdrawAmountChange,
+      handleWithdrawByVaultChange,
+      handleWithdrawVaultAmountChange,
       handleWithdrawToggleVaultActive,
+      handleWithdrawVaultAssetChange,
+
       resetDepositStrategy,
       resetWithdrawStrategy,
     ]

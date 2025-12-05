@@ -1,68 +1,78 @@
-import { useCallback, useState } from "react";
-import { CreateDepositTransactionsDtoTypeEnum, type UserTokenView } from "@/api";
+import { useCallback } from "react";
+import type { UserTokenView } from "@/api";
 import { Button } from "@/common/components/ui/button";
-
+import { Switch } from "@/common/components/ui/switch";
 import { FeesDisplay } from "@/position-panel/components/FeesDisplay";
-import { SummaryRow } from "@/position-panel/components/SummaryRow";
-import { useStrategyTransaction } from "@/position-panel/hooks/useStrategyTransaction";
-
+import { VaultWithdrawCard } from "@/position-panel/components/VaultWithdrawCard";
+import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
+import { useUserTokens } from "@/solana/hooks/useUserTokens";
 import type { WithdrawStrategy } from "@/strategy/context/StrategyContext";
+import { SummaryRow } from "./components/SummaryRow";
+import { WithdrawTokenInput } from "./components/WithdrawTokenInput";
 
 interface StrategyWithdrawProps {
+  strategyDepositedAmountUi: number;
   currentStrategy: WithdrawStrategy;
-  onDepositAmountChange: (amount: number) => void;
+  onWithdrawAmountChange: (amount: number) => void;
+  onWithdrawByVaultChange: (isActive: boolean) => void;
   onToggleActiveVault: (vaultId: string, isActive: boolean) => void;
+  onVaultWithdrawAmountChange: (vaultId: string, amount: number) => void;
+  onWithdrawVaultAssetChange: (vaultId: string, asset: UserTokenView) => void;
 }
 
 export const StrategyWithdraw = ({
+  strategyDepositedAmountUi,
   currentStrategy,
-  // onDepositAmountChange,
-  // onToggleActiveVault,
+  onWithdrawAmountChange,
+  onWithdrawByVaultChange,
+  onToggleActiveVault,
+  onVaultWithdrawAmountChange,
+  onWithdrawVaultAssetChange,
 }: StrategyWithdrawProps) => {
-  const { withdrawAmount, vaults } = currentStrategy;
-  const [selectedAsset] = useState<UserTokenView | null>(null);
-  // const [selectedAsset, setSelectedAsset] = useState<UserTokenView | null>(null);
+  const { address: walletAddress } = useSolanaWallet();
 
-  const currentAction = CreateDepositTransactionsDtoTypeEnum.WITHDRAW;
-  // const { userTokens } = useUserTokens();
+  const { withdrawAmount, vaults, isWithdrawByVault } = currentStrategy;
 
-  const { handleTransaction, isLoading, walletAddress } = useStrategyTransaction({
-    quotes: [],
-    totalAllocationEntries: [], //TODO: optional
-    vaults,
-    selectedAsset: null,
-    depositAmount: withdrawAmount,
-  });
+  const { userTokens } = useUserTokens();
 
   const handleDepositWithdraw = useCallback(() => {
-    handleTransaction(currentAction);
-  }, [handleTransaction, currentAction]);
+    console.log("handleDepositWithdraw");
+  }, []);
 
-  const isDepositDisabled = !withdrawAmount || vaults?.length === 0 || !selectedAsset || !walletAddress || isLoading;
+  const isDepositDisabled = !withdrawAmount || vaults?.length === 0 || !walletAddress;
 
   return (
     <>
-      {/* <TokenInputComponent
-        assets={userTokens.arr}
-        currentValue={depositAmount}
-        selectedAsset={selectedAsset}
-        setCurrentValue={onDepositAmountChange}
-        setSelectedAsset={setSelectedAsset}
-        sufficientBalance={sufficientBalance}
-        title="Total deposit amount"
-      /> */}
-
-      {/* {vaults.map((vault) => (
-        <VaultAllocationCard
-          allocation={totalAllocation[vault.id]}
-          depositAmount={(depositAmount / 100) * (totalAllocation[vault.id] || 0)}
-          isAllocationError={isAllocationError}
-          key={vault.id}
-          removeVaultFromStrategy={onRemoveVault}
-          setAllocation={(amount) => onAllocationChange(vault.id, amount)}
-          vault={vault}
+      <div className="my-1 flex flex-row items-center justify-between px-5">
+        <p className="font-bold text-sm leading-[normal]">Withdraw by vault</p>
+        <Switch checked={isWithdrawByVault} onCheckedChange={onWithdrawByVaultChange} />
+      </div>
+      {isWithdrawByVault ? (
+        <div className="flex flex-col gap-2">
+          {vaults.map((vault) => (
+            <VaultWithdrawCard
+              assets={userTokens.arr}
+              key={vault.id}
+              onToggleActiveVault={onToggleActiveVault}
+              onWithdrawAmountChange={onVaultWithdrawAmountChange}
+              onWithdrawAssetChange={onWithdrawVaultAssetChange}
+              vault={vault}
+            />
+          ))}
+        </div>
+      ) : (
+        <WithdrawTokenInput
+          assets={userTokens.arr}
+          availableAmount={strategyDepositedAmountUi}
+          currentValue={withdrawAmount}
+          selectedAsset={vaults[0].token}
+          setCurrentValue={onWithdrawAmountChange}
+          setSelectedAsset={(token) => {
+            console.log("setSelectedAsset", token);
+          }}
+          title="Total withdraw amount"
         />
-      ))} */}
+      )}
 
       {/* {depositAmount > 0 && selectedAsset && quotes.length > 0 && (
         <div className="flex flex-col gap-2">
@@ -90,24 +100,15 @@ export const StrategyWithdraw = ({
       <div className="flex w-full flex-col justify-start gap-[3px]">
         <SummaryRow
           amount={withdrawAmount}
-          label="Total withdraw"
-          symbol={selectedAsset?.symbol}
-          usdPrice={selectedAsset?.usdPrice}
+          label="Total to withdraw"
+          symbol={vaults[0].token.symbol}
+          usdPrice={vaults[0].token.usdPrice}
         />
       </div>
 
       <div className="flex flex-col gap-[9px] rounded-2xl border border-zinc-100 bg-white">
         <Button disabled={isDepositDisabled} onClick={handleDepositWithdraw} size="xl" variant="tertiary">
-          {walletAddress ? (
-            <>
-              Withdraw {withdrawAmount} {selectedAsset?.symbol}{" "}
-              {selectedAsset?.icon && (
-                <img alt={selectedAsset?.symbol} className="size-[14px]" src={selectedAsset?.icon} />
-              )}
-            </>
-          ) : (
-            "Connect wallet"
-          )}
+          {walletAddress ? "Withdraw" : "Connect wallet"}
         </Button>
         <FeesDisplay depositFee={0} routeFee={0} />
       </div>

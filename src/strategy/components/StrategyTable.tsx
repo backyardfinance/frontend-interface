@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useNavigate } from "react-router";
+import { StrategyInfoResponseStrategyStatusEnum } from "@/api";
 import { getPlatformImage } from "@/common/assets/platforms";
 import { getVaultTokenImage } from "@/common/assets/tokens";
 import { Table } from "@/common/components/table";
@@ -7,7 +8,6 @@ import { TogglePlusMinusButton } from "@/common/components/toggle-plus-minus-but
 import { calculateWeights } from "@/common/utils/calculations";
 import { formatUnits } from "@/common/utils/format";
 import type { Strategy } from "@/common/utils/types";
-
 import { toVaultRoute } from "@/routes";
 import type { StrategyPosition } from "@/strategy/hooks/useStrategyPosition";
 import { useStrategyContext } from "../context/StrategyContext";
@@ -19,6 +19,7 @@ type StrategyTableProps = {
 export const StrategyTable = ({ strategy }: StrategyTableProps) => {
   const { depositStrategy, handleDepositToggleVault } = useStrategyContext();
   const navigate = useNavigate();
+  const isConfirmed = strategy.strategyStatus === StrategyInfoResponseStrategyStatusEnum.CONFIRMED;
 
   const handleRowClick = (rowIndex: number) => {
     navigate(toVaultRoute(strategy.vaults[rowIndex].id));
@@ -62,10 +63,14 @@ export const StrategyTable = ({ strategy }: StrategyTableProps) => {
   return (
     <div>
       <Table
-        action={(rowIndex: number) => {
-          const isAdded = depositStrategy?.vaults.find((v) => v.id === strategy.vaults[rowIndex].id);
-          return <TogglePlusMinusButton handleToggle={(e) => handleAdd(e, rowIndex)} isAdded={!!isAdded} />;
-        }}
+        action={
+          isConfirmed
+            ? (rowIndex: number) => {
+                const isAdded = depositStrategy?.vaults.find((v) => v.id === strategy.vaults[rowIndex].id);
+                return <TogglePlusMinusButton handleToggle={(e) => handleAdd(e, rowIndex)} isAdded={!!isAdded} />;
+              }
+            : undefined
+        }
         handleRowClick={handleRowClick}
         headers={table.headers}
         rows={table.rows}

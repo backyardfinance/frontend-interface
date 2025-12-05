@@ -1,3 +1,4 @@
+import { StrategyInfoResponseStrategyStatusEnum } from "@/api";
 import { CompactHybridTooltip } from "@/common/components/ui/hybrid-tooltip";
 import { formatMonetaryAmount } from "@/common/utils";
 import { formatUnits } from "@/common/utils/format";
@@ -131,7 +132,16 @@ export default function DashboardStrategyIdPage() {
         </div>
         <div className="flex flex-col gap-6">
           <section className="relative min-h-[396px] w-[364px]">
-            <StrategyControl />
+            {strategy.strategyStatus === StrategyInfoResponseStrategyStatusEnum.PROCESSING && (
+              <div className="absolute inset-0 z-9999 flex items-center justify-center overflow-hidden rounded-3xl bg-[#2F5FA9]/5 backdrop-blur-md">
+                <p className="text-center font-bold text-neutral-800 text-xl">
+                  Please wait
+                  <br />
+                  Strategy is in progress
+                </p>
+              </div>
+            )}
+            <StrategyControl strategyPosition={strategy} />
           </section>
           <RecentActivity activity={recentActivity} />
         </div>
