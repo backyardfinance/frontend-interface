@@ -26,6 +26,7 @@ export const StrategyControl = ({ strategyPosition }: { strategyPosition: Strate
     handleWithdrawToggleVaultActive,
     handleWithdrawVaultAmountChange,
     handleWithdrawVaultAssetChange,
+    handleWithdrawSelectedAssetChange,
   } = useStrategyContext();
 
   return (
@@ -74,6 +75,7 @@ export const StrategyControl = ({ strategyPosition }: { strategyPosition: Strate
           onVaultWithdrawAmountChange={handleWithdrawVaultAmountChange}
           onWithdrawAmountChange={handleWithdrawAmountChange}
           onWithdrawByVaultChange={handleWithdrawByVaultChange}
+          onWithdrawSelectedAssetChange={handleWithdrawSelectedAssetChange}
           onWithdrawVaultAssetChange={handleWithdrawVaultAssetChange}
           strategyDepositedAmountUi={strategyPosition.strategyDepositedAmountUi}
         />

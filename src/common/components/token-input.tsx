@@ -4,6 +4,7 @@ import type { UserTokenView } from "@/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/common/components/ui/select";
 import { InfoCircleIcon } from "@/icons/info-circle";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
+import { useDebounce } from "../hooks/useDebounce";
 import { cn } from "../utils";
 import { inputEnforcer } from "../utils/input";
 
@@ -27,6 +28,18 @@ export const TokenInputComponent = ({
   const [value, setValue] = useState<string>("");
   const [isSelectOpen, setIsSelectOpen] = useState(false);
   const { address: walletAddress } = useSolanaWallet();
+
+  useDebounce(
+    () => {
+      const num = Number(value);
+      if (Number.isNaN(num)) {
+        return;
+      }
+      setCurrentValue(num);
+    },
+    1000,
+    [value]
+  );
 
   return (
     <div className="flex w-full flex-col items-center justify-between gap-[14px] rounded-3xl bg-white p-[14px]">
@@ -63,11 +76,6 @@ export const TokenInputComponent = ({
                 return;
               }
               setValue(value);
-              const num = Number(value);
-              if (Number.isNaN(num)) {
-                return;
-              }
-              setCurrentValue(num);
             }}
             onWheel={(e) => e.currentTarget.blur()}
             placeholder="0"

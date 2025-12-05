@@ -5,6 +5,7 @@ import { getPlatformImage } from "@/common/assets/platforms";
 import { getVaultTokenImage } from "@/common/assets/tokens";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/common/components/ui/select";
 import { Switch } from "@/common/components/ui/switch";
+import { useDebounce } from "@/common/hooks/useDebounce";
 import { cn } from "@/common/utils";
 import { inputEnforcer } from "@/common/utils/input";
 import { StarsIcon } from "@/icons/stars";
@@ -27,6 +28,18 @@ export const VaultWithdrawCard = ({
 }: VaultWithdrawCardProps) => {
   const [value, setValue] = useState<string>(vault.withdrawAmount.toFixed());
   const [isSelectOpen, setIsSelectOpen] = useState(false);
+
+  useDebounce(
+    () => {
+      const num = Number(value);
+      if (Number.isNaN(num)) {
+        return;
+      }
+      onWithdrawAmountChange(vault.id, num);
+    },
+    1000,
+    [value]
+  );
 
   const sufficientBalance = Big(vault.withdrawAmount).gte(vault.withdrawAmount.toFixed());
 
@@ -73,11 +86,6 @@ export const VaultWithdrawCard = ({
                 return;
               }
               setValue(value);
-              const num = Number(value);
-              if (Number.isNaN(num)) {
-                return;
-              }
-              onWithdrawAmountChange(vault.id, num);
             }}
             placeholder="0"
             type="text"

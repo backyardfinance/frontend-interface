@@ -21,6 +21,7 @@ export interface WithdrawStrategy extends Omit<Strategy, "vaults" | "depositAmou
   withdrawAmount: number;
   isWithdrawByVault: boolean;
   vaults: WithdrawVault[];
+  selectedAsset: UserTokenView;
 }
 
 interface StrategyContextValue {
@@ -41,6 +42,7 @@ interface StrategyContextValue {
 
   handleWithdrawAmountChange: (amount: number) => void;
   handleWithdrawByVaultChange: (isActive: boolean) => void;
+  handleWithdrawSelectedAssetChange: (asset: UserTokenView) => void;
   handleWithdrawToggleVaultActive: (vaultId: string, isActive: boolean) => void;
   handleWithdrawVaultAmountChange: (vaultId: string, amount: number) => void;
   handleWithdrawVaultAssetChange: (vaultId: string, asset: UserTokenView) => void;
@@ -61,6 +63,7 @@ const initialWithdrawStrategy = (strategyPosition: StrategyPosition): WithdrawSt
     id: strategyPosition.strategyId,
     withdrawAmount: strategyPosition.strategyDepositedAmountUi,
     isWithdrawByVault: false,
+    selectedAsset: strategyPosition.vaults[0].token, //TODO: fix this
     vaults: strategyPosition.vaults.map((vault) => ({
       ...vault,
       withdrawAmount: vault.amountUi,
@@ -105,6 +108,15 @@ export const StrategyProvider = ({ children, strategyPosition }: StrategyProvide
 
   const handleDepositAddVault = useCallback((vault: VaultInfoResponse) => {
     setDepositStrategy((prev) => addVaultToStrategy(prev, vault));
+  }, []);
+
+  const handleWithdrawSelectedAssetChange = useCallback((asset: UserTokenView) => {
+    setWithdrawStrategy(
+      (prev): WithdrawStrategy => ({
+        ...prev,
+        selectedAsset: asset,
+      })
+    );
   }, []);
 
   const handleWithdrawAmountChange = useCallback((amount: number) => {
@@ -191,6 +203,7 @@ export const StrategyProvider = ({ children, strategyPosition }: StrategyProvide
       handleDepositToggleVault,
       handleDepositAddVault,
 
+      handleWithdrawSelectedAssetChange,
       handleWithdrawAmountChange,
       handleWithdrawByVaultChange,
       handleWithdrawVaultAmountChange,
@@ -212,6 +225,7 @@ export const StrategyProvider = ({ children, strategyPosition }: StrategyProvide
       handleDepositToggleVault,
       handleDepositAddVault,
 
+      handleWithdrawSelectedAssetChange,
       handleWithdrawAmountChange,
       handleWithdrawByVaultChange,
       handleWithdrawVaultAmountChange,

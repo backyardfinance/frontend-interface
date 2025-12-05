@@ -2,6 +2,7 @@ import Big from "big.js";
 import { useState } from "react";
 import type { UserTokenView } from "@/api";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/common/components/ui/select";
+import { useDebounce } from "@/common/hooks/useDebounce";
 import { cn } from "@/common/utils";
 import { inputEnforcer } from "@/common/utils/input";
 import { InfoCircleIcon } from "@/icons/info-circle";
@@ -29,6 +30,18 @@ export const WithdrawTokenInput = ({
   const { address: walletAddress } = useSolanaWallet();
 
   const sufficientBalance = Big(availableAmount).gte(currentValue ?? "0");
+
+  useDebounce(
+    () => {
+      const num = Number(value);
+      if (Number.isNaN(num)) {
+        return;
+      }
+      setCurrentValue(num);
+    },
+    1000,
+    [value]
+  );
 
   return (
     <div className="flex w-full flex-col items-center justify-between gap-[14px] rounded-3xl bg-white p-[14px]">
@@ -65,11 +78,6 @@ export const WithdrawTokenInput = ({
                 return;
               }
               setValue(value);
-              const num = Number(value);
-              if (Number.isNaN(num)) {
-                return;
-              }
-              setCurrentValue(num);
             }}
             onWheel={(e) => e.currentTarget.blur()}
             placeholder="0"

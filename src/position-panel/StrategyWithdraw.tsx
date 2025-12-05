@@ -1,12 +1,16 @@
-import { useCallback } from "react";
+import Big from "big.js";
+import { useCallback, useMemo } from "react";
 import type { UserTokenView } from "@/api";
 import { Button } from "@/common/components/ui/button";
 import { Switch } from "@/common/components/ui/switch";
+import { parseUnits } from "@/common/utils/format";
+import { useJupiterMultipleQuotes } from "@/jupiter/queries/useJupiterSwap";
 import { FeesDisplay } from "@/position-panel/components/FeesDisplay";
 import { VaultWithdrawCard } from "@/position-panel/components/VaultWithdrawCard";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
 import { useUserTokens } from "@/solana/hooks/useUserTokens";
 import type { WithdrawStrategy } from "@/strategy/context/StrategyContext";
+import { RouteDisplay } from "./components/RouteDisplay";
 import { SummaryRow } from "./components/SummaryRow";
 import { WithdrawTokenInput } from "./components/WithdrawTokenInput";
 
@@ -18,6 +22,7 @@ interface StrategyWithdrawProps {
   onToggleActiveVault: (vaultId: string, isActive: boolean) => void;
   onVaultWithdrawAmountChange: (vaultId: string, amount: number) => void;
   onWithdrawVaultAssetChange: (vaultId: string, asset: UserTokenView) => void;
+  onWithdrawSelectedAssetChange: (asset: UserTokenView) => void;
 }
 
 export const StrategyWithdraw = ({
@@ -28,18 +33,69 @@ export const StrategyWithdraw = ({
   onToggleActiveVault,
   onVaultWithdrawAmountChange,
   onWithdrawVaultAssetChange,
+  onWithdrawSelectedAssetChange,
 }: StrategyWithdrawProps) => {
   const { address: walletAddress } = useSolanaWallet();
 
-  const { withdrawAmount, vaults, isWithdrawByVault } = currentStrategy;
+  const { withdrawAmount, vaults, isWithdrawByVault, selectedAsset } = currentStrategy;
 
   const { userTokens } = useUserTokens();
+
+  const quotesParams = useMemo(() => {
+    return vaults.reduce(
+      (acc, vault) => {
+        if (isWithdrawByVault) {
+          return Object.assign(acc, {
+            [vault.id]: {
+              vaultId: vault.id,
+              inputMint: vault.token.mint,
+              outputMint: selectedAsset.mint,
+              amount: parseUnits(withdrawAmount.toFixed(), selectedAsset.decimals),
+            },
+          });
+        }
+
+        if (!vault.isActive) return acc;
+
+        return Object.assign(acc, {
+          [vault.id]: {
+            vaultId: vault.id,
+            inputMint: vault.token.mint,
+            outputMint: vault.selectedAsset.mint,
+            amount: parseUnits(vault.withdrawAmount.toFixed(), vault.selectedAsset.decimals),
+          },
+        });
+      },
+      {} as Record<string, { vaultId: string; inputMint: string; outputMint: string; amount: string }>
+    );
+  }, [withdrawAmount, vaults, selectedAsset, isWithdrawByVault]);
+
+  const quotes = useJupiterMultipleQuotes(Object.values(quotesParams), {
+    enabled:
+      Object.values(quotesParams).length > 0 &&
+      Object.values(quotesParams).every((quote) => Big(quote.amount ?? "0").gt(0)),
+  });
+
+  // const { handleTransaction, isLoading: isStrategyTransactionLoading } = useStrategyTransaction({
+  //   quotes,
+  //   totalAllocationEntries,
+  //   vaults,
+  //   selectedAsset,
+  //   depositAmount,
+  //   onConfirm: () => {
+  //     //TODO: reset withdraw strategy
+  //   },
+  // });
 
   const handleDepositWithdraw = useCallback(() => {
     console.log("handleDepositWithdraw");
   }, []);
 
-  const isDepositDisabled = !withdrawAmount || vaults?.length === 0 || !walletAddress;
+  const isDepositDisabled =
+    !withdrawAmount ||
+    vaults?.length === 0 ||
+    !walletAddress ||
+    quotes.some((quote) => quote.isLoading || quote.isRefetching);
 
   return (
     <>
@@ -65,16 +121,14 @@ export const StrategyWithdraw = ({
           assets={userTokens.arr}
           availableAmount={strategyDepositedAmountUi}
           currentValue={withdrawAmount}
-          selectedAsset={vaults[0].token}
+          selectedAsset={selectedAsset}
           setCurrentValue={onWithdrawAmountChange}
-          setSelectedAsset={(token) => {
-            console.log("setSelectedAsset", token);
-          }}
+          setSelectedAsset={onWithdrawSelectedAssetChange}
           title="Total withdraw amount"
         />
       )}
 
-      {/* {depositAmount > 0 && selectedAsset && quotes.length > 0 && (
+      {quotes.length > 0 && (
         <div className="flex flex-col gap-2">
           {quotes.map((quote) => {
             if (!quote.data || quote.error || !quotesParams) return null;
@@ -93,7 +147,7 @@ export const StrategyWithdraw = ({
             );
           })}
         </div>
-      )} */}
+      )}
 
       <div className="h-px w-80 rounded-2xl bg-zinc-100" />
 
