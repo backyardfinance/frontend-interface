@@ -3,7 +3,7 @@ import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { SendTransactionError, type Transaction, VersionedTransaction } from "@solana/web3.js";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
-import { toast } from "sonner";
+import { toast } from "@/common/components/ui/sonner";
 import { localStorageService } from "@/common/utils/localStorageService";
 
 export const useSolanaWallet = () => {

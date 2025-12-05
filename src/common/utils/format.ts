@@ -39,3 +39,7 @@ export const displayAmount = (amount: string, decimals?: number, precision = 4):
   if (amountBig.lte(0.0001)) return `>0.0001`;
   return removeTrailingZeros(amountBig.toFixed(precision));
 };
+
+export const uppercaseToFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};

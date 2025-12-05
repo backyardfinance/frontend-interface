@@ -1,9 +1,9 @@
 import { SendTransactionError, VersionedTransaction } from "@solana/web3.js";
 import Big from "big.js";
 import { useCallback, useState } from "react";
-import { toast } from "sonner";
 import { CreateDepositTransactionsDtoTypeEnum, type UserTokenView, type VaultInfoResponse } from "@/api";
-import { parseUnits } from "@/common/utils/format";
+import { toast } from "@/common/components/ui/sonner";
+import { parseUnits, uppercaseToFirstLetter } from "@/common/utils/format";
 import type { JupiterSwap } from "@/jupiter/api";
 import { useJupiterSwapExecute } from "@/jupiter/queries/useJupiterSwap";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
@@ -62,8 +62,8 @@ const buildVaultParams = (
     const vaultAmount = Big(depositAmountInMint).mul(Big(allocation).div(100)).toFixed();
 
     const swapAmount =
-      quotes?.find((quote) => quote.data?.inputMint === vaultInputMint)?.data?.outAmount ?? vaultAmount;
-
+      quotes?.find((quote) => quote.data?.outputMint === vaultInputMint)?.data?.outAmount ?? vaultAmount;
+    console.log("vaultAmount", vaultAmount);
     console.log("swapAmount", swapAmount);
     console.log("quotes", quotes?.find((quote) => quote.data?.inputMint === vaultInputMint)?.data);
 
@@ -218,8 +218,19 @@ export const useStrategyTransaction = ({
         }
 
         onConfirm?.();
+        toast.success(`${uppercaseToFirstLetter(actionType)} completed successfully`, {
+          description: "View your transactions on Solscan",
+          actions: [
+            {
+              label: "View on Solscan",
+              onClick: () => {
+                window.open(`https://solscan.io/account/${walletAddress}`, "_blank");
+              },
+              variant: "ghost",
+            },
+          ],
+        });
         console.log(`${actionType} completed successfully`, { vaultSignatures });
-        toast.success(`${actionType} completed successfully`);
       } catch (error) {
         if (error instanceof SendTransactionError) {
           const logs = await error.getLogs(connection);
