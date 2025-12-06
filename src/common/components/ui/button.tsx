@@ -2,7 +2,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 
-import { cn } from "@/common/utils";
+import { cn } from "@/common/utils/index";
 
 const buttonVariants = cva(
   "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[100px] font-medium text-md outline-none transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default: "bg-slate-900 text-slate-50 hover:bg-slate-900/90",
         secondary: "border border-[rgba(225,225,226,0.5)] bg-[#FAFAFA] px-4.5 py-1 text-[#8A8A8A] hover:shadow-md",
         white: "bg-white font-normal text-neutral-800",
-        tertiary: "rounded-2xl bg-neutral-700 font-bold text-neutral-800 text-white text-xs",
+        tertiary: "rounded-2xl bg-neutral-700 font-bold text-neutral-800 text-white text-xs hover:shadow-md",
         ghost: "bg-transparent hover:shadow-md",
       },
       size: {

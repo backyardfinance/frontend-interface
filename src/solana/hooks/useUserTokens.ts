@@ -5,19 +5,20 @@ import { useJupiterSwapHoldings, useJupiterSwapSearch } from "@/jupiter/queries/
 import { useVaults } from "@/vaults/queries";
 
 const buildSplTokens = (
-  tokensMap: { [key: string]: Array<JupiterSwap.TokenAccount> },
+  mints: string[],
+  tokensMap: { [key: string]: Array<JupiterSwap.TokenAccount> } | undefined,
   tokenInfoMap: Map<string, JupiterSwap.MintInformation>
 ): UserTokenView[] => {
-  return Object.entries(tokensMap)
-    .map(([mint, accounts]) => {
+  return mints
+    .map((mint) => {
       const tokenInfo = tokenInfoMap.get(mint);
 
       if (!tokenInfo?.decimals || !tokenInfo?.usdPrice || !tokenInfo?.name || !tokenInfo?.symbol || !tokenInfo?.icon) {
         return null;
       }
 
-      //TODO: check if this is correct
-      const amount = accounts.reduce((sum, acc) => sum + BigInt(acc.amount), 0n);
+      const accounts = tokensMap?.[mint];
+      const amount = accounts ? accounts.reduce((sum, acc) => sum + BigInt(acc.amount), 0n) : 0n;
       const uiAmount = Number(amount) / 10 ** tokenInfo.decimals;
       const amountUsd = uiAmount * tokenInfo.usdPrice;
 
@@ -37,31 +38,25 @@ const buildSplTokens = (
     .filter((token): token is UserTokenView => token !== null);
 };
 
-export const useUserTokens = () => {
-  const { data: vaults } = useVaults();
-  const mints = useMemo(() => new Set(vaults?.map((vault) => vault.inputTokenMint) ?? []), [vaults]);
+export const useUserTokens = ({ enabled = true }: { enabled?: boolean } = {}) => {
+  const { data: vaults } = useVaults({ enabled });
+  const mintList = useMemo(() => vaults?.map((vault) => vault.inputTokenMint) ?? [], [vaults]);
   const { data: holdings, isLoading: isHoldingsLoading } = useJupiterSwapHoldings();
 
-  const mintList = useMemo(() => {
-    if (!holdings) return [];
-    const splMints = Object.keys(holdings.tokens);
-    return splMints.filter((mint) => mints.has(mint));
-  }, [holdings, mints]);
-
-  const { data: tokens, isLoading: isTokensLoading } = useJupiterSwapSearch(mintList);
+  const { data: tokens, isLoading: isTokensLoading } = useJupiterSwapSearch(mintList, { enabled });
 
   const userTokens = useMemo(() => {
-    if (!holdings || !tokens) {
+    if (!tokens) {
       return { arr: [], map: new Map<string, UserTokenView>() };
     }
     const tokenInfoMap = new Map(tokens.filter((t) => t.id).map((t) => [t.id as string, t]));
 
-    const splTokens = buildSplTokens(holdings.tokens, tokenInfoMap);
+    const splTokens = buildSplTokens(mintList, holdings?.tokens, tokenInfoMap);
 
     const tokenMap = new Map(splTokens.map((t) => [t.mint, t]));
 
     return { arr: splTokens, map: tokenMap };
-  }, [holdings, tokens]);
+  }, [holdings, tokens, mintList]);
 
   return {
     sol: { amount: holdings?.amount ?? "0", uiAmount: holdings?.uiAmountString ?? "0" },

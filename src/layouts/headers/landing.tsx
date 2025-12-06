@@ -27,7 +27,7 @@ export const LandingHeader = () => {
               <span className="flex items-center justify-center transition-transform duration-300 group-hover:translate-y-[200%]">
                 Launch App
               </span>
-              <span className="absolute inset-0 flex translate-y-[-100%] items-center justify-center transition-transform duration-300 group-hover:translate-y-0">
+              <span className="-translate-y-full absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:translate-y-0">
                 Coming soon
               </span>
             </Button>

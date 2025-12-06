@@ -1,16 +1,20 @@
 import { useMemo } from "react";
 import { formatUnits } from "@/common/utils/format";
+import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
 import { useUserTokens } from "@/solana/hooks/useUserTokens";
 import { useUserStrategies } from "@/strategy/queries";
 import { useVaults } from "@/vaults/queries";
 
 export const useStrategiesPositions = () => {
-  const { data: vaults } = useVaults();
-  const { data: userStrategies } = useUserStrategies();
-  const { userTokens } = useUserTokens();
+  const { address } = useSolanaWallet();
+  const { data: vaults, isLoading: isVaultsLoading } = useVaults({ enabled: !!address });
+  const { data: userStrategies, isLoading: isUserStrategiesLoading } = useUserStrategies({ enabled: !!address });
+  const { userTokens, isLoading: isUserTokensLoading } = useUserTokens({ enabled: !!address });
+
+  const isLoading = isUserStrategiesLoading || isUserTokensLoading || isVaultsLoading;
 
   const positions = useMemo(() => {
-    if (!userStrategies || !vaults) return [];
+    if (!userStrategies || !vaults || isLoading) return [];
 
     const vaultsMap = new Map(vaults.map((v) => [v.id, v]));
 
@@ -43,7 +47,7 @@ export const useStrategiesPositions = () => {
           return acc + amountUSD;
         }, 0),
       }));
-  }, [userStrategies, vaults, userTokens]);
+  }, [userStrategies, vaults, userTokens, isLoading]);
 
-  return positions;
+  return { positions, isLoading };
 };

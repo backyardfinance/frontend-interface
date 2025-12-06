@@ -5,7 +5,7 @@ import { useStrategiesPositions } from "@/dashboard/hooks/useStrategiesPositions
 
 //TODO: add data for PositionPerformanceChart
 export const PositionPerformanceChart = () => {
-  const positions = useStrategiesPositions();
+  const { positions } = useStrategiesPositions();
 
   const myPositionUsd = useMemo(
     () => (positions ?? [])?.reduce((acc, item) => acc + item.myPositionUsd, 0),

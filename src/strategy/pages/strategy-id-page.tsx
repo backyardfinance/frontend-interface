@@ -1,4 +1,6 @@
 import { StrategyInfoResponseStrategyStatusEnum } from "@/api";
+import { Loading } from "@/common/components/loading";
+import { NotFound } from "@/common/components/not-found";
 import { CompactHybridTooltip } from "@/common/components/ui/hybrid-tooltip";
 import { formatMonetaryAmount } from "@/common/utils";
 import { formatUnits } from "@/common/utils/format";
@@ -33,9 +35,15 @@ const Item: React.FC<Props> = ({ title, value, additionalValue, valueComponent }
 };
 
 export default function DashboardStrategyIdPage() {
-  const strategy = useStrategyPosition();
+  const { strategy, isLoading } = useStrategyPosition();
 
-  if (!strategy) return <div>No found</div>;
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!strategy) {
+    return <NotFound text="Strategy not found" />;
+  }
 
   const uniquePlatforms = new Set(strategy.vaults.map((v) => v.platform)).size;
   const uniqueTokens = new Set(strategy.vaults.map((v) => v.name)).size;

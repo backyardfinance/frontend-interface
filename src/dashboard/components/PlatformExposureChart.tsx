@@ -4,7 +4,7 @@ import { buildChartDataByKey } from "@/common/utils/calculations";
 import { useStrategiesPositions } from "@/dashboard/hooks/useStrategiesPositions";
 
 export const PlatformExposureChart = () => {
-  const positions = useStrategiesPositions();
+  const { positions } = useStrategiesPositions();
 
   const { chartData, chartConfig } = useMemo(() => {
     if (!positions?.length) {

@@ -12,7 +12,7 @@ import { toStrategyRoute } from "@/routes";
 import { getBadgeStrategyStatusVariant } from "@/strategy/utils";
 
 export const DashboardTable = () => {
-  const positions = useStrategiesPositions();
+  const { positions } = useStrategiesPositions();
   const navigate = useNavigate();
   const headers = ["Strategy ID", "Status", "Allocation", "My position", "APY"];
   const rows = useMemo(

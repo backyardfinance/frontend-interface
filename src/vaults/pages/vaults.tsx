@@ -3,13 +3,13 @@ import { useNavigate } from "react-router";
 import type { VaultInfoResponse } from "@/api";
 import { getPlatformImage } from "@/common/assets/platforms";
 import { getVaultTokenImage } from "@/common/assets/tokens";
+import { Loading } from "@/common/components/loading";
+import { NotFound } from "@/common/components/not-found";
 import { Table } from "@/common/components/table";
 import { TogglePlusMinusButton } from "@/common/components/toggle-plus-minus-button";
 import { Input } from "@/common/components/ui/input";
 import { formatNumber } from "@/common/utils";
 import type { Strategy } from "@/common/utils/types";
-import Logo from "@/icons/backyard-logo.svg";
-
 import PlusThickIcon from "@/icons/plus-thick.svg?react";
 import { SearchIcon } from "@/icons/search";
 import { StarsIcon } from "@/icons/stars";
@@ -25,8 +25,7 @@ import { TopVaults } from "@/vaults/components/TopVaults";
 import { useVaults } from "@/vaults/queries";
 
 export default function VaultsPage() {
-  const { data: vaults } = useVaults();
-  console.log(vaults);
+  const { data: vaults, isLoading } = useVaults();
   const [currentStrategy, setCurrentStrategy] = useState<Strategy | null>(null);
   const [slippage, setSlippage] = useState(0.1);
   const navigate = useNavigate();
@@ -110,13 +109,12 @@ export default function VaultsPage() {
     [vaults, search]
   );
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
   if (!vaults) {
-    return (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-4">
-        <img alt="backyard" src={Logo} />
-        <span className="shimmer text-[rgba(51,51,51,0.95)] text-base leading-normal">Loading</span>
-      </div>
-    );
+    return <NotFound text="No vaults found" />;
   }
 
   return (

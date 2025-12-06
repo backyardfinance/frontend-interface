@@ -28,13 +28,13 @@ type ToastVariant = "success" | "error" | "info" | "warning";
 interface ToastAction {
   label: string;
   onClick: () => void;
-  variant?: "primary" | "ghost";
+  variant?: "ghost" | "default" | "secondary" | "white" | "tertiary";
 }
 
 interface ToastProps {
   id: string | number;
-  title: string;
-  description?: string;
+  title: React.ReactNode;
+  description?: React.ReactNode;
   variant?: ToastVariant;
   icon?: React.ReactNode;
   actions?: ToastAction[];
@@ -69,7 +69,7 @@ function Toast({ title, description, actions, id, variant = "info", icon }: Toas
         <div className={cn("size-9 shrink-0", config.accentColor)}>{icon || config.icon}</div>
         <div className="flex w-full flex-1 flex-col">
           <div className="flex justify-between">
-            <h3 className="font-semibold text-sm leading-tight tracking-tight">{title}</h3>
+            <div className="font-semibold text-sm leading-tight tracking-tight">{title}</div>
             <button
               className="shrink-0 rounded-lg p-1 text-neutral-700 transition-colors hover:bg-neutral-700/10 hover:text-neutral-700"
               onClick={() => sonnerToast.dismiss(id)}
@@ -78,7 +78,7 @@ function Toast({ title, description, actions, id, variant = "info", icon }: Toas
               <X className="size-3.5" />
             </button>
           </div>
-          {description && <p className="text-neutral-700 text-xs leading-relaxed">{description}</p>}
+          {description && <div className="font-normal text-[#8A8A8A] text-xs leading-[normal]">{description}</div>}
         </div>
       </div>
 
@@ -90,7 +90,7 @@ function Toast({ title, description, actions, id, variant = "info", icon }: Toas
               key={action.label}
               onClick={action.onClick}
               type="button"
-              variant={action.variant === "primary" ? "default" : "secondary"}
+              variant={action.variant}
             >
               {action.label}
             </Button>
@@ -106,16 +106,16 @@ const toast = (props: Omit<ToastProps, "id">) => {
   return sonnerToast.custom((id) => <Toast {...props} id={id} />);
 };
 
-toast.success = (title: string, options?: Omit<ToastProps, "id" | "title" | "variant">) =>
+toast.success = (title: React.ReactNode, options?: Omit<ToastProps, "id" | "title" | "variant">) =>
   toast({ title, variant: "success", ...options });
 
-toast.error = (title: string, options?: Omit<ToastProps, "id" | "title" | "variant">) =>
+toast.error = (title: React.ReactNode, options?: Omit<ToastProps, "id" | "title" | "variant">) =>
   toast({ title, variant: "error", ...options });
 
-toast.info = (title: string, options?: Omit<ToastProps, "id" | "title" | "variant">) =>
+toast.info = (title: React.ReactNode, options?: Omit<ToastProps, "id" | "title" | "variant">) =>
   toast({ title, variant: "info", ...options });
 
-toast.warning = (title: string, options?: Omit<ToastProps, "id" | "title" | "variant">) =>
+toast.warning = (title: React.ReactNode, options?: Omit<ToastProps, "id" | "title" | "variant">) =>
   toast({ title, variant: "warning", ...options });
 
 toast.dismiss = sonnerToast.dismiss;

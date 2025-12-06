@@ -1,11 +1,13 @@
 import { SendTransactionError, VersionedTransaction } from "@solana/web3.js";
 import Big from "big.js";
 import { useCallback, useState } from "react";
+import { useNavigate } from "react-router";
 import { CreateDepositTransactionsDtoTypeEnum, type UserTokenView, type VaultInfoResponse } from "@/api";
 import { toast } from "@/common/components/ui/sonner";
-import { parseUnits, uppercaseToFirstLetter } from "@/common/utils/format";
+import { parseUnits } from "@/common/utils/format";
 import type { JupiterSwap } from "@/jupiter/api";
 import { useJupiterSwapExecute } from "@/jupiter/queries/useJupiterSwap";
+import { toStrategyRoute } from "@/routes";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
 import { useCreateDepositTransactions, useStrategyConfirm } from "@/strategy/queries";
 
@@ -85,6 +87,8 @@ export const useStrategyTransaction = ({
   depositAmount,
   onConfirm,
 }: UseStrategyTransactionOptions) => {
+  const navigate = useNavigate();
+
   const { address: walletAddress, signAllTransactions, connection } = useSolanaWallet();
   const { mutateAsync: createDepositTransactions } = useCreateDepositTransactions();
   const { mutateAsync: confirmStrategy } = useStrategyConfirm();
@@ -218,15 +222,27 @@ export const useStrategyTransaction = ({
         }
 
         onConfirm?.();
-        toast.success(`${uppercaseToFirstLetter(actionType)} completed successfully`, {
-          description: "View your transactions on Solscan",
+        toast.success(actionType === CreateDepositTransactionsDtoTypeEnum.DEPOSIT ? "Deposited" : "Withdrawn", {
+          description: (
+            <div className="flex flex-row items-center gap-1">
+              <span>{depositAmount}</span>
+              <img alt={selectedAsset?.name} className="size-2.5" src={selectedAsset?.icon} />
+            </div>
+          ),
           actions: [
             {
               label: "View on Solscan",
               onClick: () => {
                 window.open(`https://solscan.io/account/${walletAddress}`, "_blank");
               },
-              variant: "ghost",
+              variant: "secondary",
+            },
+            {
+              label: "Go to my positions",
+              onClick: () => {
+                navigate(toStrategyRoute(vaultTxsRaw.strategyId));
+              },
+              variant: "secondary",
             },
           ],
         });
@@ -257,6 +273,8 @@ export const useStrategyTransaction = ({
       connection,
       confirmStrategy,
       onConfirm,
+      selectedAsset?.icon,
+      selectedAsset?.name,
     ]
   );
 

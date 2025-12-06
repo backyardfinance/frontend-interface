@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import { Button } from "@/common/components/ui/button";
 import { Separator } from "@/common/components/ui/separator";
-import { formatMonetaryAmount } from "@/common/utils";
+import { cn, formatMonetaryAmount } from "@/common/utils";
 import { useStrategiesPositions } from "@/dashboard/hooks/useStrategiesPositions";
 import { StarsIcon } from "@/icons/stars";
 
-export const DashboardData = () => {
-  const positions = useStrategiesPositions();
+export const DashboardData = ({ disabled = false }: { disabled?: boolean }) => {
+  const { positions } = useStrategiesPositions();
 
   const summaryData = useMemo(
     () =>
@@ -42,7 +42,12 @@ export const DashboardData = () => {
   ];
 
   return (
-    <div className="relative flex h-[115px] w-full rounded-[22px] border border-[#F7F7F7] border-solid ps-11">
+    <div
+      className={cn(
+        "relative flex h-[115px] w-full rounded-[22px] border border-[#F7F7F7] border-solid ps-11",
+        disabled && "pointer-events-none opacity-50"
+      )}
+    >
       <div className="absolute top-0 left-0 size-full rounded-[22px] [background:linear-gradient(90deg,#FAFAFA_10.14%,rgba(250,250,250,0.00)_82.41%)]" />
       <div className="z-10 flex h-full flex-1 justify-between py-7.5">
         {data.map(({ title, value, icon }) => (
@@ -64,14 +69,7 @@ export const DashboardData = () => {
         <img alt="pattern" className="pointer-events-none absolute top-0 left-0 size-full" src="/pattern.webp" />
         <Button
           className="z-10 flex min-w-[164px] shrink-0 items-center gap-1 self-center rounded-[13px] border border-[#F4F4F4] border-solid py-[9px] pr-2.5 pl-3 text-[#383838] text-[11px]"
-          onClick={() => {
-            const isSecondStrategyActive = localStorage.getItem("isSecondStrategyActive");
-            if (isSecondStrategyActive === "true") {
-              localStorage.setItem("isSecondStrategyActive", "false");
-            } else {
-              localStorage.setItem("isSecondStrategyActive", "true");
-            }
-          }}
+          disabled
           variant="secondary"
         >
           Claim YARD

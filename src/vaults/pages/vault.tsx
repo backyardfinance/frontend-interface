@@ -2,6 +2,8 @@ import { useParams } from "react-router";
 import type { VaultPlatform } from "@/api";
 import { getPlatformImage } from "@/common/assets/platforms";
 import { getVaultTokenImage } from "@/common/assets/tokens";
+import { Loading } from "@/common/components/loading";
+import { NotFound } from "@/common/components/not-found";
 import { Button } from "@/common/components/ui/button";
 import { CompactHybridTooltip } from "@/common/components/ui/hybrid-tooltip";
 import { formatMonetaryAmount, formatUsdAmount } from "@/common/utils";
@@ -19,18 +21,26 @@ import { useVaultByIdWithUser, useVaults } from "@/vaults/queries";
 export default function VaultIdPage() {
   const { vaultId } = useParams<{ vaultId: string }>();
 
-  const { data: vaults } = useVaults();
+  const { data: vaults, isLoading: isVaultsLoading } = useVaults();
   const vault = vaults?.find((el) => el.id === vaultId);
 
-  const { data: vaultWithUser } = useVaultByIdWithUser(vaultId ?? "", {
+  const { data: vaultWithUser, isLoading: isVaultWithUserLoading } = useVaultByIdWithUser(vaultId ?? "", {
     enabled: !!vault,
   });
 
-  const { userTokens } = useUserTokens();
+  const { userTokens, isLoading: isUserTokensLoading } = useUserTokens();
 
   const token = vault ? userTokens.map.get(vault.inputTokenMint) : null;
 
-  if (!vaultId || !vault || !token) return <div>No found</div>;
+  const isLoading = isVaultsLoading || isVaultWithUserLoading || isUserTokensLoading;
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!vault || !token) {
+    return <NotFound text="No vault found" />;
+  }
 
   const myPosition = (vaultWithUser?.strategies ?? []).reduce((acc, strategy) => {
     const depositedAmount = formatUnits(strategy.depositedAmount.toFixed(), token.decimals);

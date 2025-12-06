@@ -50,7 +50,7 @@ export const useVaultByIdWithUser = (vaultId: string, options?: UseVaultOptions)
       return data;
     },
     ...options,
-    enabled: !!vaultId && options?.enabled,
+    enabled: !!vaultId && !!address && options?.enabled,
   });
 };
 

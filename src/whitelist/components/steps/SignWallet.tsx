@@ -2,10 +2,10 @@ import bs58 from "bs58";
 import { CheckIcon } from "lucide-react";
 import { type FC, useState } from "react";
 import { authApi } from "@/api";
+import { useAuthVerifySignature } from "@/auth/queries/useAuth";
 import { truncateAddress } from "@/common/utils";
 import { useSolanaWallet } from "@/solana/hooks/useSolanaWallet";
 import { Button, ErrorMessage, StepWrapper } from "@/whitelist/components/ui";
-import { useWhitelistVerifySignature } from "@/whitelist/queries/useWhitelist";
 
 type Props = {
   isCompleted: boolean;
@@ -14,7 +14,7 @@ type Props = {
 
 export const SignWallet: FC<Props> = ({ connectedAddress, isCompleted }) => {
   const { signIn, address, signMessage } = useSolanaWallet();
-  const { mutateAsync: verifySignature, error } = useWhitelistVerifySignature();
+  const { mutateAsync: verifySignature, error } = useAuthVerifySignature();
 
   const [loading, setLoading] = useState(false);
 
