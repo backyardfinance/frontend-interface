@@ -41,7 +41,7 @@ export function formatMonetaryAmount(value: number | string): string {
   try {
     const bigNumber = Big(value);
     if (bigNumber.lt(1_000)) {
-      return value.toString();
+      return Number(value).toFixed(2).toString();
     }
 
     const suffixes = [
@@ -53,15 +53,15 @@ export function formatMonetaryAmount(value: number | string): string {
 
     for (const suffix of suffixes) {
       if (bigNumber.gte(suffix.value)) {
-        const abbreviated = bigNumber.div(suffix.value).toFixed(1);
+        const abbreviated = bigNumber.div(suffix.value).toFixed(2);
         return `${parseFloat(abbreviated)}${suffix.symbol}`;
       }
     }
   } catch (e) {
     console.error(e);
-    return "0";
+    return "0.00";
   }
-  return "0";
+  return "0.00";
 }
 
 export const sleep = async (time = 1000): Promise<void> => {

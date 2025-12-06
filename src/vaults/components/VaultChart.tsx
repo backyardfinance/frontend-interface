@@ -37,22 +37,28 @@ export const VaultChart: React.FC<Props> = ({ vault, token }) => {
     setSelectedCategory(newCategory);
     setSelectedMetric(MetricMap[newCategory][0]);
   };
+  const totalDeposited = vaultWithUser?.strategies.reduce((acc, strategy) => acc + strategy.depositedAmount, 0);
+
+  const recalculateVaultWeightStrategies = vaultWithUser?.strategies.map((strategy) => ({
+    ...strategy,
+    localVaultWeight: totalDeposited ? strategy.depositedAmount / totalDeposited : 0,
+  }));
 
   const table = {
     headers: ["Deposited", "Vault weight", "Interest earned", "Parent Strategy"],
-    rows: vaultWithUser?.strategies?.map((strategy) => [
+    rows: recalculateVaultWeightStrategies?.map((strategy) => [
       <div className="flex flex-col items-start justify-between" key={strategy.strategyId}>
         <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>
           <img alt={token.symbol} className="size-3" src={token.icon} />
           <div className="justify-start font-bold text-neutral-800 text-sm">
-            {formatUnits(strategy.depositedAmount.toFixed(), token.decimals)}
+            {formatUnits(strategy.depositedAmount.toFixed(), token.decimals, 2)}
           </div>
         </div>
         <div className="w-16 justify-start font-normal text-xs text-zinc-500 uppercase">
-          ${formatUnits(strategy.depositedAmount.toFixed(), token.decimals)}
+          ${formatUnits(strategy.depositedAmount.toFixed(), token.decimals, 2)}
         </div>
       </div>,
-      `${strategy.vaultWeight * 100}%`,
+      `${(strategy.localVaultWeight * 100).toFixed(2)}%`,
       <div className="inline-flex items-center justify-start gap-1.5" key={strategy.strategyId}>
         <div className="justify-start font-bold text-neutral-800 text-sm">{strategy.interestEarned.toFixed(2)}</div>
         <img alt={token.symbol} className="size-3" src={token.icon} />

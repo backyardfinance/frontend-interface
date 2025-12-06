@@ -24,18 +24,20 @@ export const parseUnits = (value: string, decimals: number, precision?: number) 
  * formatUnits("420000000000", 9) = "42"
  */
 export const formatUnits = (value: string, decimals: number, precision?: number) => {
-  //TODO: check if this creates problems
+  //TODO: check if this creates problems: Yes, Oleksii said that we should show always with 2 decimal places including zeros.
   try {
-    return removeTrailingZeros(Big(value).div(Big(10).pow(decimals)).toFixed(precision));
+    return Big(value)
+      .div(Big(10).pow(decimals))
+      .toFixed(precision ?? 2, 0);
   } catch {
-    return "0";
+    return "0.00";
   }
 };
 
 export const displayAmount = (amount: string, decimals?: number, precision = 4): string => {
   const formateAmount = formatUnits(amount, decimals || 0);
   const amountBig = Big(formateAmount);
-  if (amountBig.eq(0)) return "0";
+  if (amountBig.eq(0)) return "0.00";
   if (amountBig.lte(0.0001)) return `>0.0001`;
   return removeTrailingZeros(amountBig.toFixed(precision));
 };
